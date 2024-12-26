@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const subdomain = request.url.split('.')[0];
+  // const subdomain = request.url.split('.')[0];
 
   console.log(request.nextUrl.host);
 

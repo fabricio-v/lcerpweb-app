@@ -14,7 +14,7 @@ import {
 } from './ui/dropdown-menu';
 
 export const Header = () => {
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   return (
     <header className="sticky top-0 z-50 flex h-[50px] bg-lc-secondary">
@@ -44,6 +44,13 @@ export const Header = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 mr-5">
             <DropdownMenuGroup>
+              <DropdownMenuItem
+                onClick={() => {
+                  setTheme(theme === 'dark' ? 'light' : 'dark');
+                }}
+              >
+                Alterar tema ({theme === 'light' ? 'claro' : 'escuro'})
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => {}}>Sair</DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>

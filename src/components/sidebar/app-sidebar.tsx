@@ -29,7 +29,7 @@ const navMain = [
   },
   {
     title: 'Dashboard',
-    url: '#',
+    url: '/',
     icon: <LayoutDashboardIcon />,
     isActive: true,
     items: [
@@ -45,58 +45,58 @@ const navMain = [
   },
   {
     title: 'Vendas',
-    url: '#',
+    url: '/',
     icon: <ShoppingCartIcon />,
     isActive: true,
     items: [
       {
-        title: 'Pdv',
-        url: '#',
+        title: 'PDV',
+        url: '/',
       },
       {
         title: 'Pedido de venda',
-        url: '#',
+        url: '/',
       },
     ],
   },
   {
     type: 'group',
     title: 'Cadastros',
-    url: '#',
+    url: '/',
     icon: <PackagePlusIcon />,
     isActive: true,
     items: [
       {
         title: 'Produto',
-        url: '#',
+        url: '/',
       },
       {
         title: 'Cliente',
-        url: '#',
+        url: '/',
       },
       {
         title: 'Fornecedor',
-        url: '#',
+        url: '/',
       },
       {
         title: 'Categoria',
-        url: '#',
+        url: '/',
       },
       {
         title: 'Subcategoria',
-        url: '#',
+        url: '/',
       },
       {
         title: 'Fabricante',
-        url: '#',
+        url: '/',
       },
       {
         title: 'Natureza da operação',
-        url: '#',
+        url: '/',
       },
       {
         title: 'Unidade',
-        url: '#',
+        url: '/',
       },
     ],
   },
@@ -118,8 +118,6 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <Separator className="mb-2" />
-
-        <span className="text-xs text-lc-secondary">Empresa selecionada</span>
         <DropdownMultiempresa />
       </SidebarFooter>
     </Sidebar>

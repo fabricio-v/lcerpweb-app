@@ -12,6 +12,7 @@ const DropdownMultiempresa = () => {
 
   return (
     <div>
+      <span className="text-xs text-lc-tertiary">Empresa selecionada</span>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="flex items-center gap-2 cursor-pointer ">

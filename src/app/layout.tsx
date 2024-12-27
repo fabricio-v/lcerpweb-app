@@ -1,6 +1,7 @@
 import { AppSidebar } from '@/components/app-sidebar';
+import Header from '@/components/Header';
 import { ThemeProvider } from '@/components/theme-provider';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -26,9 +27,16 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <SidebarProvider>
-              <AppSidebar />
-              <SidebarTrigger />
-              {children}
+              <div className="flex flex-1 flex-col">
+                <header>
+                  <Header />
+                </header>
+
+                <div className="flex">
+                  <AppSidebar />
+                  <main className="flex-1">{children}</main>
+                </div>
+              </div>
             </SidebarProvider>
           </ThemeProvider>
         </body>

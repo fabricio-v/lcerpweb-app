@@ -20,7 +20,7 @@ export function AppSidebar() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <Sidebar>
+    <Sidebar className="max-h-xal">
       <SidebarHeader />
       <SidebarContent>
         <SidebarGroup>

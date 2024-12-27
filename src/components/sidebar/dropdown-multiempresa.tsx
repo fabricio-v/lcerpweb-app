@@ -11,8 +11,8 @@ const DropdownMultiempresa = () => {
   const { isMobile } = useSidebar();
 
   return (
-    <div>
-      <span className="text-xs text-lc-tertiary">Empresa selecionada</span>
+    <div className="pb-2">
+      {/* <span className="text-xs text-lc-tertiary">Empresa selecionada</span> */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="flex items-center gap-2 cursor-pointer ">
@@ -27,7 +27,7 @@ const DropdownMultiempresa = () => {
 
             <div className="flex flex-col">
               <h1 className="text-sm font-gothamBold">Nome da empresa</h1>
-              <span className="text-xs">00.000.000/0000-00</span>
+              <span className="text-[10px] opacity-50">00.000.000/0000-00</span>
             </div>
 
             <ChevronsUpDown size={15} className="ml-auto" />

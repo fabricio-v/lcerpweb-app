@@ -1,9 +1,9 @@
 "use client";
 
-import ButtonTheme from "@/components/button/ButtonTheme";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Messages } from "@/constants/Messages";
 import { useIsMobile } from "@/hooks/use-mobile";
 import api from "@/services/axios";
 import { buildMessageException } from "@/utils/Funcoes";
@@ -11,10 +11,12 @@ import { ChevronRight, Loader2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function Home() {
+  const { push } = useRouter();
   const { theme, setTheme } = useTheme();
   const isMobile = useIsMobile();
 
@@ -29,11 +31,20 @@ export default function Home() {
       );
       setIsLoading(false);
       if (response.status === 200) {
-        window.location.href = `/signin?subdomain=${subdomain}`;
+        // window.location.href = `/signin?subdomain=${subdomain}`;
+        push(`/signin?subdomain=${subdomain}`);
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
       setIsLoading(false);
-      alert(buildMessageException(error));
     }
   }
 
@@ -43,10 +54,6 @@ export default function Home() {
 
   return (
     <div>
-      <div className="relative flex justify-end pr-4 pt-4 md:absolute md:w-full">
-        <ButtonTheme />
-      </div>
-
       <div className="flex flex-col md:flex-row md:items-center">
         <div className="flex h-screen flex-1 items-center justify-center">
           {/* <Image
@@ -57,12 +64,12 @@ export default function Home() {
             height={50}
             alt="Logo"
           /> */}
-          <h1 className="text-lc-secondary text-2xl">
+          <h1 className="text-2xl text-lc-secondary">
             Espaço reservado ao marketing
           </h1>
         </div>
 
-        <Separator orientation="vertical" className="h-half hidden md:block" />
+        <Separator orientation="vertical" className="hidden h-half md:block" />
 
         <div className="m-4 flex flex-1 flex-col items-center">
           <div className="flex w-full max-w-[450px] flex-col items-center justify-center">
@@ -76,7 +83,7 @@ export default function Home() {
             />
 
             <div className="flex w-full flex-col pt-20">
-              <h1 className="text-lc-tertiary mb-3 text-lg">
+              <h1 className="mb-3 text-lg text-lc-tertiary">
                 Informe seu domínio
               </h1>
 
@@ -112,7 +119,7 @@ export default function Home() {
 
               <Link
                 href={"/"}
-                className="text-lc-tertiary hover:text-lc-sunsetsky-light text-xs"
+                className="text-xs text-lc-tertiary hover:text-lc-sunsetsky-light"
               >
                 Esqueci meu domínio
               </Link>
@@ -122,7 +129,8 @@ export default function Home() {
                   className="hover:bg-lc-sunsetsky-light hover:text-white"
                   variant={"outline"}
                   onClick={() => {
-                    redirect("/signup");
+                    // window.location.href = "/signup";
+                    push("/signup");
                   }}
                 >
                   Cadastrar-se

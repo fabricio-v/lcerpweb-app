@@ -1,13 +1,14 @@
-import axios from 'axios';
+import axios from "axios";
 
 // export const CONNECTION_TIMEOUT = 20000;
 export const CONNECTION_TIMEOUT_TEST = 2000;
-export const VERSAO_API = 'v1';
+export const VERSAO_API = "v1";
 
 const baseURL_DEV = `http://localhost:8080/api/${VERSAO_API}`;
+const baseURL_PROD = `http://143.137.152.19:8080/api/${VERSAO_API}`;
 
 const api = axios.create({
-  baseURL: baseURL_DEV,
+  baseURL: baseURL_PROD,
   // timeout: CONNECTION_TIMEOUT,
 });
 

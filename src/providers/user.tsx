@@ -1,7 +1,8 @@
 "use client";
 import { CookiesKeys } from "@/constants/CookiesKeys";
-import { DOMAIN, HOST, PROTOCOL } from "@/utils/hosts";
+import { DOMAIN } from "@/utils/hosts";
 import { deleteCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 interface User {
@@ -26,6 +27,7 @@ type UserProviderProps = {
 export const UserContext = createContext({} as UserContextData);
 
 function UserProvider({ children }: UserProviderProps) {
+  const { replace } = useRouter();
   const [user, setUser] = useState<User | null>(null);
 
   function clearUser() {
@@ -39,7 +41,8 @@ function UserProvider({ children }: UserProviderProps) {
     await deleteCookie(CookiesKeys.USER, {
       domain: DOMAIN,
     });
-    window.location.href = PROTOCOL + "app." + HOST;
+    replace("http://app.lcerp-local.com.br:3000/");
+    // window.location.href = PROTOCOL + "app." + HOST;
   }
 
   return (

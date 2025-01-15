@@ -57,8 +57,13 @@ export default function RootLayout({
                   <div className="flex">
                     <AppSidebar /> */}
               <main>{children}</main>
-
-              <Toaster />
+              <Toaster
+                expand
+                // richColors
+                position="top-right"
+                closeButton
+                duration={7000}
+              />
               {/* </div>
                 </div>
               </SidebarProvider> */}

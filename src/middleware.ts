@@ -2,6 +2,7 @@ import { decode } from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 import { CookiesKeys } from "./constants/CookiesKeys";
 import { getCookieServer } from "./lib/cookieServer";
+import api from "./services/axios";
 import { DOMAIN, HOST, PROTOCOL } from "./utils/hosts";
 
 export async function middleware(req: NextRequest) {
@@ -16,12 +17,17 @@ export async function middleware(req: NextRequest) {
     if (
       pathname === "/" ||
       pathname.startsWith("/signin") ||
-      pathname.startsWith("/signup")
+      pathname.startsWith("/signup") ||
+      pathname.startsWith("/forgot-password")
     ) {
       return NextResponse.next();
     } else {
-      console.log("ENTROU NO REDIRECT 1");
-      return NextResponse.redirect(new URL("/", req.url));
+      if (pathname.startsWith("/_next") || pathname.startsWith("/")) {
+        return NextResponse.next();
+      } else {
+        console.log("ENTROU NO REDIRECT 1");
+        return NextResponse.redirect(new URL("/", req.url));
+      }
     }
   } else {
     const token = getCookieServer(CookiesKeys.TOKEN);
@@ -31,11 +37,16 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL(PROTOCOL + "app." + HOST + "/"));
     }
 
+    if (!(await validarToken(token))) {
+      console.log("ENTROU NO REDIRECT 3");
+      return NextResponse.redirect(new URL(PROTOCOL + "app." + HOST + "/"));
+    }
+
     const tokenDecoded = decode(token);
     const subdomain = host.split(".")[0];
 
     if (tokenDecoded?.aud !== subdomain) {
-      console.log("ENTROU NO REDIRECT 3");
+      console.log("ENTROU NO REDIRECT 4");
 
       const response = NextResponse.redirect(
         new URL(PROTOCOL + "app." + HOST + "/"),
@@ -49,7 +60,7 @@ export async function middleware(req: NextRequest) {
     }
 
     if (pathname === "/") {
-      console.log("ENTROU NO REDIRECT 4");
+      console.log("ENTROU NO REDIRECT 5");
       return NextResponse.redirect(new URL("/home", req.url));
     }
   }
@@ -57,8 +68,13 @@ export async function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = {
-  matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
-  ],
+const validarToken = async (token: string) => {
+  try {
+    await api.get("/auth/valid-token", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error) {
+    return false;
+  }
+  return true;
 };

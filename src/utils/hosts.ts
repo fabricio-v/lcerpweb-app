@@ -7,4 +7,4 @@ export const HOST =
   process.env.NODE_ENV === "development" ? DOMAIN + ":3000" : DOMAIN;
 
 export const PROTOCOL =
-  process.env.NODE_ENV === "development" ? "http://" : "http://";
+  process.env.NODE_ENV === "development" ? "http://" : "https://";

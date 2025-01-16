@@ -2,7 +2,6 @@ import { Header } from "@/components/header";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Metadata } from "next";
-import "../globals.css";
 
 export const metadata: Metadata = {
   title: "LC ERP",

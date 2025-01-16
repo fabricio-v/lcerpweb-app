@@ -12,7 +12,7 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function Home() {
@@ -21,18 +21,19 @@ export default function Home() {
   const isMobile = useIsMobile();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [subdomain, setSubdomain] = useState("lcsistemas");
+  const [subdomain, setSubdomain] = useState("");
 
-  async function validateSubdomain() {
+  async function validateSubdomain(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
     try {
       setIsLoading(true);
       const response = await api.get(
         "/auth/valid-subdomain?subdomain=" + subdomain,
       );
-      setIsLoading(false);
       if (response.status === 200) {
-        // window.location.href = `/signin?subdomain=${subdomain}`;
         push(`/signin?subdomain=${subdomain}`);
+        // setIsLoading(false);
       }
     } catch (error: any) {
       if (error?.response?.status < 500) {
@@ -87,7 +88,10 @@ export default function Home() {
                 Informe seu domínio
               </h1>
 
-              <div className="flex flex-1 justify-center gap-3">
+              <form
+                className="flex flex-1 justify-center gap-3"
+                onSubmit={validateSubdomain}
+              >
                 <div className="mb-3 flex flex-1 rounded-lg border">
                   <Input
                     className="w-full border-b-0 border-t-0"
@@ -104,8 +108,9 @@ export default function Home() {
                 </div>
 
                 <Button
+                  type="submit"
                   size={"icon"}
-                  onClick={validateSubdomain}
+                  // onClick={validateSubdomain}
                   disabled={isLoading}
                   className="hover:bg-lc-sunsetsky-light"
                 >
@@ -115,26 +120,16 @@ export default function Home() {
                     <ChevronRight />
                   )}
                 </Button>
-              </div>
+              </form>
 
-              <Link
-                href={"/"}
-                className="text-xs text-lc-tertiary hover:text-lc-sunsetsky-light"
-              >
-                Esqueci meu domínio
-              </Link>
-
-              <div className="mt-10">
-                <Button
-                  className="hover:bg-lc-sunsetsky-light hover:text-white"
-                  variant={"outline"}
-                  onClick={() => {
-                    // window.location.href = "/signup";
-                    push("/signup");
-                  }}
+              <div className="mt-10 flex flex-1 justify-center">
+                <p className="text-sm text-lc-tertiary">Não tem uma conta?</p>
+                <Link
+                  href="/signup"
+                  className="pl-1 font-gothamBold text-sm hover:text-lc-sunsetsky-light"
                 >
-                  Cadastrar-se
-                </Button>
+                  Cadastre-se
+                </Link>
               </div>
             </div>
           </div>

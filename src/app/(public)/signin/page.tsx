@@ -21,6 +21,7 @@ import { useState } from "react";
 export default function Signin() {
   const { replace } = useRouter();
   const { theme } = useTheme();
+
   const isMobile = useIsMobile();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -84,7 +85,7 @@ export default function Signin() {
             nome: res.data.nome,
             email: res.data.email,
             permissoes: res.data.permissoes,
-            avatar: "https://github.com/fabricio-v.png",
+            avatar: "",
           }),
           {
             domain: DOMAIN,

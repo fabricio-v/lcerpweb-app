@@ -8,6 +8,10 @@ import { DOMAIN, HOST, PROTOCOL } from "./utils/hosts";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // if (pathname.startsWith("/_next")) {
+  //   return NextResponse.next();
+  // }
+
   const host = req.headers.get("host") || "";
 
   console.log("pathname: " + pathname);
@@ -22,7 +26,7 @@ export async function middleware(req: NextRequest) {
     ) {
       return NextResponse.next();
     } else {
-      if (pathname.startsWith("/_next") || pathname.startsWith("/")) {
+      if (pathname.startsWith("/_next") || pathname === "/") {
         return NextResponse.next();
       } else {
         console.log("ENTROU NO REDIRECT 1");

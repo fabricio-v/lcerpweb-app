@@ -6,7 +6,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
@@ -26,11 +25,20 @@ export interface ComboboxDataProps {
 interface Props {
   label?: string;
   data: ComboboxDataProps[];
+  valueSelected: string | number;
+  messageWhenNotfound?: string;
+  onChangeValueSelected: (value: string | number) => void;
 }
 
-export const Combobox: React.FC<Props> = ({ label, data }) => {
+export const Combobox: React.FC<Props> = ({
+  label,
+  data,
+  valueSelected,
+  messageWhenNotfound = "Nenhum registro encontrado",
+  onChangeValueSelected,
+}) => {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  // const [value, setValue] = React.useState("");
 
   return (
     <div className="grid items-center gap-1.5">
@@ -44,31 +52,37 @@ export const Combobox: React.FC<Props> = ({ label, data }) => {
             aria-expanded={open}
             className="w-full justify-between"
           >
-            {value
-              ? data.find((item) => item.value === value)?.label
-              : "Selecione"}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <p>
+              {valueSelected
+                ? data.find((item) => item.value === valueSelected)?.label
+                : "Selecione"}
+            </p>
+            <ChevronsUpDown className="ml-2 h-4 w-full shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-ful p-0">
           <Command>
-            <CommandInput placeholder="Digite aqui para filtrar..." />
+            {/* <CommandInput placeholder="Digite aqui para filtrar..." /> */}
             <CommandList>
-              <CommandEmpty>Nenhum registro encontrado</CommandEmpty>
+              <CommandEmpty>{messageWhenNotfound}</CommandEmpty>
               <CommandGroup>
                 {data.map((item) => (
                   <CommandItem
                     key={item.value}
                     value={item.value}
                     onSelect={(currentValue: any) => {
-                      setValue(currentValue === value ? "" : currentValue);
+                      onChangeValueSelected(
+                        currentValue === valueSelected ? "" : currentValue,
+                      );
                       setOpen(false);
                     }}
                   >
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        value === item.value ? "opacity-100" : "opacity-0",
+                        valueSelected === item.value
+                          ? "opacity-100"
+                          : "opacity-0",
                       )}
                     />
                     {item.label}

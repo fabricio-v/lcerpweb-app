@@ -1,6 +1,6 @@
 "use client";
 
-import { ComboboxDataProps } from "@/components/combobox/Combobox";
+import { Combobox, ComboboxDataProps } from "@/components/combobox/Combobox";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { InputWithLabel } from "@/components/input/InputWithLabel";
@@ -21,12 +21,15 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { isValidCNPJ } from "@/utils/Funcoes";
+import { Messages } from "@/constants/Messages";
+import api from "@/services/axios";
+import { buildMessageException, isValidCNPJ } from "@/utils/Funcoes";
+import { toast } from "sonner";
 import { z } from "zod";
 
 export const createAccountSchema = z
   .object({
-    domain: z
+    subdomain: z
       .string()
       .min(1, {
         message: "O domínio é obrigatório",
@@ -45,6 +48,12 @@ export const createAccountSchema = z
       .refine(isValidCNPJ, {
         message: "CNPJ inválido",
       }),
+    state: z.string().min(1, {
+      message: "O estado é obrigatório",
+    }),
+    city: z.string().min(1, {
+      message: "A cidade é obrigatória",
+    }),
     email: z
       .string()
       .nonempty({
@@ -69,38 +78,111 @@ export default function Signup() {
   const { theme } = useTheme();
   const isMobile = useIsMobile();
 
+  const [isLoadingRegister, setIsLoadingRegisters] = useState(false);
+  const [listaEstados, setListaEstados] = useState<IEstadoResponse[]>([]);
+  const [listaCidades, setListaCidades] = useState<ICidadeResponse[]>([]);
+  const [stateSel, setStateSel] = useState("");
+
   const form = useForm<z.infer<typeof createAccountSchema>>({
     resolver: zodResolver(createAccountSchema),
     defaultValues: {
-      domain: "",
+      subdomain: "",
       enterpriseName: "",
       enterpriseCnpj: "",
       email: "",
       password: "",
       confirmPassword: "",
+      state: stateSel,
+      city: "",
     },
   });
 
-  const [listaEstados, setListaEstados] = useState<IEstadoResponse[]>([]);
-  const [listaCidades, setListaCidades] = useState<ICidadeResponse[]>([]);
-
   async function handleSignup(values: z.infer<typeof createAccountSchema>) {
     console.log(values);
+
+    setIsLoadingRegisters(true);
+    try {
+      const resp = await api.post("/auth/create-account", {
+        subdomain: values.subdomain,
+        cnpj: values.enterpriseCnpj,
+        nome: values.enterpriseName,
+        email: values.email,
+        senha: values.password,
+        cidade: values.city,
+        estado: values.state,
+      });
+
+      if (resp.status === 201) {
+        toast.success(Messages.TOAST_SUCCESS_TITLE, {
+          description: "Conta criada com sucesso",
+        });
+
+        replace("/");
+        setIsLoadingRegisters(false);
+      }
+    } catch (error: any) {
+      setIsLoadingRegisters(false);
+
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
+    }
   }
 
   async function buscarEstados() {
-    setListaEstados([{ id: 15, nome: "PARA", uf: "PA" }]);
+    try {
+      const response = await api.get<IEstadoResponse[]>("/public/estados");
+
+      if (response.status === 200) {
+        setListaEstados(response.data);
+      }
+    } catch (error: any) {
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
+    }
   }
 
-  async function buscarCidades() {
-    setListaCidades([
-      {
-        id: 1504059,
-        nome: "Mae do Rio",
-        estado: { id: 15, nome: "PARA", uf: "PA" },
-      },
-    ]);
-  }
+  const buscarCidades = useCallback(
+    async (stateParam: string) => {
+      if (stateParam !== "") {
+        try {
+          const resp = await api.get<ICidadeResponse[]>(
+            `/public/cidades/estado/${stateParam}`,
+          );
+
+          if (resp.status === 200) {
+            setListaCidades(resp.data);
+          }
+        } catch (error: any) {
+          if (error?.response?.status < 500) {
+            toast.warning(Messages.TOAST_INFO_TITLE, {
+              description: buildMessageException(error),
+            });
+          } else {
+            toast.error(Messages.TOAST_ERROR_TITLE, {
+              description: buildMessageException(error),
+            });
+          }
+        }
+      } else {
+        setListaCidades([]);
+      }
+    },
+    [stateSel],
+  );
 
   const estados: ComboboxDataProps[] = useMemo(() => {
     return listaEstados.map((estado) => {
@@ -122,7 +204,6 @@ export default function Signup() {
 
   useEffect(() => {
     buscarEstados();
-    buscarCidades();
   }, []);
 
   return (
@@ -154,7 +235,7 @@ export default function Signup() {
               >
                 <FormField
                   control={form.control}
-                  name="domain"
+                  name="subdomain"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -195,7 +276,54 @@ export default function Signup() {
                   )}
                 />
 
-                {/* cidade e estado */}
+                <div className="flex flex-col justify-between gap-3 lg:flex-row">
+                  <div className="flex-1">
+                    <FormField
+                      control={form.control}
+                      name="state"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Combobox
+                              label="Estado"
+                              data={estados}
+                              valueSelected={field.value}
+                              onChangeValueSelected={(e: any) => {
+                                field.onChange(e);
+                                form.setValue("city", "");
+                                // setStateSel(e);
+                                buscarCidades(e);
+                              }}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Combobox
+                              label="Cidade"
+                              messageWhenNotfound="Selecione um estado"
+                              data={cidades}
+                              valueSelected={field.value}
+                              onChangeValueSelected={field.onChange}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
 
                 <FormField
                   control={form.control}
@@ -244,56 +372,13 @@ export default function Signup() {
                   )}
                 />
 
-                {/* <InputWithLabel
-                  name="enterpriseName"
-                  label="Nome da empresa"
-                  required
-                /> */}
-
-                {/* <InputWithLabel
-                  name="enterpriseCnpj"
-                  label="CNPJ"
-                  maxLength={18}
-                  required
-                />
-
-                <div className="flex flex-col justify-between gap-3 lg:flex-row">
-                  <div className="flex-1">
-                    <Combobox label="Estado" data={estados} />
-                  </div>
-                  <div className="flex-1">
-                    <Combobox label="Cidade" data={cidades} />
-                  </div>
-                </div>
-
-                <InputWithLabel
-                  name="email"
-                  label="Digite seu email"
-                  required
-                />
-
-                <InputWithLabel
-                  name="password"
-                  label="Digite sua senha"
-                  type="password"
-                  required
-                />
-
-                <InputWithLabel
-                  name="confirmPassword"
-                  label="Confirme sua senha"
-                  type="password"
-                  required
-                /> */}
-
                 <div className="flex items-center justify-between gap-2">
                   <Button
                     type="button"
-                    className="mt-4 w-[100px] hover:border-lc-sunsetsky hover:bg-transparent"
+                    className="mt-4 w-[100px] hover:border-lc-sunsetsky-light hover:bg-transparent hover:text-lc-sunsetsky-light"
                     variant={"outline"}
                     onClick={() => {
                       replace("/");
-                      // window.location.href = "/";
                     }}
                   >
                     Voltar
@@ -302,6 +387,7 @@ export default function Signup() {
                   <Button
                     className="mt-4 w-[100px] bg-lc-sunsetsky-light text-white hover:bg-lc-sunsetsky"
                     type="submit"
+                    isLoading={isLoadingRegister}
                   >
                     Finalizar
                   </Button>

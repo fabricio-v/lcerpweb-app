@@ -65,7 +65,7 @@ export default function Home() {
             alt="Logo"
           /> */}
           <h1 className="text-2xl text-lc-secondary">
-            Espaço reservado ao marketing
+            Espaço reservado ao marketing 123
           </h1>
         </div>
 

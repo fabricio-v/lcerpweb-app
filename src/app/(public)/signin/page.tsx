@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Signin() {
-  const { replace } = useRouter();
+  const { replace, push } = useRouter();
   const { theme } = useTheme();
 
   const isMobile = useIsMobile();
@@ -58,7 +58,7 @@ export default function Signin() {
         if (tokenDecoded?.aud !== subdomain) {
           alert("Token não pertence a esse subdomínio");
           // window.location.href = "/";
-          replace("/");
+          push("/");
           setIsLoading(false);
           return;
         }
@@ -98,7 +98,7 @@ export default function Signin() {
         );
 
         setTimeout(() => {
-          replace(PROTOCOL + subdomain + "." + HOST + "/home");
+          push(PROTOCOL + subdomain + "." + HOST + "/home");
         }, 1000);
       } else {
         alert("Falha no login");

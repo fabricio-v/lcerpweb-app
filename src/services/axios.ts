@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const CONNECTION_TIMEOUT_TEST = 2000;
+// export const CONNECTION_TIMEOUT_TEST = 2000;
 export const VERSAO_API = "v1";
 
 const baseURL_DEV = `http://localhost:8080/api/${VERSAO_API}`;

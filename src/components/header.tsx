@@ -26,16 +26,16 @@ import {
 
 import { CookiesKeys } from "@/constants/CookiesKeys";
 import { getCookieClient } from "@/lib/cookieClient";
-import { useUser } from "@/providers/user";
+import { useUserStore } from "@/providers/user";
+import { HOST, PROTOCOL } from "@/utils/hosts";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "./ui/button";
 
 export const Header = () => {
+  const { replace } = useRouter();
   const { theme, setTheme } = useTheme();
-
-  const { user, signout } = useUser();
-
-  const { setUser } = useUser();
+  const { user, setUser, signout } = useUserStore();
 
   const [isModalSignoutOpen, setIsModalSignoutOpen] = useState(false);
   const [isLoadingSignout, setIsLoadingSignout] = useState(false);
@@ -55,8 +55,9 @@ export const Header = () => {
 
   const handleSignout = async () => {
     setIsLoadingSignout(true);
-    setTimeout(() => {
-      signout();
+    setTimeout(async () => {
+      await signout();
+      replace(PROTOCOL + "app." + HOST + "/");
     }, 100);
   };
 
@@ -134,13 +135,13 @@ export const Header = () => {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel
-                      className="w-20"
+                      className="w-full md:w-20"
                       onClick={() => setIsModalSignoutOpen(false)}
                     >
                       Não
                     </AlertDialogCancel>
                     <Button
-                      className="w-20 hover:bg-lc-sunsetsky-light"
+                      className="w-full hover:bg-lc-sunsetsky-light hover:text-white md:w-20"
                       isLoading={isLoadingSignout}
                       onClick={handleSignout}
                     >

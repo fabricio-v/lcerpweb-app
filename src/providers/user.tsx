@@ -1,11 +1,11 @@
 "use client";
-import { CookiesKeys } from "@/constants/CookiesKeys";
-import { DOMAIN, HOST, PROTOCOL } from "@/utils/hosts";
-import { deleteCookie } from "cookies-next";
-import { useRouter } from "next/navigation";
-import { createContext, ReactNode, useContext, useState } from "react";
 
-interface User {
+import { CookiesKeys } from "@/constants/CookiesKeys";
+import { DOMAIN } from "@/utils/hosts";
+import { deleteCookie } from "cookies-next";
+import { create } from "zustand";
+
+interface UserProps {
   id: number;
   nome: string;
   email: string;
@@ -13,49 +13,27 @@ interface User {
   avatar?: "";
 }
 
-type UserContextData = {
-  user: User | null;
-  setUser: (user: User) => void;
+type Props = {
+  user: UserProps | null;
+  setUser: (user: UserProps) => void;
   clearUser: () => void;
   signout: () => Promise<void>;
 };
 
-type UserProviderProps = {
-  children: ReactNode;
-};
+const useUserStore = create<Props>((set, get) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+  clearUser: () => set({ user: null }),
+  signout: async () => {
+    get().clearUser();
 
-export const UserContext = createContext({} as UserContextData);
-
-function UserProvider({ children }: UserProviderProps) {
-  const { replace } = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-
-  function clearUser() {
-    setUser(null);
-  }
-
-  async function signout() {
     await deleteCookie(CookiesKeys.TOKEN, {
       domain: DOMAIN,
     });
     await deleteCookie(CookiesKeys.USER, {
       domain: DOMAIN,
     });
+  },
+}));
 
-    replace(PROTOCOL + "app." + HOST + "/");
-    // window.location.href = PROTOCOL + "app." + HOST;
-  }
-
-  return (
-    <UserContext.Provider value={{ user, setUser, clearUser, signout }}>
-      {children}
-    </UserContext.Provider>
-  );
-}
-
-function useUser(): UserContextData {
-  const context = useContext(UserContext);
-  return context;
-}
-
-export { UserProvider, useUser };
+export { useUserStore };

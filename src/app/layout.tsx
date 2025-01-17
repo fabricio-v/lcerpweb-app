@@ -56,6 +56,9 @@ export default function RootLayout({
 
                   <div className="flex">
                     <AppSidebar /> */}
+              {/* <div className="absolute z-[100] flex h-full w-full items-center justify-center bg-lc-sunsetsky opacity-80">
+                <h1>LOADING</h1>
+              </div> */}
               <main>{children}</main>
               <Toaster
                 expand

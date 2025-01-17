@@ -22,6 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Messages } from "@/constants/Messages";
+import { noCharsLetters, noSpaces, noSpecialChars } from "@/constants/regex";
 import api from "@/services/axios";
 import { buildMessageException, isValidCNPJ } from "@/utils/Funcoes";
 import { toast } from "sonner";
@@ -34,8 +35,14 @@ export const createAccountSchema = z
       .min(1, {
         message: "O domínio é obrigatório",
       })
-      .min(5, {
-        message: "O dominio deve ter pelo menos 5 caracteres",
+      .refine((value) => noSpecialChars.test(value), {
+        message: "O domínio não deve conter caracteres especiais",
+      })
+      .refine((value) => noSpaces.test(value), {
+        message: "O domínio não deve conter espaços",
+      })
+      .refine((value) => noCharsLetters.test(value), {
+        message: "O domínio não pode ser formado somente por números",
       }),
     enterpriseName: z.string().min(1, {
       message: "O nome da empresa é obrigatório",

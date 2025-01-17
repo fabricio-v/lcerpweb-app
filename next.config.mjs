@@ -1,16 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // reactStrictMode: true,
-  // swcMinify: false,
-  // output: "export",
-  // trailingSlash: true,
+  reactStrictMode: true,
+  swcMinify: false,
+  output: "export",
+  trailingSlash: true,
   typescript: {
     ignoreBuildErrors: true, //foi adicionado para evitar erro na build do vercel
   },
   // experimental: {
-  //   images: {
-  //     unoptimized: true,
-  //   },
+  images: {
+    unoptimized: true,
+  },
   // },
 };
 

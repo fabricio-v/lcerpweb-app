@@ -8,9 +8,9 @@ import { DOMAIN, HOST, PROTOCOL } from "./utils/hosts";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // if (pathname.startsWith("/_next")) {
-  //   return NextResponse.next();
-  // }
+  if (pathname.startsWith("/_next")) {
+    return NextResponse.next();
+  }
 
   const host = req.headers.get("host") || "";
 

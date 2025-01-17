@@ -11,7 +11,7 @@ import { buildMessageException } from "@/utils/Funcoes";
 import { DOMAIN, HOST, PROTOCOL } from "@/utils/hosts";
 import { setCookie } from "cookies-next";
 import { decode } from "jsonwebtoken";
-import { ChevronLeft, LucideLoader2 } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
@@ -97,8 +97,9 @@ export default function Signin() {
           },
         );
 
-        // window.location.href = PROTOCOL + subdomain + "." + HOST + "/home";
-        replace(PROTOCOL + subdomain + "." + HOST + "/home");
+        setTimeout(() => {
+          replace(PROTOCOL + subdomain + "." + HOST + "/home");
+        }, 1000);
       } else {
         alert("Falha no login");
         setIsLoading(false);
@@ -114,14 +115,6 @@ export default function Signin() {
     <div>
       <div className="flex flex-col md:flex-row md:items-center">
         <div className="flex h-screen flex-1 items-center justify-center">
-          {/* <Image
-            src={
-              theme === "dark" ? "/logo-lc-white.webp" : "/logo-lc-black.webp"
-            }
-            width={isMobile ? 250 : 350}
-            height={50}
-            alt="Logo"
-          /> */}
           <h1 className="text-2xl text-lc-secondary">
             Espaço reservado ao marketing
           </h1>
@@ -179,12 +172,9 @@ export default function Signin() {
                   className="mt-4 w-[100px] bg-lc-sunsetsky-light text-white hover:bg-lc-sunsetsky"
                   type="submit"
                   disabled={isLoading}
+                  isLoading={isLoading}
                 >
-                  {isLoading ? (
-                    <LucideLoader2 className="animate-spin" />
-                  ) : (
-                    "Entrar"
-                  )}
+                  Entrar
                 </Button>
               </div>
             </form>

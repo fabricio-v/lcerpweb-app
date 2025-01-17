@@ -3,7 +3,6 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -17,8 +16,6 @@ import {
   ShoppingCartIcon,
 } from "lucide-react";
 import { NavMain } from "../ui/nav-main";
-import { Separator } from "../ui/separator";
-import DropdownMultiempresa from "./dropdown-multiempresa";
 
 const navMain = [
   {
@@ -29,74 +26,75 @@ const navMain = [
   },
   {
     title: "Dashboard",
-    url: "/home",
     icon: <LayoutDashboardIcon />,
     isActive: true,
     items: [
       {
         title: "Vendas",
-        url: "/dashboard",
+        url: "/dashboard/vendas",
       },
       {
         title: "Estoque",
-        url: "/dashboard",
+        url: "/dashboard/estoque",
       },
     ],
   },
   {
     title: "Vendas",
-    url: "/home",
     icon: <ShoppingCartIcon />,
     isActive: true,
     items: [
       {
         title: "PDV",
-        url: "/home",
+        url: "/vendas/pdv",
       },
       {
         title: "Pedido de venda",
-        url: "/home",
+        url: "/vendas/pedido-de-venda",
       },
     ],
   },
   {
     type: "group",
     title: "Cadastros",
-    url: "/home",
     icon: <PackagePlusIcon />,
     isActive: true,
     items: [
       {
-        title: "Produto",
-        url: "/home",
+        title: "Categoria",
+        url: "/cadastros/categoria",
       },
       {
         title: "Cliente",
-        url: "/home",
-      },
-      {
-        title: "Fornecedor",
-        url: "/home",
-      },
-      {
-        title: "Categoria",
-        url: "/home",
-      },
-      {
-        title: "Subcategoria",
-        url: "/home",
+        url: "/cadastros/cliente",
       },
       {
         title: "Fabricante",
-        url: "/home",
+        url: "/cadastros/fabricante",
+      },
+      {
+        title: "Fornecedor",
+        url: "/cadastros/fornecedor",
       },
       {
         title: "Natureza da operação",
-        url: "/home",
+        url: "/cadastros/natureza-operacao",
+      },
+      {
+        title: "Produto",
+        url: "/cadastros/produto",
+      },
+      {
+        title: "Subcategoria",
+        url: "/cadastros/subcategoria",
       },
       {
         title: "Unidade",
-        url: "/home",
+        url: "/cadastros/unidade",
+      },
+      {
+        title: "Usuário",
+        url: "/cadastros/usuario",
       },
     ],
   },
@@ -116,10 +114,10 @@ export function AppSidebar() {
         </SidebarGroup>
         <SidebarGroup />
       </SidebarContent>
-      <SidebarFooter>
+      {/* <SidebarFooter>
         <Separator className="mb-2" />
         <DropdownMultiempresa />
-      </SidebarFooter>
+      </SidebarFooter> */}
     </Sidebar>
   );
 }

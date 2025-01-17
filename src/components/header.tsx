@@ -13,13 +13,28 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { useUser } from "@/providers/user";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Button } from "./ui/button";
 
 export const Header = () => {
   const { theme, setTheme } = useTheme();
 
   const { user, signout } = useUser();
+
+  const [isModalSignoutOpen, setIsModalSignoutOpen] = useState(false);
+  const [isLoadingSignout, setIsLoadingSignout] = useState(false);
 
   const fallbackAvatar = useMemo(() => {
     let retorno = "";
@@ -33,6 +48,13 @@ export const Header = () => {
 
     return retorno.toUpperCase();
   }, [user]);
+
+  const handleSignout = async () => {
+    setIsLoadingSignout(true);
+    setTimeout(() => {
+      signout();
+    }, 100);
+  };
 
   return (
     <header className="sticky top-0 z-50 flex h-[50px] bg-lc-header-background">
@@ -69,7 +91,50 @@ export const Header = () => {
               >
                 Alterar tema ({theme === "light" ? "claro" : "escuro"})
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={signout}>Sair</DropdownMenuItem>
+
+              {/* <DropdownMenuItem
+                onSelect={(e) => e.preventDefault()}
+                onClick={() => {
+                  setIsModalSignoutOpen(true);
+                }}
+              >
+                Sair
+              </DropdownMenuItem> */}
+
+              <AlertDialog open={isModalSignoutOpen}>
+                <AlertDialogTrigger
+                  onSelect={(e) => e.preventDefault()}
+                  onClick={() => {
+                    setIsModalSignoutOpen(true);
+                  }}
+                  asChild
+                >
+                  <DropdownMenuItem>Sair</DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Atenção</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Deseja realmente sair?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel
+                      className="w-20"
+                      onClick={() => setIsModalSignoutOpen(false)}
+                    >
+                      Não
+                    </AlertDialogCancel>
+                    <Button
+                      className="w-20 hover:bg-lc-sunsetsky-light"
+                      isLoading={isLoadingSignout}
+                      onClick={handleSignout}
+                    >
+                      Sair
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -1,19 +1,47 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Messages } from "@/constants/Messages";
+import { noCharsLetters, noSpaces, noSpecialChars } from "@/constants/regex";
 import { useIsMobile } from "@/hooks/use-mobile";
 import api from "@/services/axios";
 import { buildMessageException } from "@/utils/Funcoes";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronRight, Loader2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+
+export const subdomainSchema = z.object({
+  subdomain: z
+    .string()
+    .min(1, {
+      message: "O domínio é obrigatório",
+    })
+    .refine((value) => noSpecialChars.test(value), {
+      message: "O domínio não deve conter caracteres especiais",
+    })
+    .refine((value) => noSpaces.test(value), {
+      message: "O domínio não deve conter espaços",
+    })
+    .refine((value) => noCharsLetters.test(value), {
+      message: "Digite um domínio válido",
+    }),
+});
 
 export default function Home() {
   const { push } = useRouter();
@@ -21,19 +49,22 @@ export default function Home() {
   const isMobile = useIsMobile();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [subdomain, setSubdomain] = useState("");
 
-  async function validateSubdomain(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  const form = useForm<z.infer<typeof subdomainSchema>>({
+    resolver: zodResolver(subdomainSchema),
+    defaultValues: {
+      subdomain: "",
+    },
+  });
 
+  async function validateSubdomain(values: z.infer<typeof subdomainSchema>) {
     try {
       setIsLoading(true);
       const response = await api.get(
-        "/auth/valid-subdomain?subdomain=" + subdomain,
+        "/auth/valid-subdomain?subdomain=" + values.subdomain,
       );
       if (response.status === 200) {
-        push(`/signin?subdomain=${subdomain}`);
-        // setIsLoading(false);
+        push(`/signin?subdomain=${values.subdomain}`);
       }
     } catch (error: any) {
       if (error?.response?.status < 500) {
@@ -57,14 +88,6 @@ export default function Home() {
     <div>
       <div className="flex flex-col md:flex-row md:items-center">
         <div className="flex h-screen flex-1 items-center justify-center">
-          {/* <Image
-            src={
-              theme === "dark" ? "/logo-lc-white.webp" : "/logo-lc-black.webp"
-            }
-            width={isMobile ? 250 : 350}
-            height={50}
-            alt="Logo"
-          /> */}
           <h1 className="text-2xl text-lc-secondary">
             Espaço reservado ao marketing
           </h1>
@@ -88,39 +111,48 @@ export default function Home() {
                 Informe seu domínio
               </h1>
 
-              <form
-                className="flex flex-1 justify-center gap-3"
-                onSubmit={validateSubdomain}
-              >
-                <div className="mb-3 flex flex-1 rounded-lg border">
-                  <Input
-                    className="w-full border-b-0 border-t-0"
-                    value={subdomain}
-                    onChange={(e) => {
-                      setSubdomain(e.target.value);
-                    }}
-                  />
-                  <Input
-                    className="w-[130px] border-none"
-                    value=".lcerp.com.br"
-                    disabled
-                  />
-                </div>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(validateSubdomain)}>
+                  <FormField
+                    control={form.control}
+                    name="subdomain"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl className="pb-0">
+                          <div className="flex gap-3">
+                            <div className="mb-3 flex flex-1 rounded-lg border">
+                              <Input
+                                className="w-full border-b-0 border-t-0"
+                                {...field}
+                              />
+                              <Input
+                                className="w-[130px] border-none"
+                                value=".lcerp.com.br"
+                                disabled
+                              />
+                            </div>
 
-                <Button
-                  type="submit"
-                  size={"icon"}
-                  // onClick={validateSubdomain}
-                  disabled={isLoading}
-                  className="hover:bg-lc-sunsetsky-light"
-                >
-                  {isLoading ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    <ChevronRight />
-                  )}
-                </Button>
-              </form>
+                            <Button
+                              type="submit"
+                              size={"icon"}
+                              // onClick={validateSubdomain}
+                              disabled={isLoading}
+                              className="hover:bg-lc-sunsetsky-light"
+                            >
+                              {isLoading ? (
+                                <Loader2 className="animate-spin" />
+                              ) : (
+                                <ChevronRight />
+                              )}
+                            </Button>
+                          </div>
+                        </FormControl>
+                        <FormMessage className="absolute" />
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
 
               <div className="mt-10 flex flex-1 justify-center">
                 <p className="text-sm text-lc-tertiary">Não tem uma conta?</p>

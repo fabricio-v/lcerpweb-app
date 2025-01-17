@@ -26,6 +26,7 @@ const navMain = [
   },
   {
     title: "Dashboard",
+    url: "",
     icon: <LayoutDashboardIcon />,
     isActive: true,
     items: [
@@ -41,6 +42,7 @@ const navMain = [
   },
   {
     title: "Vendas",
+    url: "",
     icon: <ShoppingCartIcon />,
     isActive: true,
     items: [
@@ -57,6 +59,7 @@ const navMain = [
   {
     type: "group",
     title: "Cadastros",
+    url: "",
     icon: <PackagePlusIcon />,
     isActive: true,
     items: [

@@ -24,14 +24,18 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+import { CookiesKeys } from "@/constants/CookiesKeys";
+import { getCookieClient } from "@/lib/cookieClient";
 import { useUser } from "@/providers/user";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "./ui/button";
 
 export const Header = () => {
   const { theme, setTheme } = useTheme();
 
   const { user, signout } = useUser();
+
+  const { setUser } = useUser();
 
   const [isModalSignoutOpen, setIsModalSignoutOpen] = useState(false);
   const [isLoadingSignout, setIsLoadingSignout] = useState(false);
@@ -55,6 +59,16 @@ export const Header = () => {
       signout();
     }, 100);
   };
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const userCookie = await getCookieClient(CookiesKeys.USER);
+      if (userCookie) {
+        setUser(JSON.parse(userCookie.toString()));
+      }
+    };
+    loadUser();
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 flex h-[50px] bg-lc-header-background">

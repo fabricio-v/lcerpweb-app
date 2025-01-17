@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // reactStrictMode: true,
-  // swcMinify: false,
-  output: "export",
-  // trailingSlash: true,
+  // output: "export",
   typescript: {
     ignoreBuildErrors: true, //foi adicionado para evitar erro na build do vercel
   },

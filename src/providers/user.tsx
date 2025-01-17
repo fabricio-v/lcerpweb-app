@@ -1,6 +1,6 @@
 "use client";
 import { CookiesKeys } from "@/constants/CookiesKeys";
-import { DOMAIN } from "@/utils/hosts";
+import { DOMAIN, HOST, PROTOCOL } from "@/utils/hosts";
 import { deleteCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { createContext, ReactNode, useContext, useState } from "react";
@@ -41,7 +41,8 @@ function UserProvider({ children }: UserProviderProps) {
     await deleteCookie(CookiesKeys.USER, {
       domain: DOMAIN,
     });
-    replace("http://app.lcerp-local.com.br:3000/");
+
+    replace(PROTOCOL + "app." + HOST + "/");
     // window.location.href = PROTOCOL + "app." + HOST;
   }
 

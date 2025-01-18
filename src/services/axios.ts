@@ -8,7 +8,7 @@ const baseURL_DEV = `http://localhost:8080/api/${VERSAO_API}`;
 const baseURL_PROD = `https://api.lcerp.com.br/api/${VERSAO_API}`;
 
 const api = axios.create({
-  baseURL: process.env.NODE_ENV === "development" ? baseURL_PROD : baseURL_PROD,
+  baseURL: process.env.NODE_ENV === "development" ? baseURL_DEV : baseURL_PROD,
 });
 
 export default api;

@@ -6,8 +6,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { IProdutoResumeResponse } from "@/interfaces/ProdutoResumeResponse";
 
-export function TableProdutos() {
+interface Props {
+  data: IProdutoResumeResponse[];
+}
+
+export function TableProdutos({ data }: Props) {
   return (
     <div className="flex flex-1 overflow-auto rounded-md border">
       <Table>
@@ -31,17 +36,17 @@ export function TableProdutos() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {[1, 2, 3, 4].map((key) => (
+          {data.map((product, key) => (
             <TableRow key={key}>
-              <TableCell>100000</TableCell>
-              <TableCell>123456789</TableCell>
-              <TableCell>123456789</TableCell>
-              <TableCell>7894561232548</TableCell>
-              <TableCell>Nome do produto</TableCell>
-              <TableCell>Fabricante</TableCell>
-              <TableCell className="text-right">100000,000</TableCell>
-              <TableCell>UN</TableCell>
-              <TableCell className="text-right">R$1.000.000,00</TableCell>
+              <TableCell>{product.id}</TableCell>
+              <TableCell>{product.codigo}</TableCell>
+              <TableCell>{product.referencia}</TableCell>
+              <TableCell>{product.codigoBarras}</TableCell>
+              <TableCell>{product.nome}</TableCell>
+              <TableCell>{product.fabricante.nome}</TableCell>
+              <TableCell className="text-right">{product.estoque}</TableCell>
+              <TableCell>{product.unidade.descricao}</TableCell>
+              <TableCell className="text-right">{product.precoVenda}</TableCell>
               <TableCell className="text-center">...</TableCell>
             </TableRow>
           ))}

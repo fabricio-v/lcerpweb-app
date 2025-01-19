@@ -31,7 +31,6 @@ import { HOST, PROTOCOL } from "@/utils/hosts";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "./ui/button";
-import { SidebarTrigger } from "./ui/sidebar";
 
 export const Header = () => {
   const { replace } = useRouter();
@@ -74,7 +73,6 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 flex h-[50px] bg-lc-header-background">
-      <SidebarTrigger></SidebarTrigger>
       <div className="flex h-full w-full items-center justify-between px-5">
         <Link href="/">
           <Image

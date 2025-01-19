@@ -15,14 +15,17 @@ export default function RootLayout({
 }>) {
   return (
     <SidebarProvider>
-      <div className="flex flex-1 flex-col">
-        <header>
+      <div className="flex h-screen w-screen flex-col overflow-hidden">
+        <div className="w-full">
           <Header />
-        </header>
+        </div>
 
-        <div className="flex">
-          <AppSidebar />
-          <main>{children}</main>
+        <div className="flex h-full w-full">
+          <div className="h-full">
+            <AppSidebar />
+          </div>
+
+          <div className="flex w-full flex-1 overflow-auto">{children}</div>
         </div>
       </div>
     </SidebarProvider>

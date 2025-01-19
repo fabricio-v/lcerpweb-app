@@ -7,8 +7,8 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export function InputWithLabel({ label, ...rest }: Props) {
   return (
-    <div className="grid items-center gap-1.5">
-      <Label htmlFor={label} className="text-xs text-lc-tertiary">
+    <div className="grid w-full items-center gap-1.5 md:w-[300px]">
+      <Label htmlFor={label} className="text-[10px] text-lc-tertiary">
         {label}
       </Label>
       <Input {...rest} />

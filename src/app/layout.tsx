@@ -2,7 +2,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 import { Toaster } from "@/components/ui/sonner";
-// import { UserProvider } from "@/providers/user";
 import { Metadata } from "next";
 import localFont from "next/font/local";
 
@@ -41,25 +40,14 @@ export default function RootLayout({
         <body
           className={`${gothamBook.variable} ${gothamBlack.variable} ${gothamBold.variable} antialiased`}
         >
-          {/* <UserProvider> */}
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
-            {/* <SidebarProvider>
-                <div className="flex flex-1 flex-col">
-                  <header>
-                    <Header />
-                  </header>
-
-                  <div className="flex">
-                    <AppSidebar /> */}
-            {/* <div className="absolute z-[100] flex h-full w-full items-center justify-center bg-lc-sunsetsky opacity-80">
-                <h1>LOADING</h1>
-              </div> */}
             <main>{children}</main>
+
             <Toaster
               expand
               richColors
@@ -67,11 +55,7 @@ export default function RootLayout({
               closeButton
               duration={7000}
             />
-            {/* </div>
-                </div>
-              </SidebarProvider> */}
           </ThemeProvider>
-          {/* </UserProvider> */}
         </body>
       </html>
     </>

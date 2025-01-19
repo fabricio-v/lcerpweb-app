@@ -4,6 +4,7 @@ import { InputWithLabel } from "@/components/input/InputWithLabel";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CookiesKeys } from "@/constants/CookiesKeys";
+import { LocalStorageKeys } from "@/constants/LocalStorageKeys";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LoginResponse } from "@/interfaces/LoginResponse";
 import api from "@/services/axios";
@@ -96,6 +97,13 @@ export default function Signin() {
             sameSite: "strict",
           },
         );
+
+        setCookie(LocalStorageKeys.COMPANY, "1", {
+          domain: DOMAIN,
+          httpOnly: false,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+        });
 
         setTimeout(() => {
           push(PROTOCOL + subdomain + "." + HOST + "/home");

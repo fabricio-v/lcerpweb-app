@@ -12,9 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { CookiesKeys } from "@/constants/CookiesKeys";
 import { Messages } from "@/constants/Messages";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { IProdutoResumeResponse } from "@/interfaces/ProdutoResumeResponse";
+import { getCookieClient } from "@/lib/cookieClient";
 import { cn } from "@/lib/utils";
 import api from "@/services/axios";
 import { buildMessageException } from "@/utils/Funcoes";
@@ -33,12 +35,13 @@ function CadastrosProduto() {
 
   const searchProduto = async () => {
     try {
+      const token = await getCookieClient(CookiesKeys.TOKEN);
+
       const response = await api.get<IProdutoResumeResponse[]>(
         "/produtos/resume?filter=&idEmpresa=1",
         {
           headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJMQyBFUlAgLSBDbG91ZCIsInN1YiI6IjEiLCJhdWQiOiJsY3Npc3RlbWFzIiwiZXhwIjoxNzM3Mzc3MzIzLCJpYXQiOjE3MzcyOTA5MjN9.jx9UVFyZDJry9rRCdrOaeoTFpkMgy0DP21Flk0qAZsOlW_Odib0Tq1Mm1rMJjq4l_upkgzKUZkK4ASMA2mugOSc_hz05L_0aWufSjeIj6ANhoSJSOx2Qt-qZFc4JEwybJpC_LZhu8iDigYczS11wzKiX3UEV4KemFrhfRvuA_utScsUz1rYJQERdJ96E6tyqx6MrSwwoZQcWal20yaJbBQvApGNEhqyh-7INeW4s1n12tqUwHLtixVKnsx-bXqEvaJUWoaJDMn1Lkqsf7i4rZn_bd_KvQGGLUIV8rhWNp6WP-tf6BACT2RzYT3Rgic5BHDeSGI-zvGtIjycPcfQkwQ",
+            Authorization: "Bearer " + token,
           },
         },
       );

@@ -147,6 +147,7 @@ export default function Signin() {
 
             <form action={handleSignin} className="flex flex-1 flex-col gap-3">
               <InputWithLabel
+                className="w-full"
                 name="email"
                 type="email"
                 label="Digite seu email"

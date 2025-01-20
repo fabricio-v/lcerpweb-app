@@ -41,8 +41,12 @@ export const Combobox: React.FC<Props> = ({
   // const [value, setValue] = React.useState("");
 
   return (
-    <div className="grid items-center gap-1.5">
-      {label && <Label htmlFor={label}>{label}</Label>}
+    <div className="flex w-full flex-1 flex-col gap-1.5">
+      {label && (
+        <Label htmlFor={label} className="text-[10px] text-lc-tertiary">
+          {label}
+        </Label>
+      )}
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>

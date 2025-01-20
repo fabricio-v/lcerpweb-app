@@ -96,10 +96,10 @@ body {
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border font-gotham;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background font-gotham text-foreground;
   }
 }
 

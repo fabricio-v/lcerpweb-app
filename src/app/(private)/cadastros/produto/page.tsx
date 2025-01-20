@@ -22,19 +22,23 @@ import api from "@/services/axios";
 import { buildMessageException } from "@/utils/Funcoes";
 import { ChevronLeft, CirclePlus, ListFilterIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { TableProdutos } from "./components/table";
+import { TableProdutos, TableProdutosPagination } from "./components/table";
 
 function CadastrosProduto() {
   const { push, back } = useRouter();
 
   const isMobile = useIsMobile();
 
-  const [produtoList, setProdutoList] = useState<IProdutoResumeResponse[]>([]);
+  const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+  const [produtoList, setProdutoList] = useState<
+    IProdutoResumeResponse[] | undefined
+  >(undefined);
 
   const searchProduto = async () => {
     try {
+      setIsLoadingSearch(true);
       const token = await getCookieClient(CookiesKeys.TOKEN);
 
       const response = await api.get<IProdutoResumeResponse[]>(
@@ -48,8 +52,13 @@ function CadastrosProduto() {
 
       if (response.status === 200) {
         setProdutoList(response.data);
+      } else {
+        setProdutoList([]);
       }
+
+      setIsLoadingSearch(false);
     } catch (error: any) {
+      setIsLoadingSearch(false);
       if (error?.response?.status < 500) {
         toast.warning(Messages.TOAST_INFO_TITLE, {
           description: buildMessageException(error),
@@ -62,12 +71,12 @@ function CadastrosProduto() {
     }
   };
 
-  // useEffect(() => {
-  //   searchProduto();
-  // }, []);
+  useEffect(() => {
+    searchProduto();
+  }, []);
 
   return (
-    <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden p-2">
+    <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden p-4">
       <div className="flex items-center gap-3">
         <SidebarTrigger />
 
@@ -98,39 +107,54 @@ function CadastrosProduto() {
 
       {/* PESQUISA / NOVO */}
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div className="flex items-end gap-2">
+        <div className="flex max-w-[600px] flex-1 items-end gap-2">
           <InputWithLabel
             label="Pesquisa por nome e código interno"
             placeholder="Digite aqui para pesquisar"
           />
 
           <Button
-            variant={"ghost"}
+            variant={isMobile ? "outline" : "ghost"}
             className="text-0 p-2"
-            onClick={searchProduto}
           >
             <ListFilterIcon />
             <span className="hidden md:block">Pesquisa avançada</span>
           </Button>
         </div>
 
-        <Button
-          className={cn(
-            "bg-lc-sunsetsky-light hover:bg-lc-sunsetsky",
-            isMobile && "w-full",
-          )}
-          onClick={() => {
-            push("produto/" + null);
-          }}
-        >
-          <CirclePlus />
-          Novo produto
-        </Button>
+        <div className="flex flex-1 justify-end">
+          <Button
+            className={cn(
+              "bg-lc-sunsetsky-light hover:bg-lc-sunsetsky",
+              isMobile && "w-full",
+            )}
+            onClick={() => {
+              push("produto/" + null);
+            }}
+          >
+            <CirclePlus />
+            Novo produto
+          </Button>
+        </div>
       </div>
 
       <Separator className="my-3" />
 
-      <TableProdutos data={produtoList} />
+      <TableProdutosPagination />
+      <TableProdutos
+        isLoading={isLoadingSearch}
+        data={produtoList}
+        onEdit={(id) => {
+          push("produto/" + id);
+        }}
+        onDelete={(id) => {
+          alert(id);
+        }}
+      />
+
+      <span className="px-5 py-3 text-sm">
+        Registros: {!produtoList ? 0 : produtoList.length}
+      </span>
     </main>
   );
 }

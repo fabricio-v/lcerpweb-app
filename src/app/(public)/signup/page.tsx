@@ -382,8 +382,8 @@ export default function Signup() {
                 <div className="flex items-center justify-between gap-2">
                   <Button
                     type="button"
-                    className="mt-4 w-[100px] hover:border-lc-sunsetsky-light hover:bg-transparent hover:text-lc-sunsetsky-light"
-                    variant={"outline"}
+                    className="mt-4 w-[100px]"
+                    variant={"secondary"}
                     onClick={() => {
                       replace("/");
                     }}

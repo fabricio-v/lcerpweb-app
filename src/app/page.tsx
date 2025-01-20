@@ -135,9 +135,7 @@ export default function Home() {
                             <Button
                               type="submit"
                               size={"icon"}
-                              // onClick={validateSubdomain}
                               disabled={isLoading}
-                              className="hover:bg-lc-sunsetsky-light"
                             >
                               {isLoading ? (
                                 <Loader2 className="animate-spin" />

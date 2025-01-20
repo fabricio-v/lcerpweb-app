@@ -10,7 +10,7 @@ export interface IProdutoResumeResponse {
   };
   unidade: {
     id: number;
-    descricao: string;
+    nome: string;
   };
   estoque: number;
   precoVenda: number;

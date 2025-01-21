@@ -6,6 +6,7 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
@@ -28,6 +29,7 @@ interface Props {
   valueSelected: string | number;
   messageWhenNotfound?: string;
   onChangeValueSelected: (value: string | number) => void;
+  disableFilter?: boolean;
 }
 
 export const Combobox: React.FC<Props> = ({
@@ -36,6 +38,7 @@ export const Combobox: React.FC<Props> = ({
   valueSelected,
   messageWhenNotfound = "Nenhum registro encontrado",
   onChangeValueSelected,
+  disableFilter = false,
 }) => {
   const [open, setOpen] = React.useState(false);
   // const [value, setValue] = React.useState("");
@@ -56,7 +59,7 @@ export const Combobox: React.FC<Props> = ({
             aria-expanded={open}
             className="w-full justify-between"
           >
-            <p>
+            <p className="truncate">
               {valueSelected
                 ? data.find((item) => item.value === valueSelected)?.label
                 : "Selecione"}
@@ -64,20 +67,28 @@ export const Combobox: React.FC<Props> = ({
             <ChevronsUpDown className="ml-2 h-4 w-full shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-ful p-0">
+        <PopoverContent className="w-full p-0">
           <Command>
-            {/* <CommandInput placeholder="Digite aqui para filtrar..." /> */}
+            {!disableFilter && (
+              <CommandInput
+                datatype="label"
+                placeholder="Digite para filtrar..."
+                className="h-9"
+                // onValueChange={() => {
+                //   console.log("onValueChange");
+                // }}
+              />
+            )}
             <CommandList>
               <CommandEmpty>{messageWhenNotfound}</CommandEmpty>
               <CommandGroup>
                 {data.map((item) => (
                   <CommandItem
                     key={item.value}
-                    value={item.value}
+                    // value={item.value}
+                    value={item.label}
                     onSelect={(currentValue: any) => {
-                      onChangeValueSelected(
-                        currentValue === valueSelected ? "" : currentValue,
-                      );
+                      onChangeValueSelected(item.value);
                       setOpen(false);
                     }}
                   >

@@ -35,10 +35,10 @@ export function InputWithLabel({ label, info, ...rest }: Props) {
       <Input
         {...rest}
         id={label}
-        className="peer" // Adiciona a classe peer para referência
+        // className="peer" // Adiciona a classe peer para referência
       />
       <Label
-        htmlFor={label}
+        // htmlFor={label}
         className="peer-focus:text-lc-sunsetsky-ligh flex items-center gap-1 text-[10px] text-lc-tertiary"
       >
         {label}

@@ -1,6 +1,7 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
+import Loading from "@/components/loading";
 import { Toaster } from "@/components/ui/sonner";
 import { Metadata } from "next";
 import localFont from "next/font/local";
@@ -46,6 +47,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <Loading />
             <main>{children}</main>
 
             <Toaster

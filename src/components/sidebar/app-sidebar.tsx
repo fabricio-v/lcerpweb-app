@@ -80,6 +80,10 @@ const navMain = [
         url: "/cadastros/fornecedor",
       },
       {
+        title: "Grade",
+        url: "/cadastros/grade",
+      },
+      {
         title: "Natureza da operação",
         url: "/cadastros/natureza-operacao",
       },

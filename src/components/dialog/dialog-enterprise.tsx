@@ -83,9 +83,9 @@ export function DialogEnterprise({ onChangeCompany }: Props) {
           Alterar empresa
         </button>
       </DialogTrigger>
-      <DialogContent className="md:max-w-[425px]">
+      <DialogContent className="md:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Selecione a empresa</DialogTitle>
+          <DialogTitle>Selecione uma empresa</DialogTitle>
         </DialogHeader>
         <div className="grid max-h-[500px] gap-4 py-4">
           <ScrollArea>

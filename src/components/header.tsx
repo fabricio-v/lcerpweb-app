@@ -146,7 +146,7 @@ export const Header = () => {
                   }}
                 >
                   <Palette />
-                  Alterar tema ({theme === "light" ? "claro" : "escuro"})
+                  Alterar tema {theme === "light" ? "claro" : "escuro"}
                 </DropdownMenuItem>
 
                 <DropdownMenuItem onClick={() => {}}>

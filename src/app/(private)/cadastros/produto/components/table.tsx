@@ -115,10 +115,12 @@ export function TableProdutos({ data, isLoading, onEdit, onDelete }: Props) {
             <TableRow>
               <TableCell colSpan={10} className="h-16 flex-auto">
                 <h1 className="flex justify-center text-lc-secondary">
-                  {isLoading || data === undefined ? (
+                  {isLoading ? (
                     <Loader2 className="animate-spin" />
+                  ) : data === undefined ? (
+                    ""
                   ) : (
-                    "Nenhum produto cadastrado"
+                    "Nenhum registro encontrado"
                   )}
                 </h1>
               </TableCell>

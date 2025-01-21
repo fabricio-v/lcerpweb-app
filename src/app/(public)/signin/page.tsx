@@ -4,13 +4,14 @@ import { InputWithLabel } from "@/components/input/InputWithLabel";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CookiesKeys } from "@/constants/CookiesKeys";
-import { LocalStorageKeys } from "@/constants/LocalStorageKeys";
+import { Messages } from "@/constants/Messages";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { IEmpresaResponse } from "@/interfaces/EmpresaResponse";
 import { LoginResponse } from "@/interfaces/LoginResponse";
 import api from "@/services/axios";
 import { buildMessageException } from "@/utils/Funcoes";
 import { DOMAIN, HOST, PROTOCOL } from "@/utils/hosts";
-import { setCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 import { decode } from "jsonwebtoken";
 import { ChevronLeft } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -18,6 +19,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Signin() {
   const { replace, push } = useRouter();
@@ -57,20 +59,23 @@ export default function Signin() {
         const tokenDecoded = decode(token);
 
         if (tokenDecoded?.aud !== subdomain) {
-          alert("Token não pertence a esse subdomínio");
-          // window.location.href = "/";
+          toast.warning(Messages.TOAST_INFO_TITLE, {
+            description: "Token não pertence a esse subdomínio",
+          });
           push("/");
           setIsLoading(false);
           return;
         }
 
         if (!token || token === "") {
-          alert("Token não informado");
+          toast.warning(Messages.TOAST_INFO_TITLE, {
+            description: "Token não informado",
+          });
           setIsLoading(false);
           return;
         }
 
-        setCookie(CookiesKeys.TOKEN, token, {
+        await setCookie(CookiesKeys.TOKEN, token, {
           domain: DOMAIN,
           maxAge: expiresIn,
           path: "/",
@@ -79,7 +84,7 @@ export default function Signin() {
           sameSite: "strict",
         });
 
-        setCookie(
+        await setCookie(
           CookiesKeys.USER,
           JSON.stringify({
             id: res.data.idUsuario,
@@ -98,25 +103,109 @@ export default function Signin() {
           },
         );
 
-        setCookie(LocalStorageKeys.COMPANY, "1", {
+        const responseCompanies = await api.get<IEmpresaResponse[]>(
+          "/empresas/availables",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          },
+        );
+
+        if (
+          responseCompanies.status !== 200 ||
+          responseCompanies.data.length === 0
+        ) {
+          toast.warning(Messages.TOAST_INFO_TITLE, {
+            description:
+              "Nenhuma empresa encontrada para o dominínio informado",
+          });
+          return;
+        }
+
+        const cookieCompanySelectedId = await getCookie(
+          CookiesKeys.COMPANY_SELECTED_ID,
+        );
+
+        if (!cookieCompanySelectedId) {
+          await setCookie(
+            CookiesKeys.COMPANY_SELECTED_ID,
+            responseCompanies.data[0].id,
+            {
+              domain: DOMAIN,
+              maxAge: expiresIn,
+              path: "/",
+              httpOnly: false,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "strict",
+            },
+          );
+
+          await setCookie(
+            CookiesKeys.COMPANY_SELECTED,
+            responseCompanies.data[0],
+            {
+              domain: DOMAIN,
+              maxAge: expiresIn,
+              path: "/",
+              httpOnly: false,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "strict",
+            },
+          );
+        } else {
+          const company = responseCompanies.data.filter(
+            (company) => company.id === Number(cookieCompanySelectedId),
+          );
+
+          if (company.length > 0) {
+            await setCookie(CookiesKeys.COMPANY_SELECTED_ID, company[0].id, {
+              domain: DOMAIN,
+              maxAge: expiresIn,
+              path: "/",
+              httpOnly: false,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "strict",
+            });
+
+            await setCookie(CookiesKeys.COMPANY_SELECTED, company[0], {
+              domain: DOMAIN,
+              maxAge: expiresIn,
+              path: "/",
+              httpOnly: false,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "strict",
+            });
+          }
+        }
+
+        await setCookie(CookiesKeys.COMPANIES, responseCompanies.data, {
           domain: DOMAIN,
-          httpOnly: false,
           secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
         });
 
         setTimeout(() => {
           push(PROTOCOL + subdomain + "." + HOST + "/home");
         }, 1000);
       } else {
-        alert("Falha no login");
         setIsLoading(false);
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: "Falha no login",
+        });
         return;
       }
-    } catch (error) {
+    } catch (error: any) {
       setIsLoading(false);
-      alert("erro no login :" + buildMessageException(error));
-      return;
+
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
     }
   }
   return (

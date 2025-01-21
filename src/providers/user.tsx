@@ -33,6 +33,9 @@ const useUserStore = create<Props>((set, get) => ({
     await deleteCookie(CookiesKeys.USER, {
       domain: DOMAIN,
     });
+    await deleteCookie(CookiesKeys.COMPANIES, {
+      domain: DOMAIN,
+    });
   },
 }));
 

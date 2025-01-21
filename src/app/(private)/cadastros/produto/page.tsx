@@ -31,7 +31,7 @@ function CadastrosProduto() {
 
   const isMobile = useIsMobile();
 
-  const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+  const [isLoadingSearch, setIsLoadingSearch] = useState(true);
   const [produtoList, setProdutoList] = useState<
     IProdutoResumeResponse[] | undefined
   >(undefined);
@@ -39,10 +39,16 @@ function CadastrosProduto() {
   const searchProduto = async () => {
     try {
       setIsLoadingSearch(true);
+      setProdutoList([]);
+
       const token = await getCookieClient(CookiesKeys.TOKEN);
 
+      const companySelected = await getCookieClient(
+        CookiesKeys.COMPANY_SELECTED_ID,
+      );
+
       const response = await api.get<IProdutoResumeResponse[]>(
-        "/produtos/resume?filter=&idEmpresa=1",
+        `/produtos/resume?filter=&idEmpresa=${companySelected}`,
         {
           headers: {
             Authorization: "Bearer " + token,
@@ -52,8 +58,6 @@ function CadastrosProduto() {
 
       if (response.status === 200) {
         setProdutoList(response.data);
-      } else {
-        setProdutoList([]);
       }
 
       setIsLoadingSearch(false);

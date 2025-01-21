@@ -1,4 +1,5 @@
 export const LocalStorageKeys = {
   THEME: "theme",
-  COMPANY: "company",
+  // COMPANY_SELECTED: "companySelected",
+  // COMPANIES: "companies",
 };

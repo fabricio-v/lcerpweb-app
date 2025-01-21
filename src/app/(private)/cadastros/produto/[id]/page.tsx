@@ -39,7 +39,10 @@ function CadastrosProdutoNovo({ params }: any) {
       >
         <div>
           <div className="flex flex-1 flex-col gap-4 pb-2 md:flex-row">
-            <InputWithLabel label="Código interno" />
+            <InputWithLabel
+              label="Código interno"
+              info="Codigo gerado automaticamente pelo sistema. Não pode ser alterado."
+            />
             <InputWithLabel label="Código" />
             <InputWithLabel label="Referência" />
             <InputWithLabel label="Código barras" />
@@ -241,7 +244,8 @@ function CadastrosProdutoNovo({ params }: any) {
         isOpcional
       >
         <div>
-          <Switch title="Pode receber desconto" />
+          <Switch classNameContainer="mb-4" title="Pode receber desconto" />
+          <Switch title="Pode ser vendido fracionado" />
         </div>
       </CollapsibleSection>
     );

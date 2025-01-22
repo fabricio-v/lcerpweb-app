@@ -16,8 +16,13 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { ICategoriaResponse } from "@/interfaces/CategoriaResponse";
 import { IEmpresaResponse } from "@/interfaces/EmpresaResponse";
 import { IFabricanteResponse } from "@/interfaces/FabricanteResponse";
-import { IProdutoResponse } from "@/interfaces/ProdutoResponse";
+import {
+  IProdutoPrecoResponse,
+  IProdutoResponse,
+} from "@/interfaces/ProdutoResponse";
 import { ISubcategoriaResponse } from "@/interfaces/SubcategoriaResponse";
+import { ITabelaPrecosResponse } from "@/interfaces/TabelaPrecosResponse";
+import { IUnidadeResponse } from "@/interfaces/UnidadeResponse";
 import { getCookieClient } from "@/lib/cookieClient";
 import { useLoadingStore } from "@/providers/loading";
 import { requestCategoriasAvailables } from "@/services/requests/categoria";
@@ -25,14 +30,18 @@ import { requestEmpresasAvailables } from "@/services/requests/empresa";
 import { requestFabricantesAvailables } from "@/services/requests/fabricante";
 import { requestProdutoById } from "@/services/requests/produto";
 import { requestSubcategoriasAvailables } from "@/services/requests/subcategoria";
+import { requestTabelaPrecosAvailables } from "@/services/requests/tabelaPrecos";
+import { requestUnidadesAvailables } from "@/services/requests/unidade";
 import { buildMessageException } from "@/utils/Funcoes";
-import { ChevronLeft, CircleMinus, Loader2, Plus } from "lucide-react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import AddItemListaPrecos from "./components/addItemListaPrecos";
 import Breadcrumbs from "./components/breadcrumbs";
 import CollapsibleSection from "./components/collapsibleSection";
 import CompanyItem from "./components/companyItem";
+import ItemListaPrecos from "./components/itemListaPrecos";
 
 function CadastrosProdutoNovo({ params }: any) {
   const { back } = useRouter();
@@ -55,12 +64,23 @@ function CadastrosProdutoNovo({ params }: any) {
   const [categoriesList, setCategoriesList] = useState<ICategoriaResponse[]>(
     [],
   );
+
   const [subcategoriesList, setSubcategoriesList] = useState<
     ISubcategoriaResponse[]
   >([]);
+
   const [manufacturesList, setManufacturesList] = useState<
     IFabricanteResponse[]
   >([]);
+
+  const [unitsList, setUnitsList] = useState<IUnidadeResponse[]>([]);
+
+  const [tabelaPrecoLista, setTabelaPrecoLista] = useState<
+    ITabelaPrecosResponse[]
+  >([]);
+
+  const [tabelaPrecoDisponiveisLista, setTabelaPrecoDisponiveisLista] =
+    useState<ITabelaPrecosResponse[]>([]);
 
   const [categorySelectedId, setCategorySelectedId] = useState<string | number>(
     "",
@@ -71,8 +91,22 @@ function CadastrosProdutoNovo({ params }: any) {
   const [manufactureSelectedId, setManufactureSelectedId] = useState<
     string | number
   >("");
+  const [unitSelectedId, setUnitSelectedId] = useState<string | number>("");
+  const [tabelaPrecoSelectedId, setTabelaPrecoSelectedId] = useState<
+    string | number
+  >("");
 
   const [grade, setGrade] = useState<string | number>("NAO");
+
+  const [estoque, setEstoque] = useState<number>();
+  const [precoVenda, setPrecoVenda] = useState<number>();
+  const [precoCusto, setPrecoCusto] = useState<number>();
+  const [markupPerc, setMarkupPerc] = useState<number>();
+  const [lucroPerc, setLucroPerc] = useState<number>();
+
+  const [precosAdicionaisLista, setPrecosAdicionaisLista] = useState<
+    IProdutoPrecoResponse[]
+  >([]);
 
   const loadProduct = async () => {
     try {
@@ -191,6 +225,49 @@ function CadastrosProdutoNovo({ params }: any) {
     }
   };
 
+  const loadUnits = async () => {
+    try {
+      const token = await getCookieClient(CookiesKeys.TOKEN);
+      const response = await requestUnidadesAvailables(token!.toString());
+
+      if (response.status === 200) {
+        setUnitsList(response.data);
+      }
+    } catch (error: any) {
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
+    }
+  };
+
+  const loadTabelaPrecos = async () => {
+    try {
+      const token = await getCookieClient(CookiesKeys.TOKEN);
+      const response = await requestTabelaPrecosAvailables(token!.toString());
+
+      if (response.status === 200) {
+        setTabelaPrecoLista(response.data);
+        setTabelaPrecoDisponiveisLista(response.data);
+      }
+    } catch (error: any) {
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
+    }
+  };
+
   const load = async () => {
     showLoading();
     if (params.id !== String(null)) {
@@ -201,6 +278,8 @@ function CadastrosProdutoNovo({ params }: any) {
     await loadCategories();
     await loadSubcategories();
     await loadManufactures();
+    await loadUnits();
+    await loadTabelaPrecos();
 
     hideLoading();
   };
@@ -213,7 +292,7 @@ function CadastrosProdutoNovo({ params }: any) {
         changeShow={setIsShowSectionGeral}
       >
         <div>
-          <div className="flex flex-1 flex-col gap-4 pb-2 md:flex-row">
+          <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-4">
             <InputWithLabel
               label="Código interno"
               info="Codigo gerado automaticamente pelo sistema. Não pode ser alterado."
@@ -228,7 +307,7 @@ function CadastrosProdutoNovo({ params }: any) {
             <InputWithLabel label="Código" value={product?.codigo} />
           </div>
 
-          <div className="flex flex-1 flex-col gap-4 pb-2 md:flex-row">
+          <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-2">
             <InputWithLabel label="Nome" value={product?.nome} />
             <InputWithLabel label="Descrição" value={product?.descricao} />
           </div>
@@ -260,9 +339,14 @@ function CadastrosProdutoNovo({ params }: any) {
             />
             <Combobox
               label="Unidade"
-              data={[]}
-              valueSelected=""
-              onChangeValueSelected={() => {}}
+              data={unitsList.map((item) => {
+                return {
+                  label: item.descricao + " - " + item.nome,
+                  value: item.id + "",
+                };
+              })}
+              valueSelected={unitSelectedId}
+              onChangeValueSelected={setUnitSelectedId}
             />
             <Combobox
               label="Grade"
@@ -273,15 +357,46 @@ function CadastrosProdutoNovo({ params }: any) {
               valueSelected={grade}
               onChangeValueSelected={setGrade}
               disableFilter
+              disabled
             />
           </div>
 
-          <div className="flex flex-1 flex-col gap-4 pb-2 md:flex-row">
-            <AmountInput label="Estoque" />
-            <MonetaryInput label="Custo" />
-            <MonetaryInput label="Preço venda" />
-            <PercentInput label="Markup" />
-            <PercentInput label="Lucro" />
+          <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-5">
+            <AmountInput
+              label="Estoque"
+              value={estoque}
+              onValueChange={(v) => {
+                setEstoque(v.floatValue);
+              }}
+            />
+            <MonetaryInput
+              label="Custo"
+              value={precoCusto}
+              onValueChange={(v) => {
+                setPrecoCusto(v.floatValue);
+              }}
+            />
+            <MonetaryInput
+              label="Preço venda"
+              value={precoVenda}
+              onValueChange={(v) => {
+                setPrecoVenda(v.floatValue);
+              }}
+            />
+            <PercentInput
+              label="Markup"
+              value={markupPerc}
+              onValueChange={(v) => {
+                setMarkupPerc(v.floatValue);
+              }}
+            />
+            <PercentInput
+              label="Lucro"
+              value={lucroPerc}
+              onValueChange={(v) => {
+                setLucroPerc(v.floatValue);
+              }}
+            />
           </div>
         </div>
       </CollapsibleSection>
@@ -294,6 +409,13 @@ function CadastrosProdutoNovo({ params }: any) {
     subcategorySelectedId,
     manufacturesList,
     manufactureSelectedId,
+    unitsList,
+    unitSelectedId,
+    precoCusto,
+    precoVenda,
+    markupPerc,
+    lucroPerc,
+    estoque,
     grade,
   ]);
 
@@ -383,56 +505,41 @@ function CadastrosProdutoNovo({ params }: any) {
         isOpcional
       >
         <div>
-          <div className="flex flex-1 flex-col items-end gap-4 pb-4 md:flex-row">
-            <Combobox
-              label="Tabela de preços"
-              data={[]}
-              valueSelected=""
-              onChangeValueSelected={() => {}}
-            />
-            <MonetaryInput label="Quantidade mínima" />
-            <MonetaryInput label="Preço de venda" />
-            <PercentInput label="Markup" />
-            <PercentInput label="Lucro" />
-            <Button
-              size={isMobile ? "default" : "icon"}
-              variant={"outline"}
-              className={isMobile ? "w-full" : ""}
-            >
-              <Plus />
-              {isMobile && "Adicionar preço"}
-            </Button>
-          </div>
+          <AddItemListaPrecos
+            data={tabelaPrecoDisponiveisLista}
+            onAdd={(item) => {
+              var existe = precosAdicionaisLista.find(
+                (i) => i.tabelaPrecoId === item.tabelaPrecoId,
+              );
+              if (existe) {
+                toast.warning(
+                  `Tabela de preço ${existe.tabelaPrecoNome} já foi adicionada ao produto`,
+                );
+              } else {
+                setPrecosAdicionaisLista((prev) => [...prev, item]);
+              }
+            }}
+          />
 
           <Separator />
 
           <div className="flex flex-1 flex-col gap-3 py-4">
-            <div className="flex flex-1 flex-col items-end gap-4 md:flex-row">
-              <Combobox
-                label={isMobile ? "Tabela de preços" : ""}
-                data={[]}
-                valueSelected=""
-                onChangeValueSelected={() => {}}
+            {precosAdicionaisLista.map((item, index) => (
+              <ItemListaPrecos
+                item={item}
+                key={index}
+                onRemove={() => {
+                  setPrecosAdicionaisLista((prev) =>
+                    prev.filter((item, index2) => index2 !== index),
+                  );
+                }}
               />
-              <MonetaryInput label={isMobile ? "Quantidade mínima" : ""} />
-              <MonetaryInput label={isMobile ? "Preço de venda" : ""} />
-              <PercentInput label={isMobile ? "Markup" : ""} />
-              <PercentInput label={isMobile ? "Lucro" : ""} />
-
-              <Button
-                size={isMobile ? "default" : "icon"}
-                variant={"ghost"}
-                className={isMobile ? "w-full text-red-600" : ""}
-              >
-                <CircleMinus color="red" />
-                {isMobile && "Remover preço"}
-              </Button>
-            </div>
+            ))}
           </div>
         </div>
       </CollapsibleSection>
     );
-  }, [isShowSectionPrecos]);
+  }, [isShowSectionPrecos, precosAdicionaisLista, tabelaPrecoDisponiveisLista]);
 
   const renderAdicionais = useMemo(() => {
     return (
@@ -502,8 +609,36 @@ function CadastrosProdutoNovo({ params }: any) {
       setCategorySelectedId(product.categoria.id + "");
       setSubcategorySelectedId(product.subcategoria.id + "");
       setManufactureSelectedId(product.fabricante.id + "");
+      setUnitSelectedId(product.unidade.id + "");
+
+      setPrecosAdicionaisLista([]);
+
+      // let tabelasPrecosEmUso: number[] = [];
+
+      product.precos.forEach((price) => {
+        // tabelasPrecosEmUso.push(price.tabelaPrecoId);
+
+        if (price.tabelaPrecoId === 1) {
+          setPrecoCusto(price.preco);
+        } else if (price.tabelaPrecoId === 2) {
+          setPrecoVenda(price.preco);
+          setMarkupPerc(price.markup);
+          setLucroPerc(price.margemLucro);
+        } else {
+          setPrecosAdicionaisLista((precosAdicionaisLista) => [
+            ...precosAdicionaisLista,
+            price,
+          ]);
+        }
+      });
+
+      // setTabelaPrecoDisponiveisLista(
+      //   tabelaPrecoLista.filter(
+      //     (item) => !tabelasPrecosEmUso.includes(item.id),
+      //   ),
+      // );
     }
-  }, [product]);
+  }, [product /*tabelaPrecoLista*/]);
 
   return (
     <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden p-4">

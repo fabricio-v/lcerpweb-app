@@ -30,6 +30,7 @@ interface Props {
   messageWhenNotfound?: string;
   onChangeValueSelected: (value: string | number) => void;
   disableFilter?: boolean;
+  disabled?: boolean;
 }
 
 export const Combobox: React.FC<Props> = ({
@@ -39,6 +40,7 @@ export const Combobox: React.FC<Props> = ({
   messageWhenNotfound = "Nenhum registro encontrado",
   onChangeValueSelected,
   disableFilter = false,
+  disabled = false,
 }) => {
   const [open, setOpen] = React.useState(false);
   // const [value, setValue] = React.useState("");
@@ -58,6 +60,7 @@ export const Combobox: React.FC<Props> = ({
             role="combobox"
             aria-expanded={open}
             className="w-full justify-between"
+            disabled={disabled}
           >
             <p className="truncate">
               {valueSelected

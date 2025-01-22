@@ -21,24 +21,7 @@ export interface IProdutoResponse {
     id: number;
     nome: string;
   };
-  precos: [
-    {
-      tabelaPrecoId: number;
-      tabelaPrecoNome: string;
-      preco: number;
-      markup: number;
-      margemLucro: number;
-      quantidadeMinima: number;
-    },
-    {
-      tabelaPrecoId: number;
-      tabelaPrecoNome: string;
-      preco: number;
-      markup: number;
-      margemLucro: number;
-      quantidadeMinima: number;
-    },
-  ];
+  precos: IProdutoPrecoResponse[];
   empresas: number[];
   tributacao: {
     cfop: {
@@ -58,24 +41,22 @@ export interface IProdutoResponse {
       codigo: string;
     };
   };
-  variacoes: [
-    {
-      id: number;
-      codigo: string;
-      variacao: string;
-      estoque: [];
-    },
-    {
-      id: number;
-      codigo: string;
-      variacao: string;
-      estoque: [];
-    },
-    {
-      id: number;
-      codigo: string;
-      variacao: string;
-      estoque: [];
-    },
-  ];
+  variacoes: IProdutoVariacaoResponse[];
+}
+
+export interface IProdutoPrecoResponse {
+  id: number;
+  tabelaPrecoId: number;
+  tabelaPrecoNome: string;
+  preco: number;
+  markup: number;
+  margemLucro: number;
+  quantidadeMinima: number;
+}
+
+export interface IProdutoVariacaoResponse {
+  id: number;
+  codigo: string;
+  variacao: string;
+  estoque: [];
 }

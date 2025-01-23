@@ -21,8 +21,10 @@ export const requestProdutoById = async (
 export const requestInsertOrUpdateProduto = async (
   produto: IProdutoInput,
   token: string,
+  idEmpresa: string,
 ) => {
   return api.post<IProdutoRefResponse>("/produtos", produto, {
+    params: { idEmpresa },
     headers: {
       Authorization: "Bearer " + token,
     },

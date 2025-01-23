@@ -48,7 +48,10 @@ export const Combobox: React.FC<Props> = ({
   return (
     <div className="flex w-full flex-1 flex-col gap-1.5">
       {label && (
-        <Label htmlFor={label} className="text-[10px] text-lc-tertiary">
+        <Label
+          htmlFor={label}
+          className="font-gothamBold text-[10px] text-lc-tertiary"
+        >
           {label}
         </Label>
       )}

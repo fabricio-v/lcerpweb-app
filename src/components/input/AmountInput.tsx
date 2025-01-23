@@ -30,7 +30,10 @@ const AmountInput = forwardRef<HTMLInputElement, AmountInputProps>(
 
     return (
       <div className="flex w-full flex-1 flex-col gap-1.5">
-        <Label htmlFor={label} className="text-[10px] text-lc-tertiary">
+        <Label
+          htmlFor={label}
+          className="font-gothamBold text-[10px] text-lc-tertiary"
+        >
           {label}
         </Label>
         <NumericFormat

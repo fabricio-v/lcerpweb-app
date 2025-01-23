@@ -22,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IProdutoResumeResponse } from "@/interfaces/ProdutoResumeResponse";
+import { IProdutoResumeResponse } from "@/interfaces/response/ProdutoResumeResponse";
 import { maskNumber } from "@/utils/Masks";
 import { Loader2, MoreVertical } from "lucide-react";
 

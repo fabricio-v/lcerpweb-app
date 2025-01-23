@@ -1,10 +1,10 @@
 "use client";
 
 import { Combobox } from "@/components/combobox/Combobox";
+import { ComboboxSearchCfop } from "@/components/combobox/ComboboxSearchCfop";
 import { AmountInput } from "@/components/input/AmountInput";
 import { InputWithLabel } from "@/components/input/InputWithLabel";
 import { MonetaryInput } from "@/components/input/MonetaryInput";
-import { PercentInput } from "@/components/input/PercentInput";
 import { Switch } from "@/components/switch";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -12,23 +12,36 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CookiesKeys } from "@/constants/CookiesKeys";
 import { Messages } from "@/constants/Messages";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { ICategoriaResponse } from "@/interfaces/CategoriaResponse";
-import { IEmpresaResponse } from "@/interfaces/EmpresaResponse";
-import { IFabricanteResponse } from "@/interfaces/FabricanteResponse";
+import {
+  IProdutoInput,
+  IProdutoPrecosAdicionaisInput,
+} from "@/interfaces/dto/ProdutoInput";
+import { ICategoriaResponse } from "@/interfaces/response/CategoriaResponse";
+import { ICestResponse } from "@/interfaces/response/CestResponse";
+import { ICfopResponse } from "@/interfaces/response/CfopResponse";
+import { ICstResponse } from "@/interfaces/response/CstResponse";
+import { IEmpresaResponse } from "@/interfaces/response/EmpresaResponse";
+import { IFabricanteResponse } from "@/interfaces/response/FabricanteResponse";
+import { INcmResponse } from "@/interfaces/response/NcmResponse";
+import { IOrigemResponse } from "@/interfaces/response/OrigemResponse";
 import {
   IProdutoPrecoResponse,
   IProdutoResponse,
-} from "@/interfaces/ProdutoResponse";
-import { ISubcategoriaResponse } from "@/interfaces/SubcategoriaResponse";
-import { ITabelaPrecosResponse } from "@/interfaces/TabelaPrecosResponse";
-import { IUnidadeResponse } from "@/interfaces/UnidadeResponse";
+} from "@/interfaces/response/ProdutoResponse";
+import { ISubcategoriaResponse } from "@/interfaces/response/SubcategoriaResponse";
+import { ITabelaPrecosResponse } from "@/interfaces/response/TabelaPrecosResponse";
+import { IUnidadeResponse } from "@/interfaces/response/UnidadeResponse";
 import { getCookieClient } from "@/lib/cookieClient";
 import { useLoadingStore } from "@/providers/loading";
 import { requestCategoriasAvailables } from "@/services/requests/categoria";
+import { requestCstAvailables } from "@/services/requests/cst";
 import { requestEmpresasAvailables } from "@/services/requests/empresa";
 import { requestFabricantesAvailables } from "@/services/requests/fabricante";
-import { requestProdutoById } from "@/services/requests/produto";
+import { requestOrigemAvailables } from "@/services/requests/origem";
+import {
+  requestInsertOrUpdateProduto,
+  requestProdutoById,
+} from "@/services/requests/produto";
 import { requestSubcategoriasAvailables } from "@/services/requests/subcategoria";
 import { requestTabelaPrecosAvailables } from "@/services/requests/tabelaPrecos";
 import { requestUnidadesAvailables } from "@/services/requests/unidade";
@@ -43,10 +56,121 @@ import CollapsibleSection from "./components/collapsibleSection";
 import CompanyItem from "./components/companyItem";
 import ItemListaPrecos from "./components/itemListaPrecos";
 
+import { ComboboxSearchCest } from "@/components/combobox/ComboboxSearchCest";
+import { ComboboxSearchNcm } from "@/components/combobox/ComboboxSearchNcm";
+import { PercentInput } from "@/components/input/PercentInput";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+export const formProdutoSchema = z.object({
+  id: z.number().optional(),
+  codigo: z.string().optional(),
+  referencia: z.string().optional(),
+  codigoBarras: z.string().optional(),
+  nome: z.string().min(1, {
+    message: "Informe o Nome do produto",
+  }),
+  descricao: z.string().optional(),
+  categoria: z.string().min(1, {
+    message: "Selecione uma Categoria",
+  }),
+  subcategoria: z.string().min(1, {
+    message: "Selecione uma Subcategoria",
+  }),
+  fabricante: z.string().min(1, {
+    message: "Selecione um Fabricante",
+  }),
+  unidade: z.string().min(1, {
+    message: "Selecione uma Unidade",
+  }),
+  precoCusto: z.preprocess((value) => {
+    if (typeof value === "string") {
+      return parseFloat(value.replace(/[R$\s]/g, "").replace(",", "."));
+    }
+    return value;
+  }, z.number()),
+  precoVenda: z.preprocess(
+    (value) => {
+      if (typeof value === "string") {
+        return parseFloat(value.replace(/[R$\s]/g, "").replace(",", "."));
+      }
+      return value;
+    },
+    z.number().min(0.01, {
+      message: "Informe o preço de venda.",
+    }),
+  ),
+  markupPerc: z.preprocess((value) => {
+    if (typeof value === "string") {
+      return parseFloat(value.replace(/[%\s]/g, "").replace(",", "."));
+    }
+    return value;
+  }, z.number()),
+  lucroPerc: z.preprocess((value) => {
+    if (typeof value === "string") {
+      return parseFloat(value.replace(/[%\s]/g, "").replace(",", "."));
+    }
+    return value;
+  }, z.number()),
+  cst: z.string().min(1, {
+    message: "Selecione um CST",
+  }),
+  cfop: z.string().min(1, {
+    message: "Selecione um CFOP",
+  }),
+  ncm: z.string().min(1, {
+    message: "Selecione um NCM",
+  }),
+  cest: z.string().min(1, {
+    message: "Selecione um CEST",
+  }),
+  origem: z.string().min(1, {
+    message: "Selecione uma Origem",
+  }),
+  empresasSelecionadas: z.number().min(1, {
+    message: "Selecione pelo menos uma empresa.",
+  }),
+});
+
 function CadastrosProdutoNovo({ params }: any) {
   const { back } = useRouter();
-  const isMobile = useIsMobile();
   const { showLoading, hideLoading } = useLoadingStore();
+
+  const form = useForm<z.infer<typeof formProdutoSchema>>({
+    resolver: zodResolver(formProdutoSchema),
+    defaultValues: {
+      id: undefined,
+      codigo: "",
+      referencia: "",
+      codigoBarras: "",
+      nome: "",
+      descricao: "",
+      categoria: "",
+      subcategoria: "",
+      fabricante: "",
+      unidade: "",
+      precoVenda: 0,
+      precoCusto: 0,
+      markupPerc: 0,
+      lucroPerc: 0,
+      cst: "",
+      cfop: "",
+      ncm: "",
+      cest: "",
+      origem: "",
+      empresasSelecionadas: 0,
+    },
+  });
+
+  const { setValue, formState, getValues, clearErrors, reset } = form;
 
   const [isShowSectionGeral, setIsShowSectionGeral] = useState(true);
   const [isShowSectionGrade, setIsShowSectionGrade] = useState(false);
@@ -60,6 +184,7 @@ function CadastrosProdutoNovo({ params }: any) {
 
   const [isLoadingCompanies, setIsLoadingCompanies] = useState(true);
   const [companiesList, setCompaniesList] = useState<IEmpresaResponse[]>([]);
+  const [companiesSelecteds, setCompaniesSelecteds] = useState<number[]>([]);
 
   const [categoriesList, setCategoriesList] = useState<ICategoriaResponse[]>(
     [],
@@ -75,34 +200,20 @@ function CadastrosProdutoNovo({ params }: any) {
 
   const [unitsList, setUnitsList] = useState<IUnidadeResponse[]>([]);
 
+  const [cstList, setCstList] = useState<ICstResponse[]>([]);
+  const [origemList, setOrigemList] = useState<IOrigemResponse[]>([]);
+
   const [tabelaPrecoLista, setTabelaPrecoLista] = useState<
     ITabelaPrecosResponse[]
   >([]);
 
-  const [tabelaPrecoDisponiveisLista, setTabelaPrecoDisponiveisLista] =
-    useState<ITabelaPrecosResponse[]>([]);
-
-  const [categorySelectedId, setCategorySelectedId] = useState<string | number>(
-    "",
-  );
-  const [subcategorySelectedId, setSubcategorySelectedId] = useState<
-    string | number
-  >("");
-  const [manufactureSelectedId, setManufactureSelectedId] = useState<
-    string | number
-  >("");
-  const [unitSelectedId, setUnitSelectedId] = useState<string | number>("");
-  const [tabelaPrecoSelectedId, setTabelaPrecoSelectedId] = useState<
-    string | number
-  >("");
+  const [cfopSelected, setCfopSelected] = useState<ICfopResponse>();
+  const [ncmSelected, setNcmSelected] = useState<INcmResponse>();
+  const [cestSelected, setCestSelected] = useState<ICestResponse>();
 
   const [grade, setGrade] = useState<string | number>("NAO");
 
   const [estoque, setEstoque] = useState<number>();
-  const [precoVenda, setPrecoVenda] = useState<number>();
-  const [precoCusto, setPrecoCusto] = useState<number>();
-  const [markupPerc, setMarkupPerc] = useState<number>();
-  const [lucroPerc, setLucroPerc] = useState<number>();
 
   const [precosAdicionaisLista, setPrecosAdicionaisLista] = useState<
     IProdutoPrecoResponse[]
@@ -209,6 +320,7 @@ function CadastrosProdutoNovo({ params }: any) {
 
       if (response.status === 200) {
         setCompaniesList(response.data);
+        setCompaniesSelecteds(response.data.map((company) => company.id));
       }
       setIsLoadingCompanies(false);
     } catch (error: any) {
@@ -246,6 +358,48 @@ function CadastrosProdutoNovo({ params }: any) {
     }
   };
 
+  const loadCst = async () => {
+    try {
+      const token = await getCookieClient(CookiesKeys.TOKEN);
+      const response = await requestCstAvailables(token!.toString());
+
+      if (response.status === 200) {
+        setCstList(response.data);
+      }
+    } catch (error: any) {
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
+    }
+  };
+
+  const loadOrigem = async () => {
+    try {
+      const token = await getCookieClient(CookiesKeys.TOKEN);
+      const response = await requestOrigemAvailables(token!.toString());
+
+      if (response.status === 200) {
+        setOrigemList(response.data);
+      }
+    } catch (error: any) {
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
+    }
+  };
+
   const loadTabelaPrecos = async () => {
     try {
       const token = await getCookieClient(CookiesKeys.TOKEN);
@@ -253,7 +407,6 @@ function CadastrosProdutoNovo({ params }: any) {
 
       if (response.status === 200) {
         setTabelaPrecoLista(response.data);
-        setTabelaPrecoDisponiveisLista(response.data);
       }
     } catch (error: any) {
       if (error?.response?.status < 500) {
@@ -279,9 +432,124 @@ function CadastrosProdutoNovo({ params }: any) {
     await loadSubcategories();
     await loadManufactures();
     await loadUnits();
+    await loadCst();
+    await loadOrigem();
     await loadTabelaPrecos();
 
     hideLoading();
+  };
+
+  const handleCustoBlur = () => {
+    const precoCusto = parseFloat(
+      form
+        .watch("precoCusto")
+        .toString()
+        .replace(/[R$\s]/g, "")
+        .replace(",", "."),
+    );
+    const precoVenda = parseFloat(
+      form
+        .watch("precoVenda")
+        .toString()
+        .replace(/[R$\s]/g, "")
+        .replace(",", "."),
+    );
+
+    if (precoCusto && precoVenda) {
+      const newMarkup = (precoVenda / precoCusto - 1) * 100;
+      setValue("markupPerc", newMarkup);
+
+      const newMargem =
+        (((precoVenda as number) - (precoCusto as number)) / precoVenda) * 100;
+      setValue("lucroPerc", newMargem);
+    }
+  };
+
+  const handlePrecoVendaBlur = () => {
+    const precoCusto = parseFloat(
+      form
+        .watch("precoCusto")
+        .toString()
+        .replace(/[R$\s]/g, "")
+        .replace(",", "."),
+    );
+    const precoVenda = parseFloat(
+      form
+        .watch("precoVenda")
+        .toString()
+        .replace(/[R$\s]/g, "")
+        .replace(",", "."),
+    );
+
+    if (precoVenda && precoCusto) {
+      const newMarkup = (precoVenda / precoCusto - 1) * 100;
+      setValue("markupPerc", newMarkup);
+
+      const newLucro =
+        (((precoVenda as number) - (precoCusto as number)) / precoVenda) * 100;
+      setValue("lucroPerc", newLucro);
+    } else if (precoVenda === 0) {
+      setValue("markupPerc", 0.0);
+      setValue("lucroPerc", 0.0);
+    }
+  };
+
+  const handleMargemLucroBlur = () => {
+    const lucroPerc = parseFloat(
+      form
+        .watch("lucroPerc")
+        .toString()
+        .replace(/[%\s]/g, "")
+        .replace(",", "."),
+    );
+    const precoCusto = parseFloat(
+      form
+        .watch("precoCusto")
+        .toString()
+        .replace(/[R$\s]/g, "")
+        .replace(",", "."),
+    );
+
+    console.log(lucroPerc, precoCusto);
+
+    if (lucroPerc && precoCusto) {
+      const newPrecoVenda = (precoCusto as number) / (1 - lucroPerc / 100);
+      setValue("precoVenda", newPrecoVenda);
+
+      const newMarkup = (newPrecoVenda / precoCusto - 1) * 100;
+      setValue("markupPerc", newMarkup);
+    } else if (lucroPerc === 0) {
+      setValue("precoVenda", precoCusto);
+      setValue("markupPerc", 0.0);
+    }
+  };
+
+  const handleMarkupBlur = () => {
+    const markupPerc = parseFloat(
+      form
+        .watch("markupPerc")
+        .toString()
+        .replace(/[%\s]/g, "")
+        .replace(",", "."),
+    );
+    const precoCusto = parseFloat(
+      form
+        .watch("precoCusto")
+        .toString()
+        .replace(/[R$\s]/g, "")
+        .replace(",", "."),
+    );
+
+    if (markupPerc && precoCusto) {
+      const newPrecoVenda = (precoCusto as number) + markupPerc;
+      setValue("precoVenda", newPrecoVenda);
+
+      const newMargem = (markupPerc / newPrecoVenda) * 100;
+      setValue("lucroPerc", newMargem);
+    } else if (markupPerc === 0) {
+      setValue("precoVenda", precoCusto);
+      setValue("lucroPerc", 0.0);
+    }
   };
 
   const renderGeral = useMemo(() => {
@@ -307,47 +575,111 @@ function CadastrosProdutoNovo({ params }: any) {
             <InputWithLabel label="Código" value={product?.codigo} />
           </div>
 
-          <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-2">
-            <InputWithLabel label="Nome" value={product?.nome} />
+          <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-2 md:items-start">
+            <FormField
+              control={form.control}
+              name="nome"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <InputWithLabel label="Nome" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* <InputWithLabel label="Nome" value={product?.nome} /> */}
             <InputWithLabel label="Descrição" value={product?.descricao} />
           </div>
 
           <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-5">
-            <Combobox
-              label="Categoria"
-              data={categoriesList.map((item) => {
-                return { label: item.nome, value: item.id + "" };
-              })}
-              valueSelected={categorySelectedId}
-              onChangeValueSelected={setCategorySelectedId}
+            <FormField
+              control={form.control}
+              name="categoria"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Combobox
+                      label="Categoria"
+                      data={categoriesList.map((item) => {
+                        return { label: item.nome, value: item.id + "" };
+                      })}
+                      valueSelected={field.value}
+                      onChangeValueSelected={field.onChange}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <Combobox
-              label="Subcategoria"
-              data={subcategoriesList.map((item) => {
-                return { label: item.nome, value: item.id + "" };
-              })}
-              valueSelected={subcategorySelectedId}
-              onChangeValueSelected={setSubcategorySelectedId}
+
+            <FormField
+              control={form.control}
+              name="subcategoria"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Combobox
+                      label="Subcategoria"
+                      data={subcategoriesList.map((item) => {
+                        return { label: item.nome, value: item.id + "" };
+                      })}
+                      valueSelected={field.value}
+                      onChangeValueSelected={field.onChange}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <Combobox
-              label="Fabricante"
-              data={manufacturesList.map((item) => {
-                return { label: item.nome, value: item.id + "" };
-              })}
-              valueSelected={manufactureSelectedId}
-              onChangeValueSelected={setManufactureSelectedId}
+
+            <FormField
+              control={form.control}
+              name="fabricante"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Combobox
+                      label="Fabricante"
+                      data={manufacturesList.map((item) => {
+                        return { label: item.nome, value: item.id + "" };
+                      })}
+                      valueSelected={field.value}
+                      onChangeValueSelected={field.onChange}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <Combobox
-              label="Unidade"
-              data={unitsList.map((item) => {
-                return {
-                  label: item.descricao + " - " + item.nome,
-                  value: item.id + "",
-                };
-              })}
-              valueSelected={unitSelectedId}
-              onChangeValueSelected={setUnitSelectedId}
+
+            <FormField
+              control={form.control}
+              name="unidade"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Combobox
+                      label="Unidade"
+                      data={unitsList.map((item) => {
+                        return {
+                          label: item.descricao + " - " + item.nome,
+                          value: item.id + "",
+                        };
+                      })}
+                      valueSelected={field.value}
+                      onChangeValueSelected={field.onChange}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
+
             <Combobox
               label="Grade"
               data={[
@@ -369,33 +701,75 @@ function CadastrosProdutoNovo({ params }: any) {
                 setEstoque(v.floatValue);
               }}
             />
-            <MonetaryInput
-              label="Custo"
-              value={precoCusto}
-              onValueChange={(v) => {
-                setPrecoCusto(v.floatValue);
-              }}
+
+            <FormField
+              control={form.control}
+              name="precoCusto"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <MonetaryInput
+                      {...field}
+                      label="Custo"
+                      onBlur={handleCustoBlur}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <MonetaryInput
-              label="Preço venda"
-              value={precoVenda}
-              onValueChange={(v) => {
-                setPrecoVenda(v.floatValue);
-              }}
+
+            <FormField
+              control={form.control}
+              name="precoVenda"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <MonetaryInput
+                      {...field}
+                      label="Preço venda"
+                      onBlur={handlePrecoVendaBlur}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <PercentInput
-              label="Markup"
-              value={markupPerc}
-              onValueChange={(v) => {
-                setMarkupPerc(v.floatValue);
-              }}
+
+            <FormField
+              control={form.control}
+              name="markupPerc"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <PercentInput
+                      {...field}
+                      label="Markup"
+                      onBlur={handleMarkupBlur}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <PercentInput
-              label="Lucro"
-              value={lucroPerc}
-              onValueChange={(v) => {
-                setLucroPerc(v.floatValue);
-              }}
+
+            <FormField
+              control={form.control}
+              name="lucroPerc"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <PercentInput
+                      // {...field}
+                      label="Lucro"
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={handleMargemLucroBlur}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
           </div>
         </div>
@@ -404,19 +778,12 @@ function CadastrosProdutoNovo({ params }: any) {
   }, [
     isShowSectionGeral,
     categoriesList,
-    categorySelectedId,
     subcategoriesList,
-    subcategorySelectedId,
     manufacturesList,
-    manufactureSelectedId,
     unitsList,
-    unitSelectedId,
-    precoCusto,
-    precoVenda,
-    markupPerc,
-    lucroPerc,
     estoque,
     grade,
+    form,
   ]);
 
   const renderGrade = useMemo(() => {
@@ -453,36 +820,116 @@ function CadastrosProdutoNovo({ params }: any) {
               <TabsTrigger value="ipi">IPI</TabsTrigger>
             </TabsList>
             <TabsContent value="geral">
-              <div className="flex flex-1 flex-col gap-4 px-4 md:flex-row">
-                <Combobox
-                  label="CST"
-                  data={[]}
-                  valueSelected=""
-                  onChangeValueSelected={() => {}}
+              <div className="flex flex-1 flex-col gap-4 px-4">
+                <FormField
+                  control={form.control}
+                  name="cst"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Combobox
+                          label="CST"
+                          data={cstList.map((item) => {
+                            return {
+                              label: item.codigo + " - " + item.descricao,
+                              value: item.id + "",
+                            };
+                          })}
+                          valueSelected={field.value}
+                          onChangeValueSelected={field.onChange}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <Combobox
-                  label="CFOP"
-                  data={[]}
-                  valueSelected=""
-                  onChangeValueSelected={() => {}}
+
+                <FormField
+                  control={form.control}
+                  name="cfop"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <ComboboxSearchCfop
+                          label="CFOP"
+                          onChangeValueSelected={(cfop) => {
+                            setCfopSelected(cfop);
+                            setValue("cfop", cfop.id + "");
+                            clearErrors("cfop");
+                          }}
+                          valueSelected={cfopSelected}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <Combobox
-                  label="NCM"
-                  data={[]}
-                  valueSelected=""
-                  onChangeValueSelected={() => {}}
+
+                <FormField
+                  control={form.control}
+                  name="ncm"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <ComboboxSearchNcm
+                          label="NCM"
+                          onChangeValueSelected={(ncm) => {
+                            setNcmSelected(ncm);
+                            setValue("ncm", ncm.id + "");
+                            clearErrors("ncm");
+                          }}
+                          valueSelected={ncmSelected}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <Combobox
-                  label="CEST"
-                  data={[]}
-                  valueSelected=""
-                  onChangeValueSelected={() => {}}
+
+                <FormField
+                  control={form.control}
+                  name="cest"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <ComboboxSearchCest
+                          label="CEST"
+                          onChangeValueSelected={(cest) => {
+                            setCestSelected(cest);
+                            setValue("cest", cest.id + "");
+                            clearErrors("cest");
+                          }}
+                          valueSelected={cestSelected}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <Combobox
-                  label="Origem"
-                  data={[]}
-                  valueSelected=""
-                  onChangeValueSelected={() => {}}
+
+                <FormField
+                  control={form.control}
+                  name="origem"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Combobox
+                          label="Origem"
+                          data={origemList.map((item) => {
+                            return {
+                              label: item.codigo + " - " + item.descricao,
+                              value: item.id + "",
+                            };
+                          })}
+                          valueSelected={field.value}
+                          onChangeValueSelected={field.onChange}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
             </TabsContent>
@@ -494,7 +941,14 @@ function CadastrosProdutoNovo({ params }: any) {
         </div>
       </CollapsibleSection>
     );
-  }, [isShowSectionTributacao]);
+  }, [
+    isShowSectionTributacao,
+    cstList,
+    cfopSelected,
+    ncmSelected,
+    cestSelected,
+    origemList,
+  ]);
 
   const renderPrecos = useMemo(() => {
     return (
@@ -506,7 +960,7 @@ function CadastrosProdutoNovo({ params }: any) {
       >
         <div>
           <AddItemListaPrecos
-            data={tabelaPrecoDisponiveisLista}
+            data={tabelaPrecoLista}
             onAdd={(item) => {
               var existe = precosAdicionaisLista.find(
                 (i) => i.tabelaPrecoId === item.tabelaPrecoId,
@@ -539,7 +993,7 @@ function CadastrosProdutoNovo({ params }: any) {
         </div>
       </CollapsibleSection>
     );
-  }, [isShowSectionPrecos, precosAdicionaisLista, tabelaPrecoDisponiveisLista]);
+  }, [isShowSectionPrecos, precosAdicionaisLista, tabelaPrecoLista]);
 
   const renderAdicionais = useMemo(() => {
     return (
@@ -569,22 +1023,46 @@ function CadastrosProdutoNovo({ params }: any) {
             <Loader2 className="animate-spin" />
           </div>
         ) : (
-          <div className="flex flex-col flex-wrap gap-3 md:flex-row">
-            {companiesList.map((company) => (
-              <CompanyItem
-                company={company}
-                defaultValue={
-                  params.id === String(null) ||
-                  (product !== undefined &&
-                    product.empresas.includes(company.id))
-                }
-              />
-            ))}
+          <div className="flex flex-col">
+            <div className="flex flex-col flex-wrap gap-3 md:flex-row">
+              {companiesList.map((company) => (
+                <CompanyItem
+                  company={company}
+                  defaultValue={
+                    params.id === String(null) ||
+                    (product !== undefined &&
+                      product.empresas.includes(company.id))
+                  }
+                  onChange={(company, isSelected) => {
+                    if (isSelected) {
+                      setCompaniesSelecteds((prev) => [...prev, company.id]);
+                    } else {
+                      setCompaniesSelecteds((prev) =>
+                        prev.filter((id) => id !== company.id),
+                      );
+                    }
+                  }}
+                />
+              ))}
+            </div>
+            <p>
+              {formState.errors.empresasSelecionadas && (
+                <p className="pt-4 text-[11px] font-medium text-destructive">
+                  {formState.errors.empresasSelecionadas.message}
+                </p>
+              )}
+            </p>
           </div>
         )}
       </CollapsibleSection>
     );
-  }, [isShowSectionEmpresas, isLoadingCompanies, companiesList, product]);
+  }, [
+    isShowSectionEmpresas,
+    isLoadingCompanies,
+    companiesList,
+    product,
+    formState.errors.empresasSelecionadas,
+  ]);
 
   const renderImagens = useMemo(() => {
     return (
@@ -599,6 +1077,82 @@ function CadastrosProdutoNovo({ params }: any) {
     );
   }, [isShowSectionImagens]);
 
+  const resetForm = () => {
+    reset();
+    setProduct(undefined);
+    setCfopSelected(undefined);
+    setNcmSelected(undefined);
+    setCestSelected(undefined);
+    setPrecosAdicionaisLista([]);
+  };
+
+  const handleSave = async () => {
+    try {
+      const precoVendaFormatado = form
+        .watch("precoVenda")
+        .toString()
+        .replace(/[R$\s]/g, "")
+        .replace(",", ".");
+
+      const precoCustoFormatado = form
+        .watch("precoCusto")
+        .toString()
+        .replace(/[R$\s]/g, "")
+        .replace(",", ".");
+
+      const precosAdicionais: IProdutoPrecosAdicionaisInput[] =
+        precosAdicionaisLista.map((item) => ({
+          ...item,
+          idTabelaPreco: item.tabelaPrecoId,
+        }));
+
+      const newProduto: IProdutoInput = {
+        id: params.id,
+        codigo: form.watch("codigo") || "",
+        referencia: form.watch("referencia") || "",
+        codigoBarras: form.watch("codigoBarras") || "",
+        nome: form.watch("nome"),
+        descricao: form.watch("descricao") || "",
+        ativo: true,
+        idCategoria: Number(form.watch("categoria")),
+        idSubcategoria: Number(form.watch("subcategoria")),
+        idFabricante: Number(form.watch("fabricante")),
+        idUnidade: Number(form.watch("unidade")),
+        precoCusto: Number(precoCustoFormatado),
+        precoVenda: Number(precoVendaFormatado),
+        podeGrade: false,
+        tipoGrade: null,
+        empresas: companiesSelecteds,
+        precosAdicionais: precosAdicionais,
+        tributacao: {
+          idCst: Number(form.watch("cst")),
+          idCfop: Number(form.watch("cfop")),
+          idNcm: Number(form.watch("ncm")),
+          idCest: Number(form.watch("cest")),
+          idOrigem: Number(form.watch("origem")),
+        },
+        variacoes: [],
+        codigosAdicionais: [],
+      };
+
+      const token = await getCookieClient(CookiesKeys.TOKEN);
+      const response = await requestInsertOrUpdateProduto(newProduto, token!);
+
+      if (response.status === 200) {
+        toast.success("Produto salvo com sucesso");
+        resetForm();
+      }
+    } catch (error: any) {
+      if (error?.response?.status < 500) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     load();
     console.log("entrou no useEffect de load");
@@ -606,24 +1160,28 @@ function CadastrosProdutoNovo({ params }: any) {
 
   useEffect(() => {
     if (product !== undefined) {
-      setCategorySelectedId(product.categoria.id + "");
-      setSubcategorySelectedId(product.subcategoria.id + "");
-      setManufactureSelectedId(product.fabricante.id + "");
-      setUnitSelectedId(product.unidade.id + "");
+      setValue("nome", product.nome);
+      setValue("categoria", product.categoria.id + "");
+      setValue("subcategoria", product.subcategoria.id + "");
+      setValue("fabricante", product.fabricante.id + "");
+      setValue("unidade", product.unidade.id + "");
+      setValue("cst", product.tributacao.cst.id + "");
+      setValue("origem", product.tributacao.origem.id + "");
+      setValue("cfop", product.tributacao.cfop.id + "");
+      setValue("ncm", product.tributacao.ncm.id + "");
+      setValue("cest", product.tributacao.cest.id + "");
+
+      setCompaniesSelecteds(product.empresas);
 
       setPrecosAdicionaisLista([]);
 
-      // let tabelasPrecosEmUso: number[] = [];
-
       product.precos.forEach((price) => {
-        // tabelasPrecosEmUso.push(price.tabelaPrecoId);
-
         if (price.tabelaPrecoId === 1) {
-          setPrecoCusto(price.preco);
+          setValue("precoCusto", price.preco);
         } else if (price.tabelaPrecoId === 2) {
-          setPrecoVenda(price.preco);
-          setMarkupPerc(price.markup);
-          setLucroPerc(price.margemLucro);
+          setValue("precoVenda", price.preco);
+          setValue("markupPerc", price.markup);
+          setValue("lucroPerc", price.margemLucro);
         } else {
           setPrecosAdicionaisLista((precosAdicionaisLista) => [
             ...precosAdicionaisLista,
@@ -631,14 +1189,12 @@ function CadastrosProdutoNovo({ params }: any) {
           ]);
         }
       });
-
-      // setTabelaPrecoDisponiveisLista(
-      //   tabelaPrecoLista.filter(
-      //     (item) => !tabelasPrecosEmUso.includes(item.id),
-      //   ),
-      // );
     }
-  }, [product /*tabelaPrecoLista*/]);
+  }, [product]);
+
+  useEffect(() => {
+    setValue("empresasSelecionadas", companiesSelecteds.length);
+  }, [companiesSelecteds]);
 
   return (
     <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden p-4">
@@ -663,39 +1219,69 @@ function CadastrosProdutoNovo({ params }: any) {
       </div>
 
       <Separator className="my-3" />
-
       <div className="flex flex-1 flex-col overflow-clip md:overflow-auto">
-        {renderGeral}
+        <Form {...form}>
+          <form
+            onKeyDown={(event: React.KeyboardEvent<HTMLFormElement>) => {
+              if (event.key === "Enter") {
+                event.preventDefault(); // Previne o envio do formulário
+              }
+            }}
+            className="flex flex-1 flex-col overflow-clip"
+            onSubmit={form.handleSubmit(handleSave, (errors) => {
+              console.log(errors);
+              toast.warning("Preencha todos os campos obrigatórios");
 
-        {grade === "SIM" && renderGrade}
+              if (
+                errors.cst ||
+                errors.origem ||
+                errors.cfop ||
+                errors.ncm ||
+                errors.cest
+              ) {
+                setIsShowSectionTributacao(true);
+              }
 
-        {renderTributacao}
+              if (errors.empresasSelecionadas) {
+                setIsShowSectionEmpresas(true);
+              }
+            })}
+          >
+            {renderGeral}
 
-        {renderPrecos}
+            {grade === "SIM" && renderGrade}
 
-        {renderAdicionais}
+            {renderTributacao}
 
-        {renderEmpresas}
+            {renderPrecos}
 
-        {renderImagens}
-      </div>
+            {renderAdicionais}
 
-      <Separator className="my-4" />
+            {renderEmpresas}
 
-      <div className="flex flex-col-reverse justify-end gap-2 md:flex-row">
-        <Button
-          className="md:w-28"
-          variant={"secondary"}
-          onClick={() => {
-            back();
-          }}
-        >
-          Voltar
-        </Button>
-        <Button className="md:w-28" variant={"secondary"}>
-          Limpar
-        </Button>
-        <Button className="md:w-28">Salvar</Button>
+            {renderImagens}
+
+            <Separator className="my-4" />
+
+            <div className="flex flex-col-reverse justify-end gap-2 pb-4 md:flex-row">
+              <Button
+                className="md:w-28"
+                variant={"secondary"}
+                onClick={() => {
+                  back();
+                }}
+              >
+                Voltar
+              </Button>
+              <Button className="md:w-28" variant={"secondary"}>
+                Limpar
+              </Button>
+              <Button type="submit" className="md:w-28">
+                Salvar
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </main>
   );

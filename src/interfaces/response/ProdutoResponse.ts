@@ -1,3 +1,9 @@
+import { ICestResponse } from "./CestResponse";
+import { ICfopResponse } from "./CfopResponse";
+import { ICstResponse } from "./CstResponse";
+import { INcmResponse } from "./NcmResponse";
+import { IOrigemResponse } from "./OrigemResponse";
+
 export interface IProdutoResponse {
   id: number | undefined;
   codigo: string;
@@ -24,22 +30,11 @@ export interface IProdutoResponse {
   precos: IProdutoPrecoResponse[];
   empresas: number[];
   tributacao: {
-    cfop: {
-      id: number;
-      codigo: string;
-    };
-    cst: {
-      id: number;
-      codigo: string;
-    };
-    ncm: {
-      id: number;
-      codigo: string;
-    };
-    cest: {
-      id: number;
-      codigo: string;
-    };
+    cfop: ICfopResponse;
+    cst: ICstResponse;
+    ncm: INcmResponse;
+    cest: ICestResponse;
+    origem: IOrigemResponse;
   };
   variacoes: IProdutoVariacaoResponse[];
 }

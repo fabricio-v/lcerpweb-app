@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { CookiesKeys } from "@/constants/CookiesKeys";
-import { IEmpresaResponse } from "@/interfaces/EmpresaResponse";
+import { IEmpresaResponse } from "@/interfaces/response/EmpresaResponse";
 import { getCookieClient } from "@/lib/cookieClient";
 import { useUserStore } from "@/providers/user";
 import { HOST, PROTOCOL } from "@/utils/hosts";

@@ -41,7 +41,7 @@ const PercentInput = forwardRef<HTMLInputElement, PercentInputProps>(
           suffix=" %"
           decimalScale={3}
           fixedDecimalScale
-          allowNegative={false}
+          allowNegative={true}
           allowLeadingZeros={false}
           getInputRef={ref}
           isAllowed={handleValueChange}

@@ -1,4 +1,4 @@
-import { ISubcategoriaResponse } from "@/interfaces/SubcategoriaResponse";
+import { ISubcategoriaResponse } from "@/interfaces/response/SubcategoriaResponse";
 import api from "../axios";
 
 export const requestSubcategoriasAvailables = async (token: string) => {

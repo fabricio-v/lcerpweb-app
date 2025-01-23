@@ -1,4 +1,4 @@
-import { IFabricanteResponse } from "@/interfaces/FabricanteResponse";
+import { IFabricanteResponse } from "@/interfaces/response/FabricanteResponse";
 import api from "../axios";
 
 export const requestFabricantesAvailables = async (token: string) => {

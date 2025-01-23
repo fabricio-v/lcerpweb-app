@@ -1,4 +1,4 @@
-import { IUnidadeResponse } from "@/interfaces/UnidadeResponse";
+import { IUnidadeResponse } from "@/interfaces/response/UnidadeResponse";
 import api from "../axios";
 
 export const requestUnidadesAll = async (token: string) => {

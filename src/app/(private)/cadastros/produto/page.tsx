@@ -15,7 +15,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { CookiesKeys } from "@/constants/CookiesKeys";
 import { Messages } from "@/constants/Messages";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { IProdutoResumeResponse } from "@/interfaces/ProdutoResumeResponse";
+import { IProdutoResumeResponse } from "@/interfaces/response/ProdutoResumeResponse";
 import { getCookieClient } from "@/lib/cookieClient";
 import { cn } from "@/lib/utils";
 import api from "@/services/axios";

@@ -4,7 +4,7 @@ import { MonetaryInput } from "@/components/input/MonetaryInput";
 import { PercentInput } from "@/components/input/PercentInput";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { IProdutoPrecoResponse } from "@/interfaces/ProdutoResponse";
+import { IProdutoPrecoResponse } from "@/interfaces/response/ProdutoResponse";
 import { CircleMinus } from "lucide-react";
 
 function ItemListaPrecos({

@@ -1,4 +1,6 @@
-import { IProdutoResponse } from "@/interfaces/ProdutoResponse";
+import { IProdutoInput } from "@/interfaces/dto/ProdutoInput";
+import { IProdutoResponse } from "@/interfaces/response/ProdutoResponse";
+import { IProdutoRefResponse } from "@/interfaces/response/ref/ProdutoRefResponse";
 import api from "../axios";
 
 export const requestProdutoById = async (
@@ -14,4 +16,15 @@ export const requestProdutoById = async (
       },
     },
   );
+};
+
+export const requestInsertOrUpdateProduto = async (
+  produto: IProdutoInput,
+  token: string,
+) => {
+  return api.post<IProdutoRefResponse>("/produtos", produto, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
 };

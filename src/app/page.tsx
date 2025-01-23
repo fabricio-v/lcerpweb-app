@@ -125,11 +125,14 @@ export default function Home() {
                                 className="w-full border-b-0 border-t-0"
                                 {...field}
                               />
-                              <Input
+                              {/* <Input
                                 className="w-[130px] border-none"
                                 value=".lcerp.com.br"
                                 disabled
-                              />
+                              /> */}
+                              <p className="flex flex-1 select-none items-center px-3 opacity-50">
+                                .lcerp.com.br
+                              </p>
                             </div>
 
                             <Button
@@ -156,7 +159,7 @@ export default function Home() {
                 <p className="text-sm text-lc-tertiary">Não tem uma conta?</p>
                 <Link
                   href="/signup"
-                  className="pl-1 font-gothamBold text-sm hover:text-lc-sunsetsky-light"
+                  className="pl-1 font-gothamBold text-sm duration-300 animate-in hover:text-lc-sunsetsky-light"
                 >
                   Cadastre-se
                 </Link>

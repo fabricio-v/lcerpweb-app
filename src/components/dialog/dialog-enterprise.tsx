@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { CookiesKeys } from "@/constants/CookiesKeys";
 import { Messages } from "@/constants/Messages";
-import { IEmpresaResponse } from "@/interfaces/EmpresaResponse";
+import { IEmpresaResponse } from "@/interfaces/response/EmpresaResponse";
 import { buildMessageException } from "@/utils/Funcoes";
 import { DOMAIN } from "@/utils/hosts";
 import { maskCpfCnpj } from "@/utils/Masks";

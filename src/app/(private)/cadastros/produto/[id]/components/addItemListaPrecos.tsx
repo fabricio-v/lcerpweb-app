@@ -4,10 +4,11 @@ import { MonetaryInput } from "@/components/input/MonetaryInput";
 import { PercentInput } from "@/components/input/PercentInput";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { IProdutoPrecoResponse } from "@/interfaces/ProdutoResponse";
-import { ITabelaPrecosResponse } from "@/interfaces/TabelaPrecosResponse";
+import { IProdutoPrecoResponse } from "@/interfaces/response/ProdutoResponse";
+import { ITabelaPrecosResponse } from "@/interfaces/response/TabelaPrecosResponse";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 function AddItemListaPrecos({
   data,
@@ -39,6 +40,25 @@ function AddItemListaPrecos({
       }
     }
   }, [tabelaPrecoSelectedId]);
+
+  const validate = () => {
+    if (tabelaPrecoSelectedId === "") {
+      toast.warning("Selecione uma tabela de preço");
+      return false;
+    }
+
+    if (precoVenda === undefined) {
+      toast.warning("Informe o preço de venda");
+      return false;
+    }
+
+    if (precoVenda <= 0) {
+      toast.warning("O preço de venda deve ser maior que R$0,00");
+      return false;
+    }
+
+    return true;
+  };
 
   return (
     <div className="flex flex-1 flex-col items-end gap-4 pb-4 md:flex-row">
@@ -85,24 +105,24 @@ function AddItemListaPrecos({
         variant={"outline"}
         className={isMobile ? "w-full" : ""}
         onClick={() => {
-          // setPrecosAdicionaisLista((prev) => [
-          //   ...prev,
-          onAdd({
-            id: new Date().getTime(),
-            tabelaPrecoId: Number(tabelaPrecoSelectedId),
-            tabelaPrecoNome: tabelaPrecoSelectedNome,
-            quantidadeMinima: quantidadeMinima || 0,
-            preco: precoVenda || 0,
-            markup: markup || 0,
-            margemLucro: lucro || 0,
-          });
+          if (validate()) {
+            onAdd({
+              id: new Date().getTime(),
+              tabelaPrecoId: Number(tabelaPrecoSelectedId),
+              tabelaPrecoNome: tabelaPrecoSelectedNome,
+              quantidadeMinima: quantidadeMinima || 0,
+              preco: precoVenda || 0,
+              markup: markup || 0,
+              margemLucro: lucro || 0,
+            });
 
-          setTabelaPrecoSelectedId("");
-          setTabelaPrecoSelectedNome("");
-          setQuantidadeMinima(undefined);
-          setPrecoVenda(undefined);
-          setMarkup(undefined);
-          setLucro(undefined);
+            setTabelaPrecoSelectedId("");
+            setTabelaPrecoSelectedNome("");
+            setQuantidadeMinima(undefined);
+            setPrecoVenda(undefined);
+            setMarkup(undefined);
+            setLucro(undefined);
+          }
         }}
       >
         <Plus />

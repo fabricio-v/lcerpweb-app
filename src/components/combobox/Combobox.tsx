@@ -37,7 +37,7 @@ export const Combobox: React.FC<Props> = ({
   label,
   data,
   valueSelected,
-  messageWhenNotfound = "Nenhum registro encontrado",
+  messageWhenNotfound = "Nenhum registro",
   onChangeValueSelected,
   disableFilter = false,
   disabled = false,
@@ -70,7 +70,7 @@ export const Combobox: React.FC<Props> = ({
             <ChevronsUpDown className="ml-2 h-4 w-full shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0">
+        <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
           <Command>
             {!disableFilter && (
               <CommandInput

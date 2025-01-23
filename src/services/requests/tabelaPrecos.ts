@@ -1,4 +1,4 @@
-import { ITabelaPrecosResponse } from "@/interfaces/TabelaPrecosResponse";
+import { ITabelaPrecosResponse } from "@/interfaces/response/TabelaPrecosResponse";
 import api from "../axios";
 
 export const requestTabelaPrecosAvailables = async (token: string) => {

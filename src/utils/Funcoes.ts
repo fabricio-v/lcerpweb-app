@@ -30,7 +30,7 @@ export const buildMessageException = (
 
         return msg;
       } else if (exception.request) {
-        return "Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.\n\nCaso o problema persista, entre em contato com a sua revenda. ";
+        return "Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.";
       } else {
         return exception.message;
       }

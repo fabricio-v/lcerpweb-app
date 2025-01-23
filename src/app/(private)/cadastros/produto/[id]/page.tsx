@@ -72,6 +72,7 @@ import { z } from "zod";
 
 export const formProdutoSchema = z.object({
   id: z.number().optional(),
+  ativo: z.boolean(),
   codigo: z.string().optional(),
   referencia: z.string().optional(),
   codigoBarras: z.string().optional(),
@@ -125,6 +126,7 @@ function CadastrosProdutoNovo({ params }: any) {
     resolver: zodResolver(formProdutoSchema),
     defaultValues: {
       id: undefined,
+      ativo: true,
       codigo: "",
       referencia: "",
       codigoBarras: "",
@@ -213,7 +215,7 @@ function CadastrosProdutoNovo({ params }: any) {
         setProduct(response.data);
       }
     } catch (error: any) {
-      back();
+      // back();
 
       if (error?.response?.status < 500) {
         toast.warning(Messages.TOAST_INFO_TITLE, {
@@ -399,7 +401,6 @@ function CadastrosProdutoNovo({ params }: any) {
   };
 
   const load = async () => {
-    showLoading();
     if (params.id !== String(null)) {
       await loadProduct();
     }
@@ -492,20 +493,29 @@ function CadastrosProdutoNovo({ params }: any) {
         <div className="flex flex-1 flex-col gap-8 md:flex-row">
           <div className="flex flex-col items-center justify-center gap-4 pt-8">
             <div className="flex h-[150px] w-[150px] cursor-pointer items-center justify-center rounded-md border opacity-50 hover:border-lc-sunsetsky-light hover:opacity-60">
-              {/* <Image
-                src="/pipa.webp"
-                alt=""
-                width={100}
-                height={100}
-                className="block opacity-15"
-              /> */}
               <p className="text-center text-xs opacity-50">
                 Produto
                 <br />
                 sem imagem
               </p>
             </div>
-            <Switch classNameContainer="mb-4" title="Ativo" />
+            <FormField
+              control={form.control}
+              name="ativo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Switch
+                      classNameContainer="mb-4"
+                      title="Ativo"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <div className="flex flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-4">
@@ -1106,14 +1116,8 @@ function CadastrosProdutoNovo({ params }: any) {
     setPrecosAdicionaisLista([]);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (data: z.infer<typeof formProdutoSchema>) => {
     try {
-      const id = params.id;
-      const precoVenda = form.watch("precoVenda");
-      const precoCusto = form.watch("precoCusto");
-      const markupPerc = form.watch("markupPerc");
-      const lucroPerc = form.watch("lucroPerc");
-
       const precosAdicionais: IProdutoPrecosAdicionaisInput[] =
         precosAdicionaisLista.map((item) => ({
           ...item,
@@ -1121,31 +1125,31 @@ function CadastrosProdutoNovo({ params }: any) {
         }));
 
       const newProduto: IProdutoInput = {
-        id: id,
-        codigo: form.watch("codigo") || "",
-        referencia: form.watch("referencia") || "",
-        codigoBarras: form.watch("codigoBarras") || "",
-        nome: form.watch("nome"),
-        descricao: form.watch("descricao") || "",
-        ativo: true,
-        idCategoria: Number(form.watch("categoria")),
-        idSubcategoria: Number(form.watch("subcategoria")),
-        idFabricante: Number(form.watch("fabricante")),
-        idUnidade: Number(form.watch("unidade")),
-        precoCusto: precoCusto,
-        precoVenda: precoVenda,
-        markup: markupPerc,
-        margemLucro: lucroPerc,
+        id: data.id || null,
+        codigo: data.codigo || "",
+        referencia: data.referencia || "",
+        codigoBarras: data.codigoBarras || "",
+        nome: data.nome,
+        descricao: data.descricao || "",
+        ativo: data.ativo,
+        idCategoria: Number(data.categoria),
+        idSubcategoria: Number(data.subcategoria),
+        idFabricante: Number(data.fabricante),
+        idUnidade: Number(data.unidade),
+        precoCusto: data.precoCusto,
+        precoVenda: data.precoVenda,
+        markup: data.markupPerc,
+        margemLucro: data.lucroPerc,
         podeGrade: false,
         tipoGrade: null,
         empresas: companiesSelecteds,
         precosAdicionais: precosAdicionais,
         tributacao: {
-          idCst: Number(form.watch("cst")),
-          idCfop: Number(form.watch("cfop")),
-          idNcm: Number(form.watch("ncm")),
-          idCest: Number(form.watch("cest")),
-          idOrigem: Number(form.watch("origem")),
+          idCst: Number(data.cst),
+          idCfop: Number(data.cfop),
+          idNcm: Number(data.ncm),
+          idCest: Number(data.cest),
+          idOrigem: Number(data.origem),
         },
         variacoes: [],
         codigosAdicionais: [],
@@ -1162,9 +1166,9 @@ function CadastrosProdutoNovo({ params }: any) {
 
       if (response.status === 200) {
         toast.success(
-          `Produto ${id === null ? "cadastrado" : "atualizado"} com sucesso`,
+          `Produto ${data.id === null ? "cadastrado" : "atualizado"} com sucesso`,
         );
-        if (id !== null) {
+        if (data.id !== null) {
           back();
         } else {
           resetForm();
@@ -1182,13 +1186,16 @@ function CadastrosProdutoNovo({ params }: any) {
   };
 
   useEffect(() => {
-    load();
-    console.log("entrou no useEffect de load");
+    showLoading();
+    setTimeout(() => {
+      load();
+    }, 500);
   }, []);
 
   useEffect(() => {
     if (product !== undefined) {
-      setValue("id", params.id);
+      setValue("id", Number(params.id));
+      setValue("ativo", product.ativo);
       setValue("codigo", product.codigo);
       setValue("referencia", product.referencia);
       setValue("codigoBarras", product.codigoBarras);

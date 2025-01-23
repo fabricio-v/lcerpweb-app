@@ -1,6 +1,5 @@
 "use client";
 
-import { InputWithLabel } from "@/components/input/InputWithLabel";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,10 +19,11 @@ import { getCookieClient } from "@/lib/cookieClient";
 import { cn } from "@/lib/utils";
 import api from "@/services/axios";
 import { buildMessageException } from "@/utils/Funcoes";
-import { ChevronLeft, CirclePlus, ListFilterIcon } from "lucide-react";
+import { ChevronLeft, CirclePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
+import Filter from "./components/filter";
 import { TableProdutos, TableProdutosPagination } from "./components/table";
 
 function CadastrosProduto() {
@@ -36,7 +36,7 @@ function CadastrosProduto() {
     IProdutoResumeResponse[] | undefined
   >(undefined);
 
-  const searchProduto = async () => {
+  const searchProduto = async (filter: string) => {
     try {
       setIsLoadingSearch(true);
       setProdutoList([]);
@@ -48,7 +48,7 @@ function CadastrosProduto() {
       );
 
       const response = await api.get<IProdutoResumeResponse[]>(
-        `/produtos/resume?filter=&idEmpresa=${companySelected}`,
+        `/produtos/resume?filter=${filter}&idEmpresa=${companySelected}`,
         {
           headers: {
             Authorization: "Bearer " + token,
@@ -75,9 +75,9 @@ function CadastrosProduto() {
     }
   };
 
-  useEffect(() => {
-    searchProduto();
-  }, []);
+  // useEffect(() => {
+  //   searchProduto("");
+  // }, []);
 
   return (
     <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden p-4">
@@ -111,20 +111,7 @@ function CadastrosProduto() {
 
       {/* PESQUISA / NOVO */}
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div className="flex max-w-[600px] flex-1 items-end gap-2">
-          <InputWithLabel
-            label="Pesquisa por nome e código interno"
-            placeholder="Digite aqui para pesquisar"
-          />
-
-          <Button
-            variant={isMobile ? "outline" : "ghost"}
-            className="text-0 p-2"
-          >
-            <ListFilterIcon />
-            <span className="hidden md:block">Pesquisa avançada</span>
-          </Button>
-        </div>
+        <Filter onSearch={searchProduto} changeIsLoading={setIsLoadingSearch} />
 
         <div className="flex flex-1 justify-end">
           <Button

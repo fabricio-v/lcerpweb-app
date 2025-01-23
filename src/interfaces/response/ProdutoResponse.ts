@@ -6,6 +6,7 @@ import { IOrigemResponse } from "./OrigemResponse";
 
 export interface IProdutoResponse {
   id: number | undefined;
+  ativo: boolean;
   codigo: string;
   referencia: string;
   codigoBarras: string;

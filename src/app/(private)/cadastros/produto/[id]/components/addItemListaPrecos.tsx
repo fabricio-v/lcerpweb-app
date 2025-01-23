@@ -165,10 +165,10 @@ function AddItemListaPrecos({
 
             setTabelaPrecoSelectedId("");
             setTabelaPrecoSelectedNome("");
-            setQuantidadeMinima(undefined);
-            setPrecoVenda(undefined);
-            setMarkup(undefined);
-            setLucro(undefined);
+            setQuantidadeMinima(0.0);
+            setPrecoVenda(0);
+            setMarkup(0);
+            setLucro(0);
           }
         }}
       >

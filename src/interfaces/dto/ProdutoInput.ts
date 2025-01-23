@@ -12,6 +12,8 @@ export interface IProdutoInput {
   idUnidade: number;
   precoCusto: number;
   precoVenda: number;
+  markup: number;
+  margemLucro: number;
   podeGrade: boolean;
   tipoGrade: string | null;
   empresas: number[];

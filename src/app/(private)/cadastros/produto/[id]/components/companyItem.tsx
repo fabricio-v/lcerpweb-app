@@ -42,8 +42,8 @@ function CompanyItem({ company, defaultValue, onChange }: Props) {
 
         <div
           className={cn(
-            "flex h-6 w-6 items-center justify-center rounded-md border",
-            isSelected && "bg-lc-sunsetsky-light",
+            "flex h-5 w-5 items-center justify-center rounded-md border",
+            isSelected && "bg-lc-tertiary",
           )}
         >
           {isSelected && <Check size={16} className="mt-[1px] text-white" />}

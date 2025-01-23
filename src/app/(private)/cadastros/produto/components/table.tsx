@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button";
 import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -24,7 +30,7 @@ import {
 } from "@/components/ui/table";
 import { IProdutoResumeResponse } from "@/interfaces/response/ProdutoResumeResponse";
 import { maskNumber } from "@/utils/Masks";
-import { Loader2, MoreVertical } from "lucide-react";
+import { Edit2, Files, Loader2, MoreVertical, Trash2 } from "lucide-react";
 
 interface Props {
   data: IProdutoResumeResponse[] | undefined;
@@ -63,53 +69,94 @@ export function TableProdutos({ data, isLoading, onEdit, onDelete }: Props) {
         <TableBody>
           {data && data.length > 0 ? (
             data.map((product, key) => (
-              <TableRow
-                key={key}
-                className="odd:bg-gray-100 dark:odd:bg-gray-800"
-                // onClick={() => {
-                //   onEdit(product.id);
-                // }}
-              >
-                <TableCell>{product.id}</TableCell>
-                <TableCell>{product.codigo}</TableCell>
-                <TableCell>{product.referencia}</TableCell>
-                <TableCell>{product.codigoBarras}</TableCell>
-                <TableCell>{product.nome}</TableCell>
-                <TableCell>{product.fabricante.nome}</TableCell>
-                <TableCell className="text-right">
-                  {maskNumber(product.estoque, false, 3, ",", "")}
-                </TableCell>
-                <TableCell>{product.unidade.nome}</TableCell>
-                <TableCell className="text-right">
-                  {maskNumber(product.precoVenda, true, 2)}
-                  {/* R$ 1.000.000,00 */}
-                </TableCell>
-                <TableCell className="text-center">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreVertical />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={() => {
-                          onEdit(product.id);
-                        }}
-                      >
-                        Editar
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          onDelete(product.id);
-                        }}
-                      >
-                        Excluir
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
+              <ContextMenu key={key}>
+                <ContextMenuTrigger asChild>
+                  <TableRow
+                    key={key}
+                    className="odd:bg-gray-100 dark:odd:bg-gray-800"
+                    onDoubleClick={() => {
+                      onEdit(product.id);
+                    }}
+                  >
+                    <TableCell>{product.id}</TableCell>
+                    <TableCell>{product.codigo}</TableCell>
+                    <TableCell>{product.referencia}</TableCell>
+                    <TableCell>{product.codigoBarras}</TableCell>
+                    <TableCell>{product.nome}</TableCell>
+                    <TableCell>{product.fabricante.nome}</TableCell>
+                    <TableCell className="text-right">
+                      {maskNumber(product.estoque, false, 3, ",", "")}
+                    </TableCell>
+                    <TableCell>{product.unidade.nome}</TableCell>
+                    <TableCell className="text-right">
+                      {maskNumber(product.precoVenda, true, 2)}
+                      {/* R$ 1.000.000,00 */}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <MoreVertical />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => {
+                              onEdit(product.id);
+                            }}
+                          >
+                            <p className="flex items-center gap-2">
+                              <Edit2 size={15} />
+                              Editar
+                            </p>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              onDelete(product.id);
+                            }}
+                          >
+                            <p className="flex items-center gap-2">
+                              <Trash2 size={15} />
+                              Excluir
+                            </p>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              onDelete(product.id);
+                            }}
+                          >
+                            <p className="flex items-center gap-2">
+                              <Files size={15} />
+                              Duplicar produto
+                            </p>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                </ContextMenuTrigger>
+
+                <ContextMenuContent className="p-4">
+                  <ContextMenuItem onClick={() => onEdit(product.id)}>
+                    <p className="flex items-center gap-2">
+                      <Edit2 size={15} />
+                      Editar
+                    </p>
+                  </ContextMenuItem>
+                  <ContextMenuItem onClick={() => onDelete(product.id)}>
+                    <p className="flex items-center gap-2">
+                      <Trash2 size={15} />
+                      Excluir
+                    </p>
+                  </ContextMenuItem>
+                  <ContextMenuItem onClick={() => onDelete(product.id)}>
+                    <p className="flex items-center gap-2">
+                      <Files size={15} />
+                      Duplicar produto
+                    </p>
+                  </ContextMenuItem>
+                </ContextMenuContent>
+              </ContextMenu>
             ))
           ) : (
             <TableRow>

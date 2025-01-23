@@ -91,35 +91,12 @@ export const formProdutoSchema = z.object({
   unidade: z.string().min(1, {
     message: "Selecione uma Unidade",
   }),
-  precoCusto: z.preprocess((value) => {
-    if (typeof value === "string") {
-      return parseFloat(value.replace(/[R$\s]/g, "").replace(",", "."));
-    }
-    return value;
-  }, z.number()),
-  precoVenda: z.preprocess(
-    (value) => {
-      if (typeof value === "string") {
-        return parseFloat(value.replace(/[R$\s]/g, "").replace(",", "."));
-      }
-      return value;
-    },
-    z.number().min(0.01, {
-      message: "Informe o preço de venda.",
-    }),
-  ),
-  markupPerc: z.preprocess((value) => {
-    if (typeof value === "string") {
-      return parseFloat(value.replace(/[%\s]/g, "").replace(",", "."));
-    }
-    return value;
-  }, z.number()),
-  lucroPerc: z.preprocess((value) => {
-    if (typeof value === "string") {
-      return parseFloat(value.replace(/[%\s]/g, "").replace(",", "."));
-    }
-    return value;
-  }, z.number()),
+  precoCusto: z.number(),
+  precoVenda: z.number().min(0.01, {
+    message: "Informe o preço de venda.",
+  }),
+  markupPerc: z.number(),
+  lucroPerc: z.number(),
   cst: z.string().min(1, {
     message: "Selecione um CST",
   }),
@@ -157,10 +134,10 @@ function CadastrosProdutoNovo({ params }: any) {
       subcategoria: "",
       fabricante: "",
       unidade: "",
-      precoVenda: 0,
-      precoCusto: 0,
-      markupPerc: 0,
-      lucroPerc: 0,
+      precoVenda: undefined,
+      precoCusto: undefined,
+      markupPerc: undefined,
+      lucroPerc: undefined,
       cst: "",
       cfop: "",
       ncm: "",
@@ -440,20 +417,8 @@ function CadastrosProdutoNovo({ params }: any) {
   };
 
   const handleCustoBlur = () => {
-    const precoCusto = parseFloat(
-      form
-        .watch("precoCusto")
-        .toString()
-        .replace(/[R$\s]/g, "")
-        .replace(",", "."),
-    );
-    const precoVenda = parseFloat(
-      form
-        .watch("precoVenda")
-        .toString()
-        .replace(/[R$\s]/g, "")
-        .replace(",", "."),
-    );
+    const precoCusto = form.watch("precoCusto");
+    const precoVenda = form.watch("precoVenda");
 
     if (precoCusto && precoVenda) {
       const newMarkup = (precoVenda / precoCusto - 1) * 100;
@@ -466,20 +431,8 @@ function CadastrosProdutoNovo({ params }: any) {
   };
 
   const handlePrecoVendaBlur = () => {
-    const precoCusto = parseFloat(
-      form
-        .watch("precoCusto")
-        .toString()
-        .replace(/[R$\s]/g, "")
-        .replace(",", "."),
-    );
-    const precoVenda = parseFloat(
-      form
-        .watch("precoVenda")
-        .toString()
-        .replace(/[R$\s]/g, "")
-        .replace(",", "."),
-    );
+    const precoCusto = form.watch("precoCusto");
+    const precoVenda = form.watch("precoVenda");
 
     if (precoVenda && precoCusto) {
       const newMarkup = (precoVenda / precoCusto - 1) * 100;
@@ -495,20 +448,9 @@ function CadastrosProdutoNovo({ params }: any) {
   };
 
   const handleMargemLucroBlur = () => {
-    const lucroPerc = parseFloat(
-      form
-        .watch("lucroPerc")
-        .toString()
-        .replace(/[%\s]/g, "")
-        .replace(",", "."),
-    );
-    const precoCusto = parseFloat(
-      form
-        .watch("precoCusto")
-        .toString()
-        .replace(/[R$\s]/g, "")
-        .replace(",", "."),
-    );
+    const lucroPerc = form.watch("lucroPerc");
+
+    const precoCusto = form.watch("precoCusto");
 
     console.log(lucroPerc, precoCusto);
 
@@ -525,20 +467,8 @@ function CadastrosProdutoNovo({ params }: any) {
   };
 
   const handleMarkupBlur = () => {
-    const markupPerc = parseFloat(
-      form
-        .watch("markupPerc")
-        .toString()
-        .replace(/[%\s]/g, "")
-        .replace(",", "."),
-    );
-    const precoCusto = parseFloat(
-      form
-        .watch("precoCusto")
-        .toString()
-        .replace(/[R$\s]/g, "")
-        .replace(",", "."),
-    );
+    const markupPerc = form.watch("markupPerc");
+    const precoCusto = form.watch("precoCusto");
 
     if (markupPerc && precoCusto) {
       const newPrecoVenda = (precoCusto as number) + markupPerc;
@@ -561,18 +491,62 @@ function CadastrosProdutoNovo({ params }: any) {
       >
         <div>
           <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-4">
-            <InputWithLabel
-              label="Código interno"
-              info="Codigo gerado automaticamente pelo sistema. Não pode ser alterado."
-              value={product?.id}
-              disabled
+            <FormField
+              control={form.control}
+              name="id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <InputWithLabel
+                      label="Código interno"
+                      info="Codigo gerado automaticamente pelo sistema. Não pode ser alterado."
+                      disabled
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <InputWithLabel
-              label="Código barras"
-              value={product?.codigoBarras}
+
+            <FormField
+              control={form.control}
+              name="codigoBarras"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <InputWithLabel label="Código barras" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <InputWithLabel label="Referência" value={product?.referencia} />
-            <InputWithLabel label="Código" value={product?.codigo} />
+
+            <FormField
+              control={form.control}
+              name="referencia"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <InputWithLabel label="Referência" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="codigo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <InputWithLabel label="Código" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-2 md:items-start">
@@ -588,8 +562,19 @@ function CadastrosProdutoNovo({ params }: any) {
                 </FormItem>
               )}
             />
-            {/* <InputWithLabel label="Nome" value={product?.nome} /> */}
-            <InputWithLabel label="Descrição" value={product?.descricao} />
+
+            <FormField
+              control={form.control}
+              name="descricao"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <InputWithLabel label="Descrição" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-5">
@@ -709,9 +694,13 @@ function CadastrosProdutoNovo({ params }: any) {
                 <FormItem>
                   <FormControl>
                     <MonetaryInput
-                      {...field}
+                      // {...field}
                       label="Custo"
                       onBlur={handleCustoBlur}
+                      value={field.value}
+                      onValueChange={(v) => {
+                        field.onChange(v.floatValue);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -726,9 +715,13 @@ function CadastrosProdutoNovo({ params }: any) {
                 <FormItem>
                   <FormControl>
                     <MonetaryInput
-                      {...field}
+                      // {...field}
                       label="Preço venda"
                       onBlur={handlePrecoVendaBlur}
+                      value={field.value}
+                      onValueChange={(v) => {
+                        field.onChange(v.floatValue);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -743,9 +736,13 @@ function CadastrosProdutoNovo({ params }: any) {
                 <FormItem>
                   <FormControl>
                     <PercentInput
-                      {...field}
+                      // {...field}
                       label="Markup"
                       onBlur={handleMarkupBlur}
+                      value={field.value}
+                      onValueChange={(v) => {
+                        field.onChange(v.floatValue);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -763,8 +760,11 @@ function CadastrosProdutoNovo({ params }: any) {
                       // {...field}
                       label="Lucro"
                       value={field.value}
-                      onChange={field.onChange}
+                      // onChange={field.onChange}
                       onBlur={handleMargemLucroBlur}
+                      onValueChange={(v) => {
+                        field.onChange(v.floatValue);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -961,13 +961,7 @@ function CadastrosProdutoNovo({ params }: any) {
         <div>
           <AddItemListaPrecos
             data={tabelaPrecoLista}
-            precoCusto={Number(
-              form
-                .watch("precoCusto")
-                .toString()
-                .replace(/[R$\s]/g, "")
-                .replace(",", "."),
-            )}
+            precoCusto={form.watch("precoCusto")}
             onAdd={(item) => {
               var existe = precosAdicionaisLista.find(
                 (i) => i.tabelaPrecoId === item.tabelaPrecoId,
@@ -1096,18 +1090,10 @@ function CadastrosProdutoNovo({ params }: any) {
   const handleSave = async () => {
     try {
       const id = params.id;
-
-      const precoVendaFormatado = form
-        .watch("precoVenda")
-        .toString()
-        .replace(/[R$\s]/g, "")
-        .replace(",", ".");
-
-      const precoCustoFormatado = form
-        .watch("precoCusto")
-        .toString()
-        .replace(/[R$\s]/g, "")
-        .replace(",", ".");
+      const precoVenda = form.watch("precoVenda");
+      const precoCusto = form.watch("precoCusto");
+      const markupPerc = form.watch("markupPerc");
+      const lucroPerc = form.watch("lucroPerc");
 
       const precosAdicionais: IProdutoPrecosAdicionaisInput[] =
         precosAdicionaisLista.map((item) => ({
@@ -1127,8 +1113,10 @@ function CadastrosProdutoNovo({ params }: any) {
         idSubcategoria: Number(form.watch("subcategoria")),
         idFabricante: Number(form.watch("fabricante")),
         idUnidade: Number(form.watch("unidade")),
-        precoCusto: Number(precoCustoFormatado),
-        precoVenda: Number(precoVendaFormatado),
+        precoCusto: precoCusto,
+        precoVenda: precoVenda,
+        markup: markupPerc,
+        margemLucro: lucroPerc,
         podeGrade: false,
         tipoGrade: null,
         empresas: companiesSelecteds,
@@ -1181,7 +1169,12 @@ function CadastrosProdutoNovo({ params }: any) {
 
   useEffect(() => {
     if (product !== undefined) {
+      setValue("id", params.id);
+      setValue("codigo", product.codigo);
+      setValue("referencia", product.referencia);
+      setValue("codigoBarras", product.codigoBarras);
       setValue("nome", product.nome);
+      setValue("descricao", product.descricao);
       setValue("categoria", product.categoria.id + "");
       setValue("subcategoria", product.subcategoria.id + "");
       setValue("fabricante", product.fabricante.id + "");
@@ -1215,7 +1208,7 @@ function CadastrosProdutoNovo({ params }: any) {
         }
       });
     }
-  }, [product]);
+  }, [product, params]);
 
   useEffect(() => {
     setValue("empresasSelecionadas", companiesSelecteds.length);
@@ -1290,6 +1283,7 @@ function CadastrosProdutoNovo({ params }: any) {
 
             <div className="flex flex-col-reverse justify-end gap-2 pb-4 md:flex-row">
               <Button
+                type="button"
                 className="md:w-28"
                 variant={"secondary"}
                 onClick={() => {
@@ -1298,7 +1292,12 @@ function CadastrosProdutoNovo({ params }: any) {
               >
                 Voltar
               </Button>
-              <Button className="md:w-28" variant={"secondary"}>
+              <Button
+                type="button"
+                className="md:w-28"
+                variant={"secondary"}
+                onClick={resetForm}
+              >
                 Limpar
               </Button>
               <Button type="submit" className="md:w-28">

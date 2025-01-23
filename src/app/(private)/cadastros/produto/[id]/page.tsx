@@ -507,7 +507,7 @@ function CadastrosProdutoNovo({ params }: any) {
             </div>
             <Switch classNameContainer="mb-4" title="Ativo" />
           </div>
-          <div>
+          <div className="flex flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-4">
               <FormField
                 control={form.control}
@@ -1231,6 +1231,14 @@ function CadastrosProdutoNovo({ params }: any) {
 
   useEffect(() => {
     setValue("empresasSelecionadas", companiesSelecteds.length);
+
+    if (companiesSelecteds.length === 0) {
+      form.setError("empresasSelecionadas", {
+        message: "Selecione ao menos uma empresa",
+      });
+    } else {
+      form.clearErrors("empresasSelecionadas");
+    }
   }, [companiesSelecteds]);
 
   return (
@@ -1304,17 +1312,18 @@ function CadastrosProdutoNovo({ params }: any) {
               <Button
                 type="button"
                 className="md:w-28"
-                variant={"secondary"}
+                variant={"outline"}
                 onClick={() => {
                   back();
                 }}
               >
+                <ChevronLeft />
                 Voltar
               </Button>
               <Button
                 type="button"
                 className="md:w-28"
-                variant={"secondary"}
+                variant={"outline"}
                 onClick={resetForm}
               >
                 Limpar

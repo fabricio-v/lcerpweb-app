@@ -5,7 +5,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarHeader,
   SidebarMenu,
 } from "@/components/ui/sidebar";
 
@@ -110,7 +109,7 @@ const navMain = [
 export function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarHeader />
+      {/* <SidebarHeader /> */}
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
@@ -121,10 +120,6 @@ export function AppSidebar() {
         </SidebarGroup>
         <SidebarGroup />
       </SidebarContent>
-      {/* <SidebarFooter>
-        <Separator className="mb-2" />
-        <DropdownMultiempresa />
-      </SidebarFooter> */}
     </Sidebar>
   );
 }

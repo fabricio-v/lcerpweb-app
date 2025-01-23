@@ -96,7 +96,7 @@ export const ComboboxSearchNcm: React.FC<Props> = ({
       {label && (
         <Label
           htmlFor={label}
-          className="font-gothamBold text-[10px] text-lc-tertiary"
+          className="font-gothamBold text-[10px] text-foreground/70"
         >
           {label}
         </Label>

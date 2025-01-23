@@ -17,6 +17,8 @@ export default {
       colors: {
         "lc-sunsetsky": "rgb(var(--lc-sunsetsky))",
         "lc-sunsetsky-light": "rgb(var(--lc-sunsetsky-light))",
+        "lc-sunlight": "rgb(var(--lc-sunlight))",
+        "lc-sunlight-light": "rgb(var(--lc-sunlight-light))",
         "lc-primary": "rgb(var(--lc-primary))",
         "lc-secondary": "rgb(var(--lc-secondary))",
         "lc-tertiary": "rgb(var(--lc-tertiary))",
@@ -106,5 +108,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("tailwind-scrollbar")],
 } satisfies Config;

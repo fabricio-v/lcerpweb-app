@@ -32,7 +32,7 @@ const MonetaryInput = forwardRef<HTMLInputElement, MonetaryInputProps>(
       <div className="flex w-full flex-1 flex-col gap-1.5">
         <Label
           htmlFor={label}
-          className="font-gothamBold text-[10px] text-lc-tertiary"
+          className="font-gothamBold text-[10px] text-foreground/70"
         >
           {label}
         </Label>

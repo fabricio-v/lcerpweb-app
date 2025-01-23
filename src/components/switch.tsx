@@ -12,7 +12,7 @@ export function Switch({ title, classNameContainer, ...rest }: Props) {
   return (
     <div className={cn("flex items-center space-x-2", classNameContainer)}>
       <SwitchPrimitive {...rest} />
-      <Label className="text-sm">{title}</Label>
+      <Label className="text-xs">{title}</Label>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, LogOut, Palette, Settings } from "lucide-react";
+import { ChevronDown, LogOut, Moon, Settings, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
@@ -145,8 +145,8 @@ export const Header = () => {
                     setTheme(theme === "dark" ? "light" : "dark");
                   }}
                 >
-                  <Palette />
-                  Alterar tema {theme === "light" ? "claro" : "escuro"}
+                  {theme === "light" ? <Sun /> : <Moon />}
+                  Alterar tema
                 </DropdownMenuItem>
 
                 <DropdownMenuItem onClick={() => {}}>

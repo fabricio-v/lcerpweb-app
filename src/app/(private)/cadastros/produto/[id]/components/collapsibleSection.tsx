@@ -3,7 +3,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronUp } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 interface Props {
   title: string;
@@ -25,17 +25,15 @@ function CollapsibleSection({
       <CollapsibleTrigger asChild>
         <div className="mb-2 flex cursor-pointer items-center justify-between gap-2 rounded-md bg-lc-gray px-4 py-2">
           <div>
-            <span className="font-gothamBold text-sm text-lc-tertiary">
-              {title}
-            </span>
+            <span className="font-gothamBold text-sm">{title}</span>
             {isOpcional && (
               <span className="text-lc-tertiar pl-2 text-xs">(Opcional)</span>
             )}
           </div>
-          <ChevronUp
+          <ChevronDown
             size={20}
             className={`transition-transform duration-300 ${
-              isShow ? "" : "rotate-180"
+              isShow ? "" : "-rotate-90"
             }`}
           />
         </div>

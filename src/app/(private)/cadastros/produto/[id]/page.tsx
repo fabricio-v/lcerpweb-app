@@ -961,6 +961,13 @@ function CadastrosProdutoNovo({ params }: any) {
         <div>
           <AddItemListaPrecos
             data={tabelaPrecoLista}
+            precoCusto={Number(
+              form
+                .watch("precoCusto")
+                .toString()
+                .replace(/[R$\s]/g, "")
+                .replace(",", "."),
+            )}
             onAdd={(item) => {
               var existe = precosAdicionaisLista.find(
                 (i) => i.tabelaPrecoId === item.tabelaPrecoId,
@@ -1088,6 +1095,8 @@ function CadastrosProdutoNovo({ params }: any) {
 
   const handleSave = async () => {
     try {
+      const id = params.id;
+
       const precoVendaFormatado = form
         .watch("precoVenda")
         .toString()
@@ -1107,7 +1116,7 @@ function CadastrosProdutoNovo({ params }: any) {
         }));
 
       const newProduto: IProdutoInput = {
-        id: params.id,
+        id: id,
         codigo: form.watch("codigo") || "",
         referencia: form.watch("referencia") || "",
         codigoBarras: form.watch("codigoBarras") || "",
@@ -1136,11 +1145,23 @@ function CadastrosProdutoNovo({ params }: any) {
       };
 
       const token = await getCookieClient(CookiesKeys.TOKEN);
-      const response = await requestInsertOrUpdateProduto(newProduto, token!);
+      const idEmpresa = await getCookieClient(CookiesKeys.COMPANY_SELECTED_ID);
+
+      const response = await requestInsertOrUpdateProduto(
+        newProduto,
+        token!,
+        idEmpresa!,
+      );
 
       if (response.status === 200) {
-        toast.success("Produto salvo com sucesso");
-        resetForm();
+        toast.success(
+          `Produto ${id === null ? "cadastrado" : "atualizado"} com sucesso`,
+        );
+        if (id !== null) {
+          back();
+        } else {
+          resetForm();
+        }
       }
     } catch (error: any) {
       if (error?.response?.status < 500) {
@@ -1171,6 +1192,10 @@ function CadastrosProdutoNovo({ params }: any) {
       setValue("ncm", product.tributacao.ncm.id + "");
       setValue("cest", product.tributacao.cest.id + "");
 
+      setCfopSelected(product.tributacao.cfop);
+      setNcmSelected(product.tributacao.ncm);
+      setCestSelected(product.tributacao.cest);
+
       setCompaniesSelecteds(product.empresas);
 
       setPrecosAdicionaisLista([]);
@@ -1197,7 +1222,7 @@ function CadastrosProdutoNovo({ params }: any) {
   }, [companiesSelecteds]);
 
   return (
-    <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden p-4">
+    <main className="mt-4 flex h-[calc(100vh-56px)] flex-1 flex-col overflow-auto overflow-x-hidden px-4">
       <div className="flex items-center gap-3">
         <SidebarTrigger />
 
@@ -1219,7 +1244,7 @@ function CadastrosProdutoNovo({ params }: any) {
       </div>
 
       <Separator className="my-3" />
-      <div className="flex flex-1 flex-col overflow-clip md:overflow-auto">
+      <div className="flex flex-1 flex-col overflow-clip md:overflow-scroll">
         <Form {...form}>
           <form
             onKeyDown={(event: React.KeyboardEvent<HTMLFormElement>) => {

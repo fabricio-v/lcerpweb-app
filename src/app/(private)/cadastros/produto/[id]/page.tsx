@@ -489,288 +489,307 @@ function CadastrosProdutoNovo({ params }: any) {
         title="Geral"
         changeShow={setIsShowSectionGeral}
       >
-        <div>
-          <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-4">
-            <FormField
-              control={form.control}
-              name="id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <InputWithLabel
-                      label="Código interno"
-                      info="Codigo gerado automaticamente pelo sistema. Não pode ser alterado."
-                      disabled
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="codigoBarras"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <InputWithLabel label="Código barras" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="referencia"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <InputWithLabel label="Referência" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="codigo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <InputWithLabel label="Código" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <div className="flex flex-1 flex-col gap-8 md:flex-row">
+          <div className="flex flex-col items-center justify-center gap-4 pt-8">
+            <div className="flex h-[150px] w-[150px] cursor-pointer items-center justify-center rounded-md border opacity-50 hover:border-lc-sunsetsky-light hover:opacity-60">
+              {/* <Image
+                src="/pipa.webp"
+                alt=""
+                width={100}
+                height={100}
+                className="block opacity-15"
+              /> */}
+              <p className="text-center text-xs opacity-50">
+                Produto
+                <br />
+                sem imagem
+              </p>
+            </div>
+            <Switch classNameContainer="mb-4" title="Ativo" />
           </div>
+          <div>
+            <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-4">
+              <FormField
+                control={form.control}
+                name="id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <InputWithLabel
+                        label="Código interno"
+                        info="Codigo gerado automaticamente pelo sistema. Não pode ser alterado."
+                        disabled
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-2 md:items-start">
-            <FormField
-              control={form.control}
-              name="nome"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <InputWithLabel label="Nome" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="codigoBarras"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <InputWithLabel label="Código barras" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="descricao"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <InputWithLabel label="Descrição" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+              <FormField
+                control={form.control}
+                name="referencia"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <InputWithLabel label="Referência" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-5">
-            <FormField
-              control={form.control}
-              name="categoria"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Combobox
-                      label="Categoria"
-                      data={categoriesList.map((item) => {
-                        return { label: item.nome, value: item.id + "" };
-                      })}
-                      valueSelected={field.value}
-                      onChangeValueSelected={field.onChange}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="codigo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <InputWithLabel label="Código" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-            <FormField
-              control={form.control}
-              name="subcategoria"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Combobox
-                      label="Subcategoria"
-                      data={subcategoriesList.map((item) => {
-                        return { label: item.nome, value: item.id + "" };
-                      })}
-                      valueSelected={field.value}
-                      onChangeValueSelected={field.onChange}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-2 md:items-start">
+              <FormField
+                control={form.control}
+                name="nome"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <InputWithLabel label="Nome" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="fabricante"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Combobox
-                      label="Fabricante"
-                      data={manufacturesList.map((item) => {
-                        return { label: item.nome, value: item.id + "" };
-                      })}
-                      valueSelected={field.value}
-                      onChangeValueSelected={field.onChange}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="descricao"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <InputWithLabel label="Descrição" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-            <FormField
-              control={form.control}
-              name="unidade"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Combobox
-                      label="Unidade"
-                      data={unitsList.map((item) => {
-                        return {
-                          label: item.descricao + " - " + item.nome,
-                          value: item.id + "",
-                        };
-                      })}
-                      valueSelected={field.value}
-                      onChangeValueSelected={field.onChange}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-5">
+              <FormField
+                control={form.control}
+                name="categoria"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Combobox
+                        label="Categoria"
+                        data={categoriesList.map((item) => {
+                          return { label: item.nome, value: item.id + "" };
+                        })}
+                        valueSelected={field.value}
+                        onChangeValueSelected={field.onChange}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Combobox
-              label="Grade"
-              data={[
-                { label: "SIM", value: "SIM" },
-                { label: "NÃO", value: "NAO" },
-              ]}
-              valueSelected={grade}
-              onChangeValueSelected={setGrade}
-              disableFilter
-              disabled
-            />
-          </div>
+              <FormField
+                control={form.control}
+                name="subcategoria"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Combobox
+                        label="Subcategoria"
+                        data={subcategoriesList.map((item) => {
+                          return { label: item.nome, value: item.id + "" };
+                        })}
+                        valueSelected={field.value}
+                        onChangeValueSelected={field.onChange}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-5">
-            <AmountInput
-              label="Estoque"
-              value={estoque}
-              onValueChange={(v) => {
-                setEstoque(v.floatValue);
-              }}
-            />
+              <FormField
+                control={form.control}
+                name="fabricante"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Combobox
+                        label="Fabricante"
+                        data={manufacturesList.map((item) => {
+                          return { label: item.nome, value: item.id + "" };
+                        })}
+                        valueSelected={field.value}
+                        onChangeValueSelected={field.onChange}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="precoCusto"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <MonetaryInput
-                      // {...field}
-                      label="Custo"
-                      onBlur={handleCustoBlur}
-                      value={field.value}
-                      onValueChange={(v) => {
-                        field.onChange(v.floatValue);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="unidade"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Combobox
+                        label="Unidade"
+                        data={unitsList.map((item) => {
+                          return {
+                            label: item.descricao + " - " + item.nome,
+                            value: item.id + "",
+                          };
+                        })}
+                        valueSelected={field.value}
+                        onChangeValueSelected={field.onChange}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="precoVenda"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <MonetaryInput
-                      // {...field}
-                      label="Preço venda"
-                      onBlur={handlePrecoVendaBlur}
-                      value={field.value}
-                      onValueChange={(v) => {
-                        field.onChange(v.floatValue);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <Combobox
+                label="Grade"
+                data={[
+                  { label: "SIM", value: "SIM" },
+                  { label: "NÃO", value: "NAO" },
+                ]}
+                valueSelected={grade}
+                onChangeValueSelected={setGrade}
+                disableFilter
+                disabled
+              />
+            </div>
 
-            <FormField
-              control={form.control}
-              name="markupPerc"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <PercentInput
-                      // {...field}
-                      label="Markup"
-                      onBlur={handleMarkupBlur}
-                      value={field.value}
-                      onValueChange={(v) => {
-                        field.onChange(v.floatValue);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-5">
+              <AmountInput
+                label="Estoque"
+                value={estoque}
+                onValueChange={(v) => {
+                  setEstoque(v.floatValue);
+                }}
+              />
 
-            <FormField
-              control={form.control}
-              name="lucroPerc"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <PercentInput
-                      // {...field}
-                      label="Lucro"
-                      value={field.value}
-                      // onChange={field.onChange}
-                      onBlur={handleMargemLucroBlur}
-                      onValueChange={(v) => {
-                        field.onChange(v.floatValue);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="precoCusto"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <MonetaryInput
+                        // {...field}
+                        label="Custo"
+                        onBlur={handleCustoBlur}
+                        value={field.value}
+                        onValueChange={(v) => {
+                          field.onChange(v.floatValue);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="precoVenda"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <MonetaryInput
+                        // {...field}
+                        label="Preço venda"
+                        onBlur={handlePrecoVendaBlur}
+                        value={field.value}
+                        onValueChange={(v) => {
+                          field.onChange(v.floatValue);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="markupPerc"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <PercentInput
+                        // {...field}
+                        label="Markup"
+                        onBlur={handleMarkupBlur}
+                        value={field.value}
+                        onValueChange={(v) => {
+                          field.onChange(v.floatValue);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="lucroPerc"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <PercentInput
+                        // {...field}
+                        label="Lucro"
+                        value={field.value}
+                        // onChange={field.onChange}
+                        onBlur={handleMargemLucroBlur}
+                        onValueChange={(v) => {
+                          field.onChange(v.floatValue);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
         </div>
       </CollapsibleSection>

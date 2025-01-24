@@ -335,7 +335,7 @@ function Filter({
                   Status
                 </Label>
                 <ToggleGroup
-                  className="w-min rounded-md border"
+                  className="w-min select-none rounded-md border"
                   type="single"
                   defaultValue="todos"
                   onValueChange={(value) => {
@@ -348,9 +348,15 @@ function Filter({
                     }
                   }}
                 >
-                  <ToggleGroupItem value="todos">Todos</ToggleGroupItem>
-                  <ToggleGroupItem value="ativos">Ativos</ToggleGroupItem>
-                  <ToggleGroupItem value="inativos">Inativos</ToggleGroupItem>
+                  <ToggleGroupItem value="todos" disabled={status === null}>
+                    Todos
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="ativos" disabled={status === true}>
+                    Ativos
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="inativos" disabled={status === false}>
+                    Inativos
+                  </ToggleGroupItem>
                 </ToggleGroup>
               </div>
             </div>

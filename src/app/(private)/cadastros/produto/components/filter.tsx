@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ListFilterIcon } from "lucide-react";
+import { ListFilterIcon, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 function Filter({
@@ -168,7 +168,10 @@ function Filter({
           <Separator className="my-4" />
 
           <div className="flex justify-end">
-            <Button>Pesquisar</Button>
+            <Button>
+              <Search />
+              Pesquisar
+            </Button>
           </div>
         </PopoverContent>
       </Popover>

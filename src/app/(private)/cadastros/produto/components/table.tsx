@@ -73,7 +73,7 @@ export function TableProdutos({ data, isLoading, onEdit, onDelete }: Props) {
                 <ContextMenuTrigger asChild>
                   <TableRow
                     key={key}
-                    className="odd:bg-gray-100 dark:odd:bg-gray-800"
+                    className="odd:bg-zinc-100 dark:odd:bg-zinc-800"
                     onDoubleClick={() => {
                       onEdit(product.id);
                     }}

@@ -1252,7 +1252,7 @@ function CadastrosProdutoNovo({ params }: any) {
   }, [companiesSelecteds]);
 
   return (
-    <main className="flex h-[calc(100vh-70px)] flex-1 flex-col overflow-auto overflow-x-hidden bg-lc-gray-light px-8 py-4">
+    <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden bg-lc-gray-light px-8 py-4">
       <div className="flex items-center gap-3">
         <SidebarTrigger />
 

@@ -11,13 +11,18 @@ export default function Banner() {
 
   return (
     <div className="relative flex w-full flex-col items-center">
-      <Carousel className="flex flex-1 gap-4">
+      <Carousel
+        className={cn(
+          "grid w-full gap-4",
+          isMobile ? "grid-cols-1" : "grid-cols-4",
+        )}
+      >
         {items.map((item, index) => (
           <div
             key={index}
             className={cn(
               "flex aspect-video flex-1 items-center justify-center rounded-md bg-lc-gray-light shadow-sm",
-              "md:w-1/4", // Em telas médias e maiores, cada item ocupa 1/4 do carrossel
+              // Em telas médias e maiores, cada item ocupa 1/4 do carrossel
             )}
           >
             <p className="text-center opacity-30">

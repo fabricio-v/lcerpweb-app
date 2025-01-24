@@ -85,7 +85,7 @@ export const Header = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 flex h-[50px] bg-lc-tertiary">
+    <header className="sticky top-0 z-50 flex h-[50px] bg-lc-tertiary dark:bg-lc-gray">
       <div className="flex h-full w-full items-center justify-between px-5">
         <Link href="/home">
           <Image

@@ -42,8 +42,8 @@ export function NavMain({
             className="group/collapsible"
           >
             {!item.items ? (
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+              <SidebarMenuItem className="hover:text-lc-sunlight">
+                <SidebarMenuButton asChild className="hover:text-lc-sunlight">
                   <a href={item.url}>
                     {item.icon && item.icon}
                     <span className="font-gothamBold text-base">
@@ -67,7 +67,10 @@ export function NavMain({
                   <SidebarMenuSub>
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton asChild>
+                        <SidebarMenuSubButton
+                          asChild
+                          className="hover:text-lc-sunlight"
+                        >
                           <a href={subItem.url}>
                             <span className="text-sm">{subItem.title}</span>
                           </a>

@@ -31,11 +31,14 @@ export default function Home() {
         <p className="pb-1 pt-5 font-gothamBold">Acesso rápido</p>
         <Link
           href={"/cadastros/produto/null"}
-          className="text-sm hover:text-lc-sunsetsky-light"
+          className="w-[130px] text-sm hover:text-lc-sunsetsky-light"
         >
           Novo produto
         </Link>
-        <Link href={""} className="text-sm hover:text-lc-sunsetsky-light">
+        <Link
+          href={""}
+          className="w-[130px] text-sm hover:text-lc-sunsetsky-light"
+        >
           Novo cliente
         </Link>
       </div>

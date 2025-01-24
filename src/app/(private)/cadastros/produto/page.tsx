@@ -18,6 +18,7 @@ import { IProdutoResumeResponse } from "@/interfaces/response/ProdutoResumeRespo
 import { getCookieClient } from "@/lib/cookieClient";
 import { cn } from "@/lib/utils";
 import api from "@/services/axios";
+import { requestProdutoByFilters } from "@/services/requests/produto";
 import { buildMessageException } from "@/utils/Funcoes";
 import { ChevronLeft, CirclePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -75,9 +76,63 @@ function CadastrosProduto() {
     }
   };
 
-  // useEffect(() => {
-  //   searchProduto("");
-  // }, []);
+  const pesquisaAvancadaProduto = async (
+    ativo: boolean | null,
+    nome: string | null,
+    descricao: string | null,
+    codigoInterno: string | null,
+    codigoBarras: string | null,
+    codigo: string | null,
+    referencia: string | null,
+    idCategoria: number | null,
+    idSubcategoria: number | null,
+    idFabricante: number | null,
+    idUnidade: number | null,
+  ) => {
+    try {
+      setIsLoadingSearch(true);
+      setProdutoList([]);
+
+      const token = await getCookieClient(CookiesKeys.TOKEN);
+
+      const companySelected = await getCookieClient(
+        CookiesKeys.COMPANY_SELECTED_ID,
+      );
+
+      const response = await requestProdutoByFilters(
+        token!,
+        ativo,
+        nome,
+        descricao,
+        codigoInterno,
+        codigoBarras,
+        codigo,
+        referencia,
+        idCategoria,
+        idSubcategoria,
+        idFabricante,
+        idUnidade,
+        Number(companySelected),
+      );
+
+      if (response.status === 200) {
+        setProdutoList(response.data);
+      }
+
+      setIsLoadingSearch(false);
+    } catch (error: any) {
+      setIsLoadingSearch(false);
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
+    }
+  };
 
   return (
     <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden p-4">
@@ -111,7 +166,10 @@ function CadastrosProduto() {
 
       {/* PESQUISA / NOVO */}
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <Filter onSearch={searchProduto} changeIsLoading={setIsLoadingSearch} />
+        <Filter
+          onSearch={searchProduto}
+          onAdvancedSearch={pesquisaAvancadaProduto}
+        />
 
         <div className="flex flex-1 justify-end">
           <Button

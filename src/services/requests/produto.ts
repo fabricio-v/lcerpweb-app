@@ -1,5 +1,6 @@
 import { IProdutoInput } from "@/interfaces/dto/ProdutoInput";
 import { IProdutoResponse } from "@/interfaces/response/ProdutoResponse";
+import { IProdutoResumeResponse } from "@/interfaces/response/ProdutoResumeResponse";
 import { IProdutoRefResponse } from "@/interfaces/response/ref/ProdutoRefResponse";
 import api from "../axios";
 
@@ -16,6 +17,42 @@ export const requestProdutoById = async (
       },
     },
   );
+};
+
+export const requestProdutoByFilters = async (
+  token: string,
+  ativo: boolean | null,
+  nome: string | null,
+  descricao: string | null,
+  codigoInterno: string | null,
+  codigoBarras: string | null,
+  codigo: string | null,
+  referencia: string | null,
+  idCategoria: number | null,
+  idSubcategoria: number | null,
+  idFabricante: number | null,
+  idUnidade: number | null,
+  idEmpresa: number,
+) => {
+  return api.get<IProdutoResumeResponse[]>(`/produtos`, {
+    params: {
+      ativo,
+      nome,
+      descricao,
+      id: codigoInterno,
+      codigoBarras,
+      codigo,
+      referencia,
+      idCategoria,
+      idSubcategoria,
+      idFabricante,
+      idUnidade,
+      idEmpresa,
+    },
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
 };
 
 export const requestInsertOrUpdateProduto = async (

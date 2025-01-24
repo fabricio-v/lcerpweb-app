@@ -85,9 +85,9 @@ export const Header = () => {
   }, []);
 
   return (
-    <header className="z-49 sticky top-0 flex h-[50px] bg-lc-header-background">
+    <header className="sticky top-0 z-50 flex h-[50px] bg-lc-header-background">
       <div className="flex h-full w-full items-center justify-between px-5">
-        <Link href="/">
+        <Link href="/home">
           <Image
             src={
               theme === "dark" ? "/logo-lc-white.webp" : "/logo-lc-black.webp"

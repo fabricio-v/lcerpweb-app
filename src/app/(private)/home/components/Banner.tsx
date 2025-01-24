@@ -10,7 +10,7 @@ export default function Banner() {
   ); // Mock de itens para o carrossel
 
   return (
-    <div className="relative w-full">
+    <div className="relative flex w-full flex-col items-center">
       <Carousel className="flex flex-1 gap-4">
         {items.map((item, index) => (
           <div
@@ -26,6 +26,11 @@ export default function Banner() {
           </div>
         ))}
       </Carousel>
+      <div className="flex items-center justify-center gap-2 pt-3">
+        <div className="h-[11px] w-[11px] rounded-full bg-lc-secondary" />
+        <div className="h-[9px] w-[9px] rounded-full bg-lc-secondary opacity-60" />
+        <div className="h-[9px] w-[9px] rounded-full bg-lc-secondary opacity-60" />
+      </div>
     </div>
   );
 }

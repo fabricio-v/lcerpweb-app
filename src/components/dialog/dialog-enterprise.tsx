@@ -119,14 +119,20 @@ export function DialogEnterprise({ onChangeCompany }: Props) {
                       });
                     }}
                   >
-                    <div>
-                      <p className="font-gothamBold text-lg">{item.nome}</p>
-                      <p className="text-sm">{maskCpfCnpj(item.cnpj)}</p>
-                    </div>
-                    <div>
-                      {item.id === companieSelected?.id && (
-                        <Check className="text-lc-sunsetsky-light" />
-                      )}
+                    <div className="flex flex-1 items-center gap-4">
+                      <Building2 size={16} />
+
+                      <div className="flex flex-1">
+                        <div className="flex flex-1 flex-col">
+                          <p className="font-gothamBold text-lg">{item.nome}</p>
+                          <p className="text-sm">{maskCpfCnpj(item.cnpj)}</p>
+                        </div>
+                        <div>
+                          {item.id === companieSelected?.id && (
+                            <Check className="text-lc-sunsetsky-light" />
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </button>
                 </div>

@@ -135,7 +135,7 @@ function CadastrosProduto() {
   };
 
   return (
-    <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden p-4">
+    <main className="flex h-[calc(100vh-70px)] flex-1 flex-col overflow-auto overflow-x-hidden bg-lc-gray-light p-4">
       <div className="flex items-center gap-3">
         <SidebarTrigger />
 
@@ -153,57 +153,59 @@ function CadastrosProduto() {
       </div>
 
       {/* TITLE */}
-      <div className="flex gap-1.5 py-3">
-        <button
-          onClick={() => {
-            back();
-          }}
-        >
-          <ChevronLeft size={25} />
-        </button>
-        <h1>Listagem de produtos</h1>
-      </div>
-
-      {/* PESQUISA / NOVO */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <Filter
-          onSearch={searchProduto}
-          onAdvancedSearch={pesquisaAvancadaProduto}
-        />
-
-        <div className="flex flex-1 justify-end">
-          <Button
-            className={cn(
-              "bg-lc-sunsetsky-light hover:bg-lc-sunsetsky",
-              isMobile && "w-full",
-            )}
+      <div className="mt-3 flex flex-col rounded-lg bg-white p-4 dark:bg-lc-tertiary">
+        <div className="flex gap-1.5 pb-3">
+          <button
             onClick={() => {
-              push("produto/" + null);
+              back();
             }}
           >
-            <CirclePlus />
-            Novo produto
-          </Button>
+            <ChevronLeft size={25} />
+          </button>
+          <h1>Listagem de produtos</h1>
         </div>
+
+        {/* PESQUISA / NOVO */}
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <Filter
+            onSearch={searchProduto}
+            onAdvancedSearch={pesquisaAvancadaProduto}
+          />
+
+          <div className="flex flex-1 justify-end">
+            <Button
+              className={cn(
+                "bg-lc-sunsetsky-light hover:bg-lc-sunsetsky",
+                isMobile && "w-full",
+              )}
+              onClick={() => {
+                push("produto/" + null);
+              }}
+            >
+              <CirclePlus />
+              Novo produto
+            </Button>
+          </div>
+        </div>
+
+        <Separator className="my-3" />
+
+        <TableProdutosPagination />
+        <TableProdutos
+          isLoading={isLoadingSearch}
+          data={produtoList}
+          onEdit={(id) => {
+            push("produto/" + id);
+          }}
+          onDelete={(id) => {
+            alert(id);
+          }}
+        />
+
+        <span className="px-5 py-3 text-sm">
+          Registros: {!produtoList ? 0 : produtoList.length}
+        </span>
       </div>
-
-      <Separator className="my-3" />
-
-      <TableProdutosPagination />
-      <TableProdutos
-        isLoading={isLoadingSearch}
-        data={produtoList}
-        onEdit={(id) => {
-          push("produto/" + id);
-        }}
-        onDelete={(id) => {
-          alert(id);
-        }}
-      />
-
-      <span className="px-5 py-3 text-sm">
-        Registros: {!produtoList ? 0 : produtoList.length}
-      </span>
     </main>
   );
 }

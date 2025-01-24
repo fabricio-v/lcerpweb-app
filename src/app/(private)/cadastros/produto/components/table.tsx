@@ -41,7 +41,7 @@ interface Props {
 
 export function TableProdutos({ data, isLoading, onEdit, onDelete }: Props) {
   return (
-    <div className="flex max-w-full overflow-auto rounded-md border px-2">
+    <div className="flex max-w-full overflow-auto rounded-md border px-2 pb-3">
       <Table>
         {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
         <TableHeader>
@@ -73,7 +73,7 @@ export function TableProdutos({ data, isLoading, onEdit, onDelete }: Props) {
                 <ContextMenuTrigger asChild>
                   <TableRow
                     key={key}
-                    className="odd:bg-zinc-100 dark:odd:bg-zinc-800"
+                    className="odd:bg-zinc-100 dark:odd:bg-zinc-700"
                     onDoubleClick={() => {
                       onEdit(product.id);
                     }}

@@ -20,7 +20,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden p-4">
+    <main className="flex h-[calc(100vh-70px)] flex-1 flex-col overflow-auto overflow-x-hidden p-4">
       <SidebarTrigger>
         <MenuIcon />
       </SidebarTrigger>

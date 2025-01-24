@@ -92,12 +92,15 @@ export const formProdutoSchema = z.object({
   unidade: z.string().min(1, {
     message: "Selecione uma Unidade",
   }),
-  precoCusto: z.number(),
-  precoVenda: z.number().min(0.01, {
-    message: "Informe o preço de venda.",
-  }),
-  markupPerc: z.number(),
-  lucroPerc: z.number(),
+  precoCusto: z.number().optional(),
+  precoVenda: z
+    .number({
+      required_error: "Informe o preço de venda.", // Mensagem quando for undefined
+      invalid_type_error: "Informe o preço de venda.", // Mensagem quando o tipo for inválido
+    })
+    .min(0.01, { message: "Informe o preço de venda." }),
+  markupPerc: z.number().optional(),
+  lucroPerc: z.number().optional(),
   cst: z.string().min(1, {
     message: "Selecione um CST",
   }),
@@ -462,7 +465,7 @@ function CadastrosProdutoNovo({ params }: any) {
       const newMarkup = (newPrecoVenda / precoCusto - 1) * 100;
       setValue("markupPerc", newMarkup);
     } else if (lucroPerc === 0) {
-      setValue("precoVenda", precoCusto);
+      setValue("precoVenda", precoCusto || 0);
       setValue("markupPerc", 0.0);
     }
   };
@@ -478,7 +481,7 @@ function CadastrosProdutoNovo({ params }: any) {
       const newMargem = (markupPerc / newPrecoVenda) * 100;
       setValue("lucroPerc", newMargem);
     } else if (markupPerc === 0) {
-      setValue("precoVenda", precoCusto);
+      setValue("precoVenda", precoCusto || 0);
       setValue("lucroPerc", 0.0);
     }
   };
@@ -990,7 +993,7 @@ function CadastrosProdutoNovo({ params }: any) {
         <div>
           <AddItemListaPrecos
             data={tabelaPrecoLista}
-            precoCusto={form.watch("precoCusto")}
+            precoCusto={form.watch("precoCusto") || 0}
             onAdd={(item) => {
               var existe = precosAdicionaisLista.find(
                 (i) => i.tabelaPrecoId === item.tabelaPrecoId,
@@ -1136,10 +1139,10 @@ function CadastrosProdutoNovo({ params }: any) {
         idSubcategoria: Number(data.subcategoria),
         idFabricante: Number(data.fabricante),
         idUnidade: Number(data.unidade),
-        precoCusto: data.precoCusto,
+        precoCusto: data.precoCusto || 0,
         precoVenda: data.precoVenda,
-        markup: data.markupPerc,
-        margemLucro: data.lucroPerc,
+        markup: data.markupPerc || 0,
+        margemLucro: data.lucroPerc || 0,
         podeGrade: false,
         tipoGrade: null,
         empresas: companiesSelecteds,

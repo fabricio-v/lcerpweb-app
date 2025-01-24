@@ -85,12 +85,13 @@ export const Header = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 flex h-[70px] bg-lc-header-background">
+    <header className="sticky top-0 z-50 flex h-[70px] bg-lc-tertiary">
       <div className="flex h-full w-full items-center justify-between px-5">
         <Link href="/home">
           <Image
             src={
-              theme === "dark" ? "/logo-lc-white.webp" : "/logo-lc-black.webp"
+              // theme === "dark" ? "/logo-lc-white.webp" : "/logo-lc-black.webp"
+              "/logo-lc-white.webp"
             }
             width={170}
             height={40}
@@ -106,7 +107,7 @@ export const Header = () => {
                   <AvatarImage src={user?.avatar || ""} />
                   <AvatarFallback>{fallbackAvatar}</AvatarFallback>
                 </Avatar>
-                <ChevronDown size={16} />
+                <ChevronDown size={16} className="text-lc-primary" />
               </div>
             </button>
           </DropdownMenuTrigger>

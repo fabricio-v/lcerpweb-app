@@ -15,6 +15,8 @@ function Breadcrumbs() {
           <BreadcrumbLink href="/home">Inicio</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
+        <BreadcrumbItem>Cadastros</BreadcrumbItem>
+        <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbLink href="/cadastros/produto">Produto</BreadcrumbLink>
         </BreadcrumbItem>

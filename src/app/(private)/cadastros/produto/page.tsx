@@ -145,6 +145,8 @@ function CadastrosProduto() {
               <BreadcrumbLink href="/home">Inicio</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
+            <BreadcrumbItem>Cadastros</BreadcrumbItem>
+            <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage>Produtos</BreadcrumbPage>
             </BreadcrumbItem>

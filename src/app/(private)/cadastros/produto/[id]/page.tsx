@@ -1077,7 +1077,7 @@ function CadastrosProdutoNovo({ params }: any) {
             </div>
             <p>
               {formState.errors.empresasSelecionadas && (
-                <p className="pt-4 text-[11px] font-medium text-destructive">
+                <p className="pt-4 text-[11px] font-medium text-destructive dark:text-red-300">
                   {formState.errors.empresasSelecionadas.message}
                 </p>
               )}
@@ -1249,98 +1249,100 @@ function CadastrosProdutoNovo({ params }: any) {
   }, [companiesSelecteds]);
 
   return (
-    <main className="mt-4 flex h-[calc(100vh-56px)] flex-1 flex-col overflow-auto overflow-x-hidden px-4">
+    <main className="flex h-[calc(100vh-70px)] flex-1 flex-col overflow-auto overflow-x-hidden bg-lc-gray-light p-4">
       <div className="flex items-center gap-3">
         <SidebarTrigger />
 
         <Breadcrumbs />
       </div>
 
-      {/* TITLE */}
-      <div className="flex gap-1.5 py-3">
-        <button
-          onClick={() => {
-            back();
-          }}
-        >
-          <ChevronLeft size={25} />
-        </button>
-        <h1>
-          {params.id === String(null) ? "Novo produto" : "Editar produto"}
-        </h1>
-      </div>
-
-      <Separator className="my-3" />
-      <div className="flex flex-1 flex-col overflow-clip md:overflow-scroll">
-        <Form {...form}>
-          <form
-            onKeyDown={(event: React.KeyboardEvent<HTMLFormElement>) => {
-              if (event.key === "Enter") {
-                event.preventDefault(); // Previne o envio do formulário
-              }
+      <div className="mt-3 flex flex-col rounded-lg bg-white p-4 dark:bg-lc-tertiary">
+        {/* TITLE */}
+        <div className="flex gap-1.5 pb-3">
+          <button
+            onClick={() => {
+              back();
             }}
-            className="flex flex-1 flex-col overflow-clip"
-            onSubmit={form.handleSubmit(handleSave, (errors) => {
-              console.log(errors);
-              toast.warning("Preencha todos os campos obrigatórios");
-
-              if (
-                errors.cst ||
-                errors.origem ||
-                errors.cfop ||
-                errors.ncm ||
-                errors.cest
-              ) {
-                setIsShowSectionTributacao(true);
-              }
-
-              if (errors.empresasSelecionadas) {
-                setIsShowSectionEmpresas(true);
-              }
-            })}
           >
-            {renderGeral}
+            <ChevronLeft size={25} />
+          </button>
+          <h1>
+            {params.id === String(null) ? "Novo produto" : "Editar produto"}
+          </h1>
+        </div>
 
-            {grade === "SIM" && renderGrade}
+        <Separator className="my-3" />
+        <div className="flex flex-1 flex-col overflow-clip md:overflow-scroll">
+          <Form {...form}>
+            <form
+              onKeyDown={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                if (event.key === "Enter") {
+                  event.preventDefault(); // Previne o envio do formulário
+                }
+              }}
+              className="flex flex-1 flex-col overflow-clip"
+              onSubmit={form.handleSubmit(handleSave, (errors) => {
+                console.log(errors);
+                toast.warning("Preencha todos os campos obrigatórios");
 
-            {renderTributacao}
+                if (
+                  errors.cst ||
+                  errors.origem ||
+                  errors.cfop ||
+                  errors.ncm ||
+                  errors.cest
+                ) {
+                  setIsShowSectionTributacao(true);
+                }
 
-            {renderPrecos}
+                if (errors.empresasSelecionadas) {
+                  setIsShowSectionEmpresas(true);
+                }
+              })}
+            >
+              {renderGeral}
 
-            {renderAdicionais}
+              {grade === "SIM" && renderGrade}
 
-            {renderEmpresas}
+              {renderTributacao}
 
-            {renderImagens}
+              {renderPrecos}
 
-            <Separator className="my-4" />
+              {renderAdicionais}
 
-            <div className="flex flex-col-reverse justify-end gap-2 pb-4 md:flex-row">
-              <Button
-                type="button"
-                className="md:w-28"
-                variant={"outline"}
-                onClick={() => {
-                  back();
-                }}
-              >
-                <ChevronLeft />
-                Voltar
-              </Button>
-              <Button
-                type="button"
-                className="md:w-28"
-                variant={"outline"}
-                onClick={resetForm}
-              >
-                Limpar
-              </Button>
-              <Button type="submit" className="md:w-28">
-                Salvar
-              </Button>
-            </div>
-          </form>
-        </Form>
+              {renderEmpresas}
+
+              {renderImagens}
+
+              <Separator className="my-4" />
+
+              <div className="flex flex-col-reverse justify-end gap-2 pt-2 md:flex-row">
+                <Button
+                  type="button"
+                  className="md:w-28"
+                  variant={"outline"}
+                  onClick={() => {
+                    back();
+                  }}
+                >
+                  <ChevronLeft />
+                  Voltar
+                </Button>
+                <Button
+                  type="button"
+                  className="md:w-28"
+                  variant={"outline"}
+                  onClick={resetForm}
+                >
+                  Limpar
+                </Button>
+                <Button type="submit" className="md:w-28">
+                  Salvar
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
       </div>
     </main>
   );

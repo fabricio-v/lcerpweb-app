@@ -273,30 +273,6 @@ function Filter({
 
           <form action={handleAvancedSearch} className="my-4 gap-2">
             <div className="flex flex-col gap-3">
-              <div className="flex flex-col gap-1.5">
-                <Label className="peer-focus:text-lc-sunsetsky-ligh flex items-center gap-1 font-gothamBold text-[10px] text-foreground/70">
-                  Status
-                </Label>
-                <ToggleGroup
-                  className="w-min rounded-md border"
-                  type="single"
-                  defaultValue="todos"
-                  onValueChange={(value) => {
-                    if (value === "todos") {
-                      setStatus(null);
-                    } else if (value === "ativos") {
-                      setStatus(true);
-                    } else {
-                      setStatus(false);
-                    }
-                  }}
-                >
-                  <ToggleGroupItem value="todos">Todos</ToggleGroupItem>
-                  <ToggleGroupItem value="ativos">Ativos</ToggleGroupItem>
-                  <ToggleGroupItem value="inativos">Inativos</ToggleGroupItem>
-                </ToggleGroup>
-              </div>
-
               <div className="flex gap-3">
                 <InputWithLabel name="nome" label="Nome" />
 
@@ -353,6 +329,29 @@ function Filter({
                   valueSelected={idUnidade}
                   onChangeValueSelected={setIdUnidade}
                 />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label className="peer-focus:text-lc-sunsetsky-ligh flex items-center gap-1 font-gothamBold text-[10px] text-foreground/70">
+                  Status
+                </Label>
+                <ToggleGroup
+                  className="w-min rounded-md border"
+                  type="single"
+                  defaultValue="todos"
+                  onValueChange={(value) => {
+                    if (value === "todos") {
+                      setStatus(null);
+                    } else if (value === "ativos") {
+                      setStatus(true);
+                    } else {
+                      setStatus(false);
+                    }
+                  }}
+                >
+                  <ToggleGroupItem value="todos">Todos</ToggleGroupItem>
+                  <ToggleGroupItem value="ativos">Ativos</ToggleGroupItem>
+                  <ToggleGroupItem value="inativos">Inativos</ToggleGroupItem>
+                </ToggleGroup>
               </div>
             </div>
 

@@ -158,7 +158,15 @@ function CadastrosProdutoNovo({ params }: any) {
   const [isShowSectionGrade, setIsShowSectionGrade] = useState(false);
   const [isShowSectionTributacao, setIsShowSectionTributacao] = useState(false);
   const [isShowSectionPrecos, setIsShowSectionPrecos] = useState(false);
+  const [
+    isShowSectionPrecoAtacadoEmbalagem,
+    setIsShowSectionPrecoAtacadoEmbalagem,
+  ] = useState(false);
+  const [isShowSectionTabelaPreco, setIsShowSectionTabelaPreco] =
+    useState(false);
   const [isShowSectionAdicionais, setIsShowSectionAdicionais] = useState(false);
+  const [isShowSectionCodigosAdicionais, setIsShowSectionCodigosAdicionais] =
+    useState(false);
   const [isShowSectionEmpresas, setIsShowSectionEmpresas] = useState(false);
   const [isShowSectionImagens, setIsShowSectionImagens] = useState(false);
 
@@ -982,11 +990,11 @@ function CadastrosProdutoNovo({ params }: any) {
     origemList,
   ]);
 
-  const renderPrecos = useMemo(() => {
+  const renderPrecosLeveXPagueY = useMemo(() => {
     return (
       <CollapsibleSection
         isShow={isShowSectionPrecos}
-        title="Preços"
+        title="Preço por quantidade (Leve X pague Y)"
         changeShow={setIsShowSectionPrecos}
         isOpcional
       >
@@ -1028,6 +1036,32 @@ function CadastrosProdutoNovo({ params }: any) {
     );
   }, [isShowSectionPrecos, precosAdicionaisLista, tabelaPrecoLista]);
 
+  const renderPrecosAtacadoEmbalagem = useMemo(() => {
+    return (
+      <CollapsibleSection
+        isShow={isShowSectionPrecoAtacadoEmbalagem}
+        title="Preço embalagem (Atacado)"
+        changeShow={setIsShowSectionPrecoAtacadoEmbalagem}
+        isOpcional
+      >
+        <div></div>
+      </CollapsibleSection>
+    );
+  }, [isShowSectionPrecoAtacadoEmbalagem]);
+
+  const renderTabelaPreco = useMemo(() => {
+    return (
+      <CollapsibleSection
+        isShow={isShowSectionTabelaPreco}
+        title="Tabela de preço"
+        changeShow={setIsShowSectionTabelaPreco}
+        isOpcional
+      >
+        <div></div>
+      </CollapsibleSection>
+    );
+  }, [isShowSectionTabelaPreco]);
+
   const renderAdicionais = useMemo(() => {
     return (
       <CollapsibleSection
@@ -1043,6 +1077,19 @@ function CadastrosProdutoNovo({ params }: any) {
       </CollapsibleSection>
     );
   }, [isShowSectionAdicionais]);
+
+  const renderCodigosAdicionais = useMemo(() => {
+    return (
+      <CollapsibleSection
+        isShow={isShowSectionCodigosAdicionais}
+        title="Códigos adicionais"
+        changeShow={setIsShowSectionCodigosAdicionais}
+        isOpcional
+      >
+        <div></div>
+      </CollapsibleSection>
+    );
+  }, [isShowSectionCodigosAdicionais]);
 
   const renderEmpresas = useMemo(() => {
     return (
@@ -1275,7 +1322,7 @@ function CadastrosProdutoNovo({ params }: any) {
         </div>
 
         <Separator className="my-3" />
-        <div className="flex flex-1 flex-col overflow-clip md:overflow-scroll">
+        <div className="flex flex-1 flex-col">
           <Form {...form}>
             <form
               onKeyDown={(event: React.KeyboardEvent<HTMLFormElement>) => {
@@ -1283,7 +1330,7 @@ function CadastrosProdutoNovo({ params }: any) {
                   event.preventDefault(); // Previne o envio do formulário
                 }
               }}
-              className="flex flex-1 flex-col overflow-clip"
+              className="flex flex-1 flex-col"
               onSubmit={form.handleSubmit(handleSave, (errors) => {
                 console.log(errors);
                 toast.warning("Preencha todos os campos obrigatórios");
@@ -1309,11 +1356,17 @@ function CadastrosProdutoNovo({ params }: any) {
 
               {renderTributacao}
 
-              {renderPrecos}
+              {renderTabelaPreco}
+
+              {renderPrecosLeveXPagueY}
+
+              {renderPrecosAtacadoEmbalagem}
 
               {renderAdicionais}
 
               {renderEmpresas}
+
+              {renderCodigosAdicionais}
 
               {renderImagens}
 

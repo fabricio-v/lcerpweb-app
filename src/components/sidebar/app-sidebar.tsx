@@ -95,6 +95,10 @@ const navMain = [
         url: "/cadastros/subcategoria",
       },
       {
+        title: "Tabela de preços",
+        url: "/cadastros/tabela-precos",
+      },
+      {
         title: "Unidade",
         url: "/cadastros/unidade",
       },

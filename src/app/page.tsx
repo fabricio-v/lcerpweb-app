@@ -9,6 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { Messages } from "@/constants/Messages";
 import { noCharsLetters, noSpaces, noSpecialChars } from "@/constants/regex";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -88,15 +89,18 @@ export default function Home() {
       <div className="flex flex-col bg-white md:flex-row md:items-center">
         {/* Área para a imagem ocupar a metade esquerda da tela */}
         <div className="relative flex h-screen flex-1">
-          <Image
+          {/* <Image
             src={"/banner2.png"}
             alt={"Banner"}
             layout="fill" // Faz a imagem preencher a área da div pai
             objectFit="cover" // Ajusta a imagem para cobrir o espaço sem deformar
-          />
+          /> */}
+          <h1 className="flex flex-1 items-center justify-center">
+            Espaço reservado para o marketing
+          </h1>
         </div>
 
-        {/* <Separator orientation="vertical" className="hidden h-half md:block" /> */}
+        <Separator orientation="vertical" className="hidden h-half md:block" />
 
         <div className="m-4 flex flex-1 flex-col items-center">
           <div className="flex w-full max-w-[450px] flex-col items-center justify-center">

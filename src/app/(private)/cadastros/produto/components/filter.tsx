@@ -263,7 +263,7 @@ function Filter({
           className="overflow-hidden"
           style={{
             width: popoverWidth,
-            maxHeight: !isMobile ? "75vh" : "50vh", // Cresce até 80% da altura da viewport
+            maxHeight: !isMobile ? "60vh" : "50vh", // Cresce até 80% da altura da viewport
             overflowY: "auto", // Ativa o scroll vertical, se necessário
           }}
         >

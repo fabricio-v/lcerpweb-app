@@ -17,8 +17,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { IProdutoResumeResponse } from "@/interfaces/response/ProdutoResumeResponse";
 import { getCookieClient } from "@/lib/cookieClient";
 import { cn } from "@/lib/utils";
-import api from "@/services/axios";
-import { requestProdutoByFilters } from "@/services/requests/produto";
+import { requestProdutoResumeByFilters } from "@/services/requests/produto";
 import { buildMessageException } from "@/utils/Funcoes";
 import { ChevronLeft, CirclePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -37,6 +36,14 @@ function CadastrosProduto() {
     IProdutoResumeResponse[] | undefined
   >(undefined);
 
+  // paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 20;
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+  // paginação
+
   const searchProduto = async (filter: string) => {
     try {
       setIsLoadingSearch(true);
@@ -48,17 +55,36 @@ function CadastrosProduto() {
         CookiesKeys.COMPANY_SELECTED_ID,
       );
 
-      const response = await api.get<IProdutoResumeResponse[]>(
-        `/produtos/resume?filter=${filter}&idEmpresa=${companySelected}`,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        },
+      // const response = await api.get<IProdutoResumeResponse[]>(
+      //   `/produtos/resume?filter=${filter}&idEmpresa=${companySelected}`,
+      //   {
+      //     headers: {
+      //       Authorization: "Bearer " + token,
+      //     },
+      //   },
+      // );
+
+      const response = await requestProdutoResumeByFilters(
+        token!,
+        null,
+        filter,
+        null,
+        filter,
+        filter,
+        filter,
+        filter,
+        null,
+        null,
+        null,
+        null,
+        Number(companySelected),
+        0,
+        0,
       );
 
       if (response.status === 200) {
-        setProdutoList(response.data);
+        console.log(response.data);
+        setProdutoList(response.data.content);
       }
 
       setIsLoadingSearch(false);
@@ -99,7 +125,7 @@ function CadastrosProduto() {
         CookiesKeys.COMPANY_SELECTED_ID,
       );
 
-      const response = await requestProdutoByFilters(
+      const response = await requestProdutoResumeByFilters(
         token!,
         ativo,
         nome,
@@ -113,10 +139,13 @@ function CadastrosProduto() {
         idFabricante,
         idUnidade,
         Number(companySelected),
+        0,
+        0,
       );
 
       if (response.status === 200) {
-        setProdutoList(response.data);
+        alert("entrou aqui");
+        setProdutoList(response.data.content);
       }
 
       setIsLoadingSearch(false);

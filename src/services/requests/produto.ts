@@ -2,6 +2,7 @@ import { IProdutoInput } from "@/interfaces/dto/ProdutoInput";
 import { IProdutoResponse } from "@/interfaces/response/ProdutoResponse";
 import { IProdutoResumeResponse } from "@/interfaces/response/ProdutoResumeResponse";
 import { IProdutoRefResponse } from "@/interfaces/response/ref/ProdutoRefResponse";
+import { IResponsePaged } from "@/interfaces/response/ResponsePaged";
 import api from "../axios";
 
 export const requestProdutoById = async (
@@ -19,7 +20,7 @@ export const requestProdutoById = async (
   );
 };
 
-export const requestProdutoByFilters = async (
+export const requestProdutoResumeByFilters = async (
   token: string,
   ativo: boolean | null,
   nome: string | null,
@@ -33,8 +34,10 @@ export const requestProdutoByFilters = async (
   idFabricante: number | null,
   idUnidade: number | null,
   idEmpresa: number,
+  page: number,
+  size: number,
 ) => {
-  return api.get<IProdutoResumeResponse[]>(`/produtos`, {
+  return api.get<IResponsePaged<IProdutoResumeResponse>>(`/produtos`, {
     params: {
       ativo,
       nome,

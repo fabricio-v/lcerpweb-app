@@ -23,11 +23,11 @@ function CollapsibleSection({
   return (
     <Collapsible open={isShow} onOpenChange={changeShow}>
       <CollapsibleTrigger asChild>
-        <div className="mb-2 flex cursor-pointer items-center justify-between gap-2 rounded-md bg-lc-gray-light px-4 py-2 dark:bg-lc-gray-light">
+        <div className="mb-2 flex cursor-pointer items-center justify-between gap-2 rounded-md bg-lc-gray px-4 py-2 dark:bg-lc-gray-light">
           <div>
             <span className="font-gothamBold text-sm">{title}</span>
             {isOpcional && (
-              <span className="text-lc-tertiar pl-2 text-xs">(Opcional)</span>
+              <span className="pl-2 text-xs text-lc-tertiary">(Opcional)</span>
             )}
           </div>
           <ChevronDown

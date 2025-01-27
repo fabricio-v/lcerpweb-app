@@ -42,11 +42,14 @@ export function NavMain({
             className="group/collapsible"
           >
             {!item.items ? (
-              <SidebarMenuItem className="hover:text-lc-sunlight">
-                <SidebarMenuButton asChild className="hover:text-lc-sunlight">
+              <SidebarMenuItem className="hover:text-lc-sunsetsky-light">
+                <SidebarMenuButton
+                  asChild
+                  className="hover:text-lc-sunsetsky-light"
+                >
                   <a href={item.url}>
                     {item.icon && item.icon}
-                    <span className="font-gothamBold text-base">
+                    <span className="font-gothamBold text-sm">
                       {item.title}
                     </span>
                   </a>
@@ -57,7 +60,7 @@ export function NavMain({
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton tooltip={item.title}>
                     {item.icon && item.icon}
-                    <span className="font-gothamBold text-base">
+                    <span className="font-gothamBold text-sm">
                       {item.title}
                     </span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -69,7 +72,7 @@ export function NavMain({
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton
                           asChild
-                          className="hover:text-lc-sunlight"
+                          className="hover:text-lc-sunsetsky-light"
                         >
                           <a href={subItem.url}>
                             <span className="text-sm">{subItem.title}</span>

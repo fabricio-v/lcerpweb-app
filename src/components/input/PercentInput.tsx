@@ -32,7 +32,7 @@ const PercentInput = forwardRef<HTMLInputElement, PercentInputProps>(
       <div className="flex w-full flex-1 flex-col gap-1.5">
         <Label
           htmlFor={label}
-          className="font-gothamBold text-[10px] text-foreground/70"
+          className="text-[12px] font-semibold text-foreground/70"
         >
           {label}
         </Label>

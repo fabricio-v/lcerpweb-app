@@ -39,7 +39,7 @@ export function InputWithLabel({ label, info, ...rest }: Props) {
       />
       <Label
         // htmlFor={label}
-        className="peer-focus:text-lc-sunsetsky-ligh flex items-center gap-1 font-gothamBold text-[10px] text-foreground/70"
+        className="peer-focus:text-lc-sunsetsky-ligh flex items-center gap-1 text-[12px] font-semibold text-foreground/70"
       >
         {label}
         {info && <CardInfo info={info} label={label} />}

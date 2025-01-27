@@ -212,12 +212,15 @@ export default function Signin() {
       <div className="flex flex-col bg-white md:flex-row md:items-center">
         {/* Área para a imagem ocupar a metade esquerda da tela */}
         <div className="relative flex h-screen flex-1">
-          <Image
+          {/* <Image
             src={"/banner2.png"}
             alt={"Banner"}
             layout="fill" // Faz a imagem preencher a área da div pai
             objectFit="cover" // Ajusta a imagem para cobrir o espaço sem deformar
-          />
+          /> */}
+          <h1 className="flex flex-1 items-center justify-center">
+            Espaço reservado para o marketing
+          </h1>
         </div>
 
         {/* <Separator orientation="vertical" className="hidden h-half md:block" /> */}

@@ -11,17 +11,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { CookiesKeys } from "@/constants/CookiesKeys";
 import { Messages } from "@/constants/Messages";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { IProdutoResumeResponse } from "@/interfaces/response/ProdutoResumeResponse";
-import { getCookieClient } from "@/lib/cookieClient";
+import usePaginatedResumeProducts from "@/hooks/usePaginatedResumeProducts";
 import { cn } from "@/lib/utils";
-import { requestProdutoResumeByFilters } from "@/services/requests/produto";
 import { buildMessageException } from "@/utils/Funcoes";
 import { ChevronLeft, CirclePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Filter from "./components/filter";
 import { TableProdutos, TableProdutosPagination } from "./components/table";
@@ -31,65 +28,52 @@ function CadastrosProduto() {
 
   const isMobile = useIsMobile();
 
-  const [isLoadingSearch, setIsLoadingSearch] = useState(true);
-  const [produtoList, setProdutoList] = useState<
-    IProdutoResumeResponse[] | undefined
-  >(undefined);
+  const [textFilter, setTextFilter] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(0);
 
-  // paginação
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 20;
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+  const { loadProducts, data, loading, itensPerPage, isLastPage } =
+    usePaginatedResumeProducts();
+
+  const handleNextPage = () => {
+    if (currentPage < data.totalPages - 1) {
+      setCurrentPage((prev) => prev + 1);
+    }
   };
-  // paginação
 
-  const searchProduto = async (filter: string) => {
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
+  const searchProduto = async () => {
     try {
-      setIsLoadingSearch(true);
-      setProdutoList([]);
+      setCurrentPage(0);
 
-      const token = await getCookieClient(CookiesKeys.TOKEN);
-
-      const companySelected = await getCookieClient(
-        CookiesKeys.COMPANY_SELECTED_ID,
-      );
-
-      // const response = await api.get<IProdutoResumeResponse[]>(
-      //   `/produtos/resume?filter=${filter}&idEmpresa=${companySelected}`,
-      //   {
-      //     headers: {
-      //       Authorization: "Bearer " + token,
-      //     },
-      //   },
-      // );
-
-      const response = await requestProdutoResumeByFilters(
-        token!,
-        null,
-        filter,
-        null,
-        filter,
-        filter,
-        filter,
-        filter,
-        null,
-        null,
-        null,
-        null,
-        Number(companySelected),
-        0,
-        0,
-      );
-
-      if (response.status === 200) {
-        console.log(response.data);
-        setProdutoList(response.data.content);
-      }
-
-      setIsLoadingSearch(false);
+      await loadProducts({
+        genericFilter: textFilter,
+        page: 0,
+      });
     } catch (error: any) {
-      setIsLoadingSearch(false);
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
+    }
+  };
+
+  const searchProdutoWithPagination = async () => {
+    try {
+      await loadProducts({
+        genericFilter: textFilter,
+        page: currentPage,
+      });
+    } catch (error: any) {
       if (error?.response?.status < 500) {
         toast.warning(Messages.TOAST_INFO_TITLE, {
           description: buildMessageException(error),
@@ -116,17 +100,7 @@ function CadastrosProduto() {
     idUnidade: number | null,
   ) => {
     try {
-      setIsLoadingSearch(true);
-      setProdutoList([]);
-
-      const token = await getCookieClient(CookiesKeys.TOKEN);
-
-      const companySelected = await getCookieClient(
-        CookiesKeys.COMPANY_SELECTED_ID,
-      );
-
-      const response = await requestProdutoResumeByFilters(
-        token!,
+      await loadProducts({
         ativo,
         nome,
         descricao,
@@ -138,19 +112,9 @@ function CadastrosProduto() {
         idSubcategoria,
         idFabricante,
         idUnidade,
-        Number(companySelected),
-        0,
-        0,
-      );
-
-      if (response.status === 200) {
-        alert("entrou aqui");
-        setProdutoList(response.data.content);
-      }
-
-      setIsLoadingSearch(false);
+        page: 0,
+      });
     } catch (error: any) {
-      setIsLoadingSearch(false);
       if (error?.response?.status < 500) {
         toast.warning(Messages.TOAST_INFO_TITLE, {
           description: buildMessageException(error),
@@ -162,6 +126,14 @@ function CadastrosProduto() {
       }
     }
   };
+
+  useEffect(() => {
+    searchProduto();
+  }, [textFilter]);
+
+  useEffect(() => {
+    searchProdutoWithPagination();
+  }, [currentPage]);
 
   return (
     <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden bg-lc-gray-light px-3 py-4 md:px-8">
@@ -199,7 +171,7 @@ function CadastrosProduto() {
         {/* PESQUISA / NOVO */}
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <Filter
-            onSearch={searchProduto}
+            onSearch={setTextFilter}
             onAdvancedSearch={pesquisaAvancadaProduto}
           />
 
@@ -221,10 +193,19 @@ function CadastrosProduto() {
 
         <Separator className="my-3" />
 
-        <TableProdutosPagination />
+        <TableProdutosPagination
+          totalPages={data.totalPages}
+          currPage={currentPage}
+          onJumpToPage={(page) => {
+            setCurrentPage(page);
+          }}
+          onPreviousPage={handlePreviousPage}
+          onNextPage={handleNextPage}
+        />
+
         <TableProdutos
-          isLoading={isLoadingSearch}
-          data={produtoList}
+          isLoading={loading}
+          data={data.products}
           onEdit={(id) => {
             push("produto/" + id);
           }}
@@ -234,7 +215,7 @@ function CadastrosProduto() {
         />
 
         <span className="px-5 py-3 text-sm">
-          Registros: {!produtoList ? 0 : produtoList.length}
+          {`Registros: ${isLastPage ? data.totalElements : itensPerPage * (currentPage + 1)} de ${data.totalElements}`}
         </span>
       </div>
     </main>

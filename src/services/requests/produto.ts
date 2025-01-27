@@ -22,6 +22,7 @@ export const requestProdutoById = async (
 
 export const requestProdutoResumeByFilters = async (
   token: string,
+  genericFilter: string | null,
   ativo: boolean | null,
   nome: string | null,
   descricao: string | null,
@@ -37,8 +38,9 @@ export const requestProdutoResumeByFilters = async (
   page: number,
   size: number,
 ) => {
-  return api.get<IResponsePaged<IProdutoResumeResponse>>(`/produtos`, {
+  return api.get<IResponsePaged<IProdutoResumeResponse>>(`/produtos/resume`, {
     params: {
+      filter: genericFilter,
       ativo,
       nome,
       descricao,
@@ -51,6 +53,8 @@ export const requestProdutoResumeByFilters = async (
       idFabricante,
       idUnidade,
       idEmpresa,
+      page,
+      size,
     },
     headers: {
       Authorization: "Bearer " + token,

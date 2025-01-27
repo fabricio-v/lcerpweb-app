@@ -108,7 +108,7 @@ export const ComboboxSearchCest: React.FC<Props> = ({
             variant="ghost"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between border"
+            className="w-full justify-between border shadow-sm"
             disabled={disabled}
           >
             <p className="truncate">

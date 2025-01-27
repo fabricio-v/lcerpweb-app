@@ -495,8 +495,8 @@ function CadastrosProdutoNovo({ params }: any) {
       >
         <div className="flex flex-1 flex-col gap-8 md:flex-row">
           <div className="flex flex-col items-center justify-center gap-4 pt-8">
-            <div className="flex h-[150px] w-[150px] cursor-pointer items-center justify-center rounded-md border opacity-50 hover:border-lc-sunsetsky-light hover:opacity-60">
-              <p className="text-center text-xs opacity-50">
+            <div className="flex h-[150px] w-[150px] cursor-pointer items-center justify-center rounded-md border hover:border-[2px] hover:border-lc-sunsetsky-light hover:opacity-60">
+              <p className="text-center text-xs opacity-20">
                 Produto
                 <br />
                 sem imagem

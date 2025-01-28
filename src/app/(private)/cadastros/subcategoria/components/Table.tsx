@@ -56,8 +56,8 @@ export function TableSubcategorias({
         <TableHeader>
           <TableRow>
             <TableHead className="md:w-full">Nome da subcategoria</TableHead>
-            <TableHead className="text-center">Status</TableHead>
-            <TableHead className="text-center">Ações</TableHead>
+            <TableHead className="w-[75px] text-center">Status</TableHead>
+            <TableHead className="w-[75px] text-center">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

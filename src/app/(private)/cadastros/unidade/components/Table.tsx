@@ -20,9 +20,9 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import {
-  Table,
   TableBody,
   TableCell,
+  Table as TableComponent,
   TableHead,
   TableHeader,
   TableRow,
@@ -36,14 +36,14 @@ import {
 } from "lucide-react";
 
 interface Props {
-  data: IFabricanteResponse[] | undefined;
+  data: IUnidadeResponse[] | undefined;
   isLoading: boolean;
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
   onChangeStatus: (id: number, status: boolean) => void;
 }
 
-export function TableFabricantes({
+export function Table({
   data,
   isLoading,
   onEdit,
@@ -52,10 +52,11 @@ export function TableFabricantes({
 }: Props) {
   return (
     <div className="flex max-w-full overflow-auto rounded-md border px-2 pb-3">
-      <Table>
+      <TableComponent>
         <TableHeader>
           <TableRow>
-            <TableHead className="md:w-full">Nome do fabricante</TableHead>
+            <TableHead className="md:w-[250px]">Nome da unidade</TableHead>
+            <TableHead>Descrição</TableHead>
             <TableHead className="w-[75px] text-center">Status</TableHead>
             <TableHead className="w-[75px] text-center">Ações</TableHead>
           </TableRow>
@@ -70,20 +71,22 @@ export function TableFabricantes({
               </TableCell>
             </TableRow>
           ) : data && data.length > 0 ? (
-            data.map((fabricante, key) => (
+            data.map((categoria, key) => (
               <ContextMenu key={key}>
                 <ContextMenuTrigger asChild>
                   <TableRow
                     key={key}
                     className="odd:bg-zinc-100 dark:odd:bg-zinc-700"
                     onDoubleClick={() => {
-                      onEdit(fabricante.id);
+                      onEdit(categoria.id);
                     }}
                   >
-                    <TableCell>{fabricante.nome}</TableCell>
+                    <TableCell>{categoria.nome}</TableCell>
+
+                    <TableCell>{categoria.descricao}</TableCell>
 
                     <TableCell className="text-center">
-                      {fabricante.ativo ? <BadgeAtivo /> : <BadgeInativo />}
+                      {categoria.ativo ? <BadgeAtivo /> : <BadgeInativo />}
                     </TableCell>
 
                     <TableCell className="text-center">
@@ -96,7 +99,7 @@ export function TableFabricantes({
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
                             onClick={() => {
-                              onEdit(fabricante.id);
+                              onEdit(categoria.id);
                             }}
                           >
                             <p className="flex items-center gap-2">
@@ -104,10 +107,10 @@ export function TableFabricantes({
                               Editar
                             </p>
                           </DropdownMenuItem>
-                          {fabricante.ativo ? (
+                          {categoria.ativo ? (
                             <DropdownMenuItem
                               onClick={() => {
-                                onChangeStatus(fabricante.id, false);
+                                onChangeStatus(categoria.id, false);
                               }}
                             >
                               <p className="flex items-center gap-2">
@@ -118,7 +121,7 @@ export function TableFabricantes({
                           ) : (
                             <DropdownMenuItem
                               onClick={() => {
-                                onChangeStatus(fabricante.id, true);
+                                onChangeStatus(categoria.id, true);
                               }}
                             >
                               <p className="flex items-center gap-2">
@@ -127,16 +130,6 @@ export function TableFabricantes({
                               </p>
                             </DropdownMenuItem>
                           )}
-                          {/* <DropdownMenuItem
-                            onClick={() => {
-                              onDelete(fabricante.id);
-                            }}
-                          >
-                            <p className="flex items-center gap-2">
-                              <Trash2 size={15} />
-                              Excluir
-                            </p>
-                          </DropdownMenuItem> */}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -144,15 +137,15 @@ export function TableFabricantes({
                 </ContextMenuTrigger>
 
                 <ContextMenuContent className="p-4">
-                  <ContextMenuItem onClick={() => onEdit(fabricante.id)}>
+                  <ContextMenuItem onClick={() => onEdit(categoria.id)}>
                     <p className="flex items-center gap-2">
                       <Edit2 size={15} />
                       Editar
                     </p>
                   </ContextMenuItem>
-                  {fabricante.ativo ? (
+                  {categoria.ativo ? (
                     <ContextMenuItem
-                      onClick={() => onChangeStatus(fabricante.id, false)}
+                      onClick={() => onChangeStatus(categoria.id, false)}
                     >
                       <p className="flex items-center gap-2">
                         <ToggleLeft size={16} />
@@ -161,7 +154,7 @@ export function TableFabricantes({
                     </ContextMenuItem>
                   ) : (
                     <ContextMenuItem
-                      onClick={() => onChangeStatus(fabricante.id, true)}
+                      onClick={() => onChangeStatus(categoria.id, true)}
                     >
                       <p className="flex items-center gap-2">
                         <ToggleRight size={16} />
@@ -169,12 +162,6 @@ export function TableFabricantes({
                       </p>
                     </ContextMenuItem>
                   )}
-                  {/* <ContextMenuItem onClick={() => onDelete(fabricante.id)}>
-                    <p className="flex items-center gap-2">
-                      <Trash2 size={15} />
-                      Excluir
-                    </p>
-                  </ContextMenuItem> */}
                 </ContextMenuContent>
               </ContextMenu>
             ))
@@ -188,7 +175,7 @@ export function TableFabricantes({
             </TableRow>
           )}
         </TableBody>
-      </Table>
+      </TableComponent>
     </div>
   );
 }
@@ -196,9 +183,9 @@ export function TableFabricantes({
 import BadgeAtivo from "@/components/badge/BadgeAtivo";
 import BadgeInativo from "@/components/badge/BadgeInativo";
 import { PaginationEllipsis } from "@/components/ui/pagination";
-import { IFabricanteResponse } from "@/interfaces/response/FabricanteResponse";
+import { IUnidadeResponse } from "@/interfaces/response/UnidadeResponse";
 
-export function TableFabricantesPagination({
+export function TableCategoriasPagination({
   totalPages,
   currPage,
   onPreviousPage,

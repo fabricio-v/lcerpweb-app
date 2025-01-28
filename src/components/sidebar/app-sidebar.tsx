@@ -98,10 +98,10 @@ const navMain = [
       //   title: "Tabela de preços",
       //   url: "/cadastros/tabela-precos",
       // },
-      // {
-      //   title: "Unidade",
-      //   url: "/cadastros/unidade",
-      // },
+      {
+        title: "Unidade",
+        url: "/cadastros/unidade",
+      },
       // {
       //   title: "Usuário",
       //   url: "/cadastros/usuario",

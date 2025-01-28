@@ -66,26 +66,26 @@ const navMain = [
         title: "Categoria",
         url: "/cadastros/categoria",
       },
-      {
-        title: "Cliente",
-        url: "/cadastros/cliente",
-      },
+      // {
+      //   title: "Cliente",
+      //   url: "/cadastros/cliente",
+      // },
       {
         title: "Fabricante",
         url: "/cadastros/fabricante",
       },
-      {
-        title: "Fornecedor",
-        url: "/cadastros/fornecedor",
-      },
-      {
-        title: "Grade",
-        url: "/cadastros/grade",
-      },
-      {
-        title: "Natureza da operação",
-        url: "/cadastros/natureza-operacao",
-      },
+      // {
+      //   title: "Fornecedor",
+      //   url: "/cadastros/fornecedor",
+      // },
+      // {
+      //   title: "Grade",
+      //   url: "/cadastros/grade",
+      // },
+      // {
+      //   title: "Natureza da operação",
+      //   url: "/cadastros/natureza-operacao",
+      // },
       {
         title: "Produto",
         url: "/cadastros/produto",
@@ -94,18 +94,18 @@ const navMain = [
         title: "Subcategoria",
         url: "/cadastros/subcategoria",
       },
-      {
-        title: "Tabela de preços",
-        url: "/cadastros/tabela-precos",
-      },
-      {
-        title: "Unidade",
-        url: "/cadastros/unidade",
-      },
-      {
-        title: "Usuário",
-        url: "/cadastros/usuario",
-      },
+      // {
+      //   title: "Tabela de preços",
+      //   url: "/cadastros/tabela-precos",
+      // },
+      // {
+      //   title: "Unidade",
+      //   url: "/cadastros/unidade",
+      // },
+      // {
+      //   title: "Usuário",
+      //   url: "/cadastros/usuario",
+      // },
     ],
   },
 ];

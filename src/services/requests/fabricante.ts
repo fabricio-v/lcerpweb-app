@@ -1,3 +1,4 @@
+import { IFabricanteInput } from "@/interfaces/dto/FabricanteInput";
 import { IFabricanteResponse } from "@/interfaces/response/FabricanteResponse";
 import api from "../axios";
 
@@ -29,6 +30,17 @@ export const requestFabricanteByFilters = async (
       ativo,
       nome,
     },
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+};
+
+export const requestInsertOrUpdateFabricante = async (
+  fabricante: IFabricanteInput,
+  token: string,
+) => {
+  return api.post<IFabricanteResponse>("/fabricantes", fabricante, {
     headers: {
       Authorization: "Bearer " + token,
     },

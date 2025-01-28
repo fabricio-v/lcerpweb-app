@@ -8,3 +8,17 @@ export const requestCategoriasAvailables = async (token: string) => {
     },
   });
 };
+
+export const requestCategoriasByFilters = async (
+  token: string,
+  genericFilter: string | null,
+) => {
+  return api.get<ICategoriaResponse[]>("/categorias", {
+    params: {
+      filter: genericFilter,
+    },
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+};

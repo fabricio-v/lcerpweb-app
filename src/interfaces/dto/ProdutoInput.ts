@@ -17,7 +17,9 @@ export interface IProdutoInput {
   podeGrade: boolean;
   tipoGrade: string | null;
   empresas: number[];
-  precosAdicionais: IProdutoPrecosAdicionaisInput[];
+  precosTabelaPreco: IProdutoPrecosTabelaPrecoInput[];
+  precosLeveXPagueY: IProdutoPrecoLeveXPagueYInput[];
+  precosAtacado: IProdutoPrecoAtacadoInput[];
   tributacao: {
     idCst: number;
     idCfop: number;
@@ -36,10 +38,33 @@ export interface IProdutoVariacaoInput {
   variacao: string;
 }
 
-export interface IProdutoPrecosAdicionaisInput {
+export interface IProdutoPrecosTabelaPrecoInput {
   idTabelaPreco: number;
+  preco: number;
+  markup: number;
+  margemLucro: number;
+}
+
+export interface IProdutoPrecoLeveXPagueYInput {
   preco: number;
   markup: number;
   margemLucro: number;
   quantidadeMinima: number;
 }
+
+export interface IProdutoPrecoAtacadoInput {
+  idUnidade: number;
+  codigo: string;
+  quantidade: number;
+  preco: number;
+  markup: number;
+  margemLucro: number;
+}
+
+// export interface IProdutoPrecosAdicionaisInput {
+//   idTabelaPreco: number;
+//   preco: number;
+//   markup: number;
+//   margemLucro: number;
+//   quantidadeMinima: number;
+// }

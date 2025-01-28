@@ -1,31 +1,21 @@
-import { Combobox } from "@/components/combobox/Combobox";
 import { AmountInput } from "@/components/input/AmountInput";
 import { MonetaryInput } from "@/components/input/MonetaryInput";
 import { PercentInput } from "@/components/input/PercentInput";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { IProdutoPrecoResponse } from "@/interfaces/response/ProdutoResponse";
-import { ITabelaPrecosResponse } from "@/interfaces/response/TabelaPrecosResponse";
+import { IProdutoPrecoLeveXPagueYResponse } from "@/interfaces/response/ProdutoResponse";
 import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
-function AddItemListaPrecos({
-  data,
+function AddItemListaLeveXPagueY({
   precoCusto,
   onAdd,
 }: {
-  data: ITabelaPrecosResponse[];
   precoCusto: number;
-  onAdd: (item: IProdutoPrecoResponse) => void;
+  onAdd: (item: IProdutoPrecoLeveXPagueYResponse) => void;
 }) {
   const isMobile = useIsMobile();
-
-  const [tabelaPrecoSelectedId, setTabelaPrecoSelectedId] = useState<
-    string | number
-  >("");
-  const [tabelaPrecoSelectedNome, setTabelaPrecoSelectedNome] =
-    useState<string>("");
 
   const [quantidadeMinima, setQuantidadeMinima] = useState<number>();
   const [precoVenda, setPrecoVenda] = useState<number>();
@@ -73,20 +63,14 @@ function AddItemListaPrecos({
     }
   };
 
-  useEffect(() => {
-    if (tabelaPrecoSelectedId) {
-      const item = data.find(
-        (item) => item.id === Number(tabelaPrecoSelectedId),
-      );
-      if (item) {
-        setTabelaPrecoSelectedNome(item.nome);
-      }
-    }
-  }, [tabelaPrecoSelectedId]);
-
   const validate = () => {
-    if (tabelaPrecoSelectedId === "") {
-      toast.warning("Selecione uma tabela de preço");
+    if (quantidadeMinima === undefined) {
+      toast.warning("Informe a quantidade minima");
+      return false;
+    }
+
+    if (quantidadeMinima <= 0) {
+      toast.warning("A quantidade minima deve ser maior que 0 (zero)");
       return false;
     }
 
@@ -105,16 +89,6 @@ function AddItemListaPrecos({
 
   return (
     <div className="flex flex-1 flex-col items-end gap-4 pb-4 md:flex-row">
-      <Combobox
-        label="Tabela de preços"
-        data={data.map((item) => ({
-          value: item.id + "",
-          label: item.nome,
-        }))}
-        valueSelected={tabelaPrecoSelectedId}
-        onChangeValueSelected={setTabelaPrecoSelectedId}
-        disableFilter
-      />
       <AmountInput
         label="Quantidade mínima"
         value={quantidadeMinima}
@@ -155,17 +129,13 @@ function AddItemListaPrecos({
           if (validate()) {
             onAdd({
               id: new Date().getTime(),
-              tabelaPrecoId: Number(tabelaPrecoSelectedId),
-              tabelaPrecoNome: tabelaPrecoSelectedNome,
               quantidadeMinima: quantidadeMinima || 0,
               preco: precoVenda || 0,
               markup: markup || 0,
               margemLucro: lucro || 0,
             });
 
-            setTabelaPrecoSelectedId("");
-            setTabelaPrecoSelectedNome("");
-            setQuantidadeMinima(0.0);
+            setQuantidadeMinima(0);
             setPrecoVenda(0);
             setMarkup(0);
             setLucro(0);
@@ -179,4 +149,4 @@ function AddItemListaPrecos({
   );
 }
 
-export default AddItemListaPrecos;
+export default AddItemListaLeveXPagueY;

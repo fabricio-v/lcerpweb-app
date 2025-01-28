@@ -73,16 +73,13 @@ export const Combobox: React.FC<Props> = ({
             <ChevronsUpDown className="ml-2 h-4 w-full shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+        <PopoverContent className="min-w-[--radix-popover-trigger-width] p-0">
           <Command>
             {!disableFilter && (
               <CommandInput
                 datatype="label"
                 placeholder="Digite para filtrar..."
                 className="h-9"
-                // onValueChange={() => {
-                //   console.log("onValueChange");
-                // }}
               />
             )}
             <CommandList>

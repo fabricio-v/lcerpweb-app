@@ -14,7 +14,8 @@ import { CookiesKeys } from "@/constants/CookiesKeys";
 import { Messages } from "@/constants/Messages";
 import {
   IProdutoInput,
-  IProdutoPrecosAdicionaisInput,
+  IProdutoPrecoAtacadoInput,
+  IProdutoPrecosTabelaPrecoInput,
 } from "@/interfaces/dto/ProdutoInput";
 import { ICategoriaResponse } from "@/interfaces/response/CategoriaResponse";
 import { ICestResponse } from "@/interfaces/response/CestResponse";
@@ -25,7 +26,9 @@ import { IFabricanteResponse } from "@/interfaces/response/FabricanteResponse";
 import { INcmResponse } from "@/interfaces/response/NcmResponse";
 import { IOrigemResponse } from "@/interfaces/response/OrigemResponse";
 import {
-  IProdutoPrecoResponse,
+  IProdutoPrecoAtacadoResponse,
+  IProdutoPrecoLeveXPagueYResponse,
+  IProdutoPrecoTabelaPrecoResponse,
   IProdutoResponse,
 } from "@/interfaces/response/ProdutoResponse";
 import { ISubcategoriaResponse } from "@/interfaces/response/SubcategoriaResponse";
@@ -50,11 +53,9 @@ import { ChevronLeft, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import AddItemListaPrecos from "./components/addItemListaPrecos";
 import Breadcrumbs from "./components/breadcrumbs";
 import CollapsibleSection from "./components/collapsibleSection";
 import CompanyItem from "./components/companyItem";
-import ItemListaPrecos from "./components/itemListaPrecos";
 
 import { ComboboxSearchCest } from "@/components/combobox/ComboboxSearchCest";
 import { ComboboxSearchNcm } from "@/components/combobox/ComboboxSearchNcm";
@@ -69,6 +70,12 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import AddItemListaAtacado from "./components/AddItemListaAtacado";
+import AddItemListaLeveXPagueY from "./components/AddItemListaLeveXPagueY";
+import AddItemListaTabelaPrecos from "./components/AddItemListaTabelaPrecos";
+import ItemListaAtacado from "./components/ItemListaAtacado";
+import ItemListaLeveXPagueY from "./components/ItemListaLeveXPagueY";
+import ItemListaTabelaPrecos from "./components/ItemListaTabelaPrecos";
 
 export const formProdutoSchema = z.object({
   id: z.number().optional(),
@@ -205,8 +212,16 @@ function CadastrosProdutoNovo({ params }: any) {
 
   const [estoque, setEstoque] = useState<number>();
 
-  const [precosAdicionaisLista, setPrecosAdicionaisLista] = useState<
-    IProdutoPrecoResponse[]
+  const [precosTabelaPrecoLista, setPrecosTabelaPrecoLista] = useState<
+    IProdutoPrecoTabelaPrecoResponse[]
+  >([]);
+
+  const [precosLeveXPagueYLista, setPrecosLeveXPagueYLista] = useState<
+    IProdutoPrecoLeveXPagueYResponse[]
+  >([]);
+
+  const [precosAtacadoLista, setPrecosAtacadoLista] = useState<
+    IProdutoPrecoAtacadoResponse[]
   >([]);
 
   const loadProduct = async () => {
@@ -713,7 +728,7 @@ function CadastrosProdutoNovo({ params }: any) {
                 valueSelected={grade}
                 onChangeValueSelected={setGrade}
                 disableFilter
-                disabled
+                // disabled
               />
             </div>
 
@@ -999,32 +1014,22 @@ function CadastrosProdutoNovo({ params }: any) {
         isOpcional
       >
         <div>
-          <AddItemListaPrecos
-            data={tabelaPrecoLista}
+          <AddItemListaLeveXPagueY
             precoCusto={form.watch("precoCusto") || 0}
             onAdd={(item) => {
-              var existe = precosAdicionaisLista.find(
-                (i) => i.tabelaPrecoId === item.tabelaPrecoId,
-              );
-              if (existe) {
-                toast.warning(
-                  `Tabela de preço ${existe.tabelaPrecoNome} já foi adicionada ao produto`,
-                );
-              } else {
-                setPrecosAdicionaisLista((prev) => [...prev, item]);
-              }
+              setPrecosLeveXPagueYLista((prev) => [...prev, item]);
             }}
           />
 
           <Separator />
 
           <div className="flex flex-1 flex-col gap-3 py-4">
-            {precosAdicionaisLista.map((item, index) => (
-              <ItemListaPrecos
+            {precosLeveXPagueYLista.map((item, index) => (
+              <ItemListaLeveXPagueY
                 item={item}
                 key={index}
                 onRemove={() => {
-                  setPrecosAdicionaisLista((prev) =>
+                  setPrecosLeveXPagueYLista((prev) =>
                     prev.filter((item, index2) => index2 !== index),
                   );
                 }}
@@ -1034,33 +1039,101 @@ function CadastrosProdutoNovo({ params }: any) {
         </div>
       </CollapsibleSection>
     );
-  }, [isShowSectionPrecos, precosAdicionaisLista, tabelaPrecoLista]);
+  }, [isShowSectionPrecos, precosLeveXPagueYLista, form.watch("precoCusto")]);
 
   const renderPrecosAtacadoEmbalagem = useMemo(() => {
     return (
       <CollapsibleSection
         isShow={isShowSectionPrecoAtacadoEmbalagem}
-        title="Preço embalagem (Atacado)"
+        title="Preço por embalagem (Atacado)"
         changeShow={setIsShowSectionPrecoAtacadoEmbalagem}
         isOpcional
       >
-        <div></div>
+        <div>
+          <AddItemListaAtacado
+            precoCusto={form.watch("precoCusto") || 0}
+            onAdd={(item) => {
+              setPrecosAtacadoLista((prev) => [...prev, item]);
+            }}
+            unidadeLista={unitsList}
+          />
+
+          <Separator />
+
+          <div className="flex flex-1 flex-col gap-3 pt-4">
+            {precosAtacadoLista.map((item, index) => (
+              <ItemListaAtacado
+                item={item}
+                key={index}
+                onRemove={() => {
+                  setPrecosAtacadoLista((prev) =>
+                    prev.filter((item, index2) => index2 !== index),
+                  );
+                }}
+              />
+            ))}
+          </div>
+        </div>
       </CollapsibleSection>
     );
-  }, [isShowSectionPrecoAtacadoEmbalagem]);
+  }, [
+    isShowSectionPrecoAtacadoEmbalagem,
+    precosAtacadoLista,
+    form.watch("precoCusto"),
+    unitsList,
+  ]);
 
   const renderTabelaPreco = useMemo(() => {
     return (
       <CollapsibleSection
         isShow={isShowSectionTabelaPreco}
+        // isShow={true}
         title="Tabela de preço"
         changeShow={setIsShowSectionTabelaPreco}
         isOpcional
       >
-        <div></div>
+        <div>
+          <AddItemListaTabelaPrecos
+            data={tabelaPrecoLista}
+            precoCusto={form.watch("precoCusto") || 0}
+            onAdd={(item) => {
+              var existe = precosTabelaPrecoLista.find(
+                (i) => i.tabelaPrecoId === item.tabelaPrecoId,
+              );
+              if (existe) {
+                toast.warning(
+                  `Tabela de preço ${existe.tabelaPrecoNome} já foi adicionada ao produto`,
+                );
+              } else {
+                setPrecosTabelaPrecoLista((prev) => [...prev, item]);
+              }
+            }}
+          />
+
+          <Separator />
+
+          <div className="flex flex-1 flex-col gap-3 py-4">
+            {precosTabelaPrecoLista.map((item, index) => (
+              <ItemListaTabelaPrecos
+                item={item}
+                key={index}
+                onRemove={() => {
+                  setPrecosTabelaPrecoLista((prev) =>
+                    prev.filter((item, index2) => index2 !== index),
+                  );
+                }}
+              />
+            ))}
+          </div>
+        </div>
       </CollapsibleSection>
     );
-  }, [isShowSectionTabelaPreco]);
+  }, [
+    isShowSectionTabelaPreco,
+    precosTabelaPrecoLista,
+    tabelaPrecoLista,
+    form.watch("precoCusto"),
+  ]);
 
   const renderAdicionais = useMemo(() => {
     return (
@@ -1163,15 +1236,23 @@ function CadastrosProdutoNovo({ params }: any) {
     setCfopSelected(undefined);
     setNcmSelected(undefined);
     setCestSelected(undefined);
-    setPrecosAdicionaisLista([]);
+    setPrecosTabelaPrecoLista([]);
+    setPrecosAtacadoLista([]);
+    setPrecosLeveXPagueYLista([]);
   };
 
   const handleSave = async (data: z.infer<typeof formProdutoSchema>) => {
     try {
-      const precosAdicionais: IProdutoPrecosAdicionaisInput[] =
-        precosAdicionaisLista.map((item) => ({
+      const precosTabelaPrecoAux: IProdutoPrecosTabelaPrecoInput[] =
+        precosTabelaPrecoLista.map((item) => ({
           ...item,
           idTabelaPreco: item.tabelaPrecoId,
+        }));
+
+      const precosAtacadoAux: IProdutoPrecoAtacadoInput[] =
+        precosAtacadoLista.map((item) => ({
+          ...item,
+          idUnidade: item.unidade.id,
         }));
 
       const newProduto: IProdutoInput = {
@@ -1193,7 +1274,9 @@ function CadastrosProdutoNovo({ params }: any) {
         podeGrade: false,
         tipoGrade: null,
         empresas: companiesSelecteds,
-        precosAdicionais: precosAdicionais,
+        precosTabelaPreco: precosTabelaPrecoAux,
+        precosLeveXPagueY: precosLeveXPagueYLista,
+        precosAtacado: precosAtacadoAux,
         tributacao: {
           idCst: Number(data.cst),
           idCfop: Number(data.cfop),
@@ -1260,29 +1343,20 @@ function CadastrosProdutoNovo({ params }: any) {
       setValue("cfop", product.tributacao.cfop.id + "");
       setValue("ncm", product.tributacao.ncm.id + "");
       setValue("cest", product.tributacao.cest.id + "");
+      setValue("precoVenda", product.precoVenda);
+      setValue("precoCusto", product.precoCusto);
+      setValue("markupPerc", product.markup);
+      setValue("lucroPerc", product.margemLucro);
+
+      setPrecosTabelaPrecoLista(product.precosTabelaPreco);
+      setPrecosLeveXPagueYLista(product.precosLeveXPagueY);
+      setPrecosAtacadoLista(product.precosAtacado);
 
       setCfopSelected(product.tributacao.cfop);
       setNcmSelected(product.tributacao.ncm);
       setCestSelected(product.tributacao.cest);
 
       setCompaniesSelecteds(product.empresas);
-
-      setPrecosAdicionaisLista([]);
-
-      product.precos.forEach((price) => {
-        if (price.tabelaPrecoId === 1) {
-          setValue("precoCusto", price.preco);
-        } else if (price.tabelaPrecoId === 2) {
-          setValue("precoVenda", price.preco);
-          setValue("markupPerc", price.markup);
-          setValue("lucroPerc", price.margemLucro);
-        } else {
-          setPrecosAdicionaisLista((precosAdicionaisLista) => [
-            ...precosAdicionaisLista,
-            price,
-          ]);
-        }
-      });
     }
   }, [product, params]);
 
@@ -1299,7 +1373,7 @@ function CadastrosProdutoNovo({ params }: any) {
   }, [companiesSelecteds]);
 
   return (
-    <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden bg-lc-gray px-3 py-4 md:px-8">
+    <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-scroll overflow-x-hidden bg-lc-gray px-3 py-4 md:pl-8 md:pr-5">
       <div className="flex items-center gap-3">
         <SidebarTrigger />
 
@@ -1356,6 +1430,8 @@ function CadastrosProdutoNovo({ params }: any) {
 
               {renderTributacao}
 
+              {renderEmpresas}
+
               {renderTabelaPreco}
 
               {renderPrecosLeveXPagueY}
@@ -1363,8 +1439,6 @@ function CadastrosProdutoNovo({ params }: any) {
               {renderPrecosAtacadoEmbalagem}
 
               {renderAdicionais}
-
-              {renderEmpresas}
 
               {renderCodigosAdicionais}
 

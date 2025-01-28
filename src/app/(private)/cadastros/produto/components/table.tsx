@@ -62,19 +62,15 @@ export function TableProdutos({
         {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[80px] min-w-[80px]">
-              Cód. Interno
+            <TableHead className="w-[100px]">Cód. Interno</TableHead>
+            <TableHead className="w-[149px]">Código</TableHead>
+            <TableHead className="w-[149px]">Referência</TableHead>
+            <TableHead className="w-[149px]">Barras</TableHead>
+            <TableHead className="min-w-[300px] max-w-[500px]">
+              Nome do produto
             </TableHead>
-            <TableHead className="w-[100px] min-w-[100px]">Código</TableHead>
-            <TableHead className="w-[100px] min-w-[100px]">
-              Referência
-            </TableHead>
-            <TableHead className="w-[130px] min-w-[130px]">Barras</TableHead>
-            <TableHead className="min-w-[280px]">Nome do produto</TableHead>
             <TableHead>Fabricante</TableHead>
-            <TableHead className="w-[100px] min-w-[100px] text-right">
-              Estoque
-            </TableHead>
+            <TableHead className="w-auto text-right">Estoque</TableHead>
             <TableHead className="w-[50px] min-w-[50px]">Unid</TableHead>
             <TableHead className="w-[130px] min-w-[130px] text-right">
               Preço R$
@@ -103,11 +99,20 @@ export function TableProdutos({
                       onEdit(product.id);
                     }}
                   >
-                    <TableCell>{product.id}</TableCell>
-                    <TableCell>{product.codigo}</TableCell>
-                    <TableCell>{product.referencia}</TableCell>
-                    <TableCell>{product.codigoBarras}</TableCell>
-                    <TableCell>{product.nome}</TableCell>
+                    <TableCell className="w-[100px]">{product.id}</TableCell>
+                    <TableCell className="w-[149px]">
+                      {product.codigo}
+                    </TableCell>
+                    <TableCell className="w-[149px]">
+                      {product.referencia}
+                    </TableCell>
+                    <TableCell className="w-[149px]">
+                      {product.codigoBarras}
+                    </TableCell>
+                    {/* <TableCell>789456123021548</TableCell> */}
+                    <TableCell className="min-w-[300px] max-w-[500px] whitespace-normal break-words">
+                      {product.nome}
+                    </TableCell>
                     <TableCell>{product.fabricante.nome}</TableCell>
                     <TableCell className="text-right">
                       {maskNumber(product.estoque, false, 3, ",", "")}

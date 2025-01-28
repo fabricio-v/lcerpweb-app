@@ -1,3 +1,5 @@
+import BadgeAtivo from "@/components/badge/BadgeAtivo";
+import BadgeInativo from "@/components/badge/BadgeInativo";
 import { Button } from "@/components/ui/button";
 import {
   ContextMenu,
@@ -14,6 +16,7 @@ import {
 import {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -29,16 +32,30 @@ import {
 } from "@/components/ui/table";
 import { IProdutoResumeResponse } from "@/interfaces/response/ProdutoResumeResponse";
 import { maskNumber } from "@/utils/Masks";
-import { Edit2, Files, Loader2, MoreVertical, Trash2 } from "lucide-react";
+import {
+  Edit2,
+  Files,
+  Loader2,
+  MoreVertical,
+  ToggleLeft,
+  ToggleRight,
+} from "lucide-react";
 
 interface Props {
   data: IProdutoResumeResponse[] | undefined;
   isLoading: boolean;
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
+  onChangeStatus: (id: number, status: boolean) => void;
 }
 
-export function TableProdutos({ data, isLoading, onEdit, onDelete }: Props) {
+export function TableProdutos({
+  data,
+  isLoading,
+  onEdit,
+  onDelete,
+  onChangeStatus,
+}: Props) {
   return (
     <div className="flex max-w-full overflow-auto rounded-md border px-2 pb-3">
       <Table>
@@ -62,6 +79,7 @@ export function TableProdutos({ data, isLoading, onEdit, onDelete }: Props) {
             <TableHead className="w-[130px] min-w-[130px] text-right">
               Preço R$
             </TableHead>
+            <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -99,6 +117,11 @@ export function TableProdutos({ data, isLoading, onEdit, onDelete }: Props) {
                       {maskNumber(product.precoVenda, true, 2)}
                       {/* R$ 1.000.000,00 */}
                     </TableCell>
+
+                    <TableCell className="text-center">
+                      {product.ativo ? <BadgeAtivo /> : <BadgeInativo />}
+                    </TableCell>
+
                     <TableCell className="text-center">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -117,7 +140,30 @@ export function TableProdutos({ data, isLoading, onEdit, onDelete }: Props) {
                               Editar
                             </p>
                           </DropdownMenuItem>
-                          <DropdownMenuItem
+                          {product.ativo ? (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                onChangeStatus(product.id, false);
+                              }}
+                            >
+                              <p className="flex items-center gap-2">
+                                <ToggleLeft size={16} />
+                                Inativar
+                              </p>
+                            </DropdownMenuItem>
+                          ) : (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                onChangeStatus(product.id, true);
+                              }}
+                            >
+                              <p className="flex items-center gap-2">
+                                <ToggleRight size={16} />
+                                Ativar
+                              </p>
+                            </DropdownMenuItem>
+                          )}
+                          {/* <DropdownMenuItem
                             onClick={() => {
                               onDelete(product.id);
                             }}
@@ -126,7 +172,7 @@ export function TableProdutos({ data, isLoading, onEdit, onDelete }: Props) {
                               <Trash2 size={15} />
                               Excluir
                             </p>
-                          </DropdownMenuItem>
+                          </DropdownMenuItem> */}
                           <DropdownMenuItem
                             onClick={() => {
                               onDelete(product.id);
@@ -150,12 +196,31 @@ export function TableProdutos({ data, isLoading, onEdit, onDelete }: Props) {
                       Editar
                     </p>
                   </ContextMenuItem>
-                  <ContextMenuItem onClick={() => onDelete(product.id)}>
+                  {product.ativo ? (
+                    <ContextMenuItem
+                      onClick={() => onChangeStatus(product.id, false)}
+                    >
+                      <p className="flex items-center gap-2">
+                        <ToggleLeft size={16} />
+                        Inativar
+                      </p>
+                    </ContextMenuItem>
+                  ) : (
+                    <ContextMenuItem
+                      onClick={() => onChangeStatus(product.id, true)}
+                    >
+                      <p className="flex items-center gap-2">
+                        <ToggleRight size={16} />
+                        Ativar
+                      </p>
+                    </ContextMenuItem>
+                  )}
+                  {/* <ContextMenuItem onClick={() => onDelete(product.id)}>
                     <p className="flex items-center gap-2">
                       <Trash2 size={15} />
                       Excluir
                     </p>
-                  </ContextMenuItem>
+                  </ContextMenuItem> */}
                   <ContextMenuItem onClick={() => onDelete(product.id)}>
                     <p className="flex items-center gap-2">
                       <Files size={15} />
@@ -179,8 +244,6 @@ export function TableProdutos({ data, isLoading, onEdit, onDelete }: Props) {
     </div>
   );
 }
-
-import { PaginationEllipsis } from "@/components/ui/pagination";
 
 export function TableProdutosPagination({
   totalPages,

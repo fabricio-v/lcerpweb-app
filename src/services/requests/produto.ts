@@ -74,3 +74,20 @@ export const requestInsertOrUpdateProduto = async (
     },
   });
 };
+
+export const requestChangeStatusProduto = async (
+  token: string,
+  idProduto: number,
+  status: boolean,
+) => {
+  return api.post<IProdutoRefResponse>(
+    `/produtos/${idProduto}/change-status`,
+    {},
+    {
+      params: { status },
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    },
+  );
+};

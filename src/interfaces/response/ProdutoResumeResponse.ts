@@ -14,4 +14,5 @@ export interface IProdutoResumeResponse {
   };
   estoque: number;
   precoVenda: number;
+  ativo: boolean;
 }

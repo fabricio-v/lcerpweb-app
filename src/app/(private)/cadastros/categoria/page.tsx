@@ -3,10 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { CookiesKeys } from "@/constants/CookiesKeys";
 import { Messages } from "@/constants/Messages";
 import { useIsMobile } from "@/hooks/use-mobile";
 import useSearchCategorias from "@/hooks/useSearchCategorias";
+import { getCookieClient } from "@/lib/cookieClient";
 import { cn } from "@/lib/utils";
+import { requestChangeStatusCategoria } from "@/services/requests/categoria";
 import { buildMessageException } from "@/utils/Funcoes";
 import { ChevronLeft, CirclePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -64,6 +67,31 @@ function CadastrosCategoria() {
     }
   };
 
+  const alterarStatusCategoria = async (id: number, ativo: boolean) => {
+    try {
+      const token = await getCookieClient(CookiesKeys.TOKEN);
+
+      const response = await requestChangeStatusCategoria(token!, id, ativo);
+
+      if (response.status === 200) {
+        toast.success(
+          `Categoria ${ativo ? "ativada" : "inativada"} com sucesso`,
+        );
+        pesquisaCategorias();
+      }
+    } catch (error: any) {
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     pesquisaCategorias();
   }, [textFilter]);
@@ -81,7 +109,8 @@ function CadastrosCategoria() {
         <div className="flex gap-1.5 pb-3">
           <button
             onClick={() => {
-              back();
+              // back();
+              push("/home");
             }}
           >
             <ChevronLeft size={25} />
@@ -123,6 +152,7 @@ function CadastrosCategoria() {
           onDelete={(id) => {
             alert(id);
           }}
+          onChangeStatus={alterarStatusCategoria}
         />
 
         <span className="px-5 py-3 text-sm">

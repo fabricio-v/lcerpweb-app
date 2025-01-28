@@ -57,6 +57,7 @@ function Filter({
   const handleAvancedSearch = (formData: FormData) => {
     const nome = formData.get("nome") ? (formData.get("nome") as string) : null;
     onAdvancedSearch(status, nome);
+    setIsOpenPopover(false);
   };
 
   return (

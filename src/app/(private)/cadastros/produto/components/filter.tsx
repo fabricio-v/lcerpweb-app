@@ -220,6 +220,7 @@ function Filter({
       idFabricante || null,
       idUnidade || null,
     );
+    setIsOpenPopover(false);
   };
 
   return (

@@ -27,22 +27,36 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit2, Loader2, MoreVertical, Trash2 } from "lucide-react";
+import {
+  Edit2,
+  Loader2,
+  MoreVertical,
+  ToggleLeft,
+  ToggleRight,
+} from "lucide-react";
 
 interface Props {
   data: ICategoriaResponse[] | undefined;
   isLoading: boolean;
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
+  onChangeStatus: (id: number, status: boolean) => void;
 }
 
-export function TableCategorias({ data, isLoading, onEdit, onDelete }: Props) {
+export function TableCategorias({
+  data,
+  isLoading,
+  onEdit,
+  onDelete,
+  onChangeStatus,
+}: Props) {
   return (
     <div className="flex max-w-full overflow-auto rounded-md border px-2 pb-3">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="md:w-full">Nome da categoria</TableHead>
+            <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -56,17 +70,21 @@ export function TableCategorias({ data, isLoading, onEdit, onDelete }: Props) {
               </TableCell>
             </TableRow>
           ) : data && data.length > 0 ? (
-            data.map((product, key) => (
+            data.map((categoria, key) => (
               <ContextMenu key={key}>
                 <ContextMenuTrigger asChild>
                   <TableRow
                     key={key}
                     className="odd:bg-zinc-100 dark:odd:bg-zinc-700"
                     onDoubleClick={() => {
-                      onEdit(product.id);
+                      onEdit(categoria.id);
                     }}
                   >
-                    <TableCell>{product.nome}</TableCell>
+                    <TableCell>{categoria.nome}</TableCell>
+
+                    <TableCell className="text-center">
+                      {categoria.ativo ? <BadgeAtivo /> : <BadgeInativo />}
+                    </TableCell>
 
                     <TableCell className="text-center">
                       <DropdownMenu>
@@ -78,7 +96,7 @@ export function TableCategorias({ data, isLoading, onEdit, onDelete }: Props) {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
                             onClick={() => {
-                              onEdit(product.id);
+                              onEdit(categoria.id);
                             }}
                           >
                             <p className="flex items-center gap-2">
@@ -86,16 +104,39 @@ export function TableCategorias({ data, isLoading, onEdit, onDelete }: Props) {
                               Editar
                             </p>
                           </DropdownMenuItem>
-                          <DropdownMenuItem
+                          {categoria.ativo ? (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                onChangeStatus(categoria.id, false);
+                              }}
+                            >
+                              <p className="flex items-center gap-2">
+                                <ToggleLeft size={16} />
+                                Inativar
+                              </p>
+                            </DropdownMenuItem>
+                          ) : (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                onChangeStatus(categoria.id, true);
+                              }}
+                            >
+                              <p className="flex items-center gap-2">
+                                <ToggleRight size={16} />
+                                Ativar
+                              </p>
+                            </DropdownMenuItem>
+                          )}
+                          {/* <DropdownMenuItem
                             onClick={() => {
-                              onDelete(product.id);
+                              onDelete(categoria.id);
                             }}
                           >
                             <p className="flex items-center gap-2">
                               <Trash2 size={15} />
                               Excluir
                             </p>
-                          </DropdownMenuItem>
+                          </DropdownMenuItem> */}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -103,18 +144,37 @@ export function TableCategorias({ data, isLoading, onEdit, onDelete }: Props) {
                 </ContextMenuTrigger>
 
                 <ContextMenuContent className="p-4">
-                  <ContextMenuItem onClick={() => onEdit(product.id)}>
+                  <ContextMenuItem onClick={() => onEdit(categoria.id)}>
                     <p className="flex items-center gap-2">
                       <Edit2 size={15} />
                       Editar
                     </p>
                   </ContextMenuItem>
-                  <ContextMenuItem onClick={() => onDelete(product.id)}>
+                  {categoria.ativo ? (
+                    <ContextMenuItem
+                      onClick={() => onChangeStatus(categoria.id, false)}
+                    >
+                      <p className="flex items-center gap-2">
+                        <ToggleLeft size={16} />
+                        Inativar
+                      </p>
+                    </ContextMenuItem>
+                  ) : (
+                    <ContextMenuItem
+                      onClick={() => onChangeStatus(categoria.id, true)}
+                    >
+                      <p className="flex items-center gap-2">
+                        <ToggleRight size={16} />
+                        Ativar
+                      </p>
+                    </ContextMenuItem>
+                  )}
+                  {/* <ContextMenuItem onClick={() => onDelete(categoria.id)}>
                     <p className="flex items-center gap-2">
                       <Trash2 size={15} />
                       Excluir
                     </p>
-                  </ContextMenuItem>
+                  </ContextMenuItem> */}
                 </ContextMenuContent>
               </ContextMenu>
             ))
@@ -133,6 +193,8 @@ export function TableCategorias({ data, isLoading, onEdit, onDelete }: Props) {
   );
 }
 
+import BadgeAtivo from "@/components/badge/BadgeAtivo";
+import BadgeInativo from "@/components/badge/BadgeInativo";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import { ICategoriaResponse } from "@/interfaces/response/CategoriaResponse";
 

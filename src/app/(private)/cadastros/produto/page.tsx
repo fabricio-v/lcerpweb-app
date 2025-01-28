@@ -11,10 +11,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { CookiesKeys } from "@/constants/CookiesKeys";
 import { Messages } from "@/constants/Messages";
 import { useIsMobile } from "@/hooks/use-mobile";
 import usePaginatedResumeProducts from "@/hooks/usePaginatedResumeProducts";
+import { getCookieClient } from "@/lib/cookieClient";
 import { cn } from "@/lib/utils";
+import { requestChangeStatusProduto } from "@/services/requests/produto";
 import { buildMessageException } from "@/utils/Funcoes";
 import { ChevronLeft, CirclePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -127,6 +130,29 @@ function CadastrosProduto() {
     }
   };
 
+  const alterarStatusProduto = async (id: number, ativo: boolean) => {
+    try {
+      const token = await getCookieClient(CookiesKeys.TOKEN);
+
+      const response = await requestChangeStatusProduto(token!, id, ativo);
+
+      if (response.status === 200) {
+        toast.success(`Produto ${ativo ? "ativado" : "inativado"} com sucesso`);
+        searchProduto();
+      }
+    } catch (error: any) {
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     searchProduto();
   }, [textFilter]);
@@ -160,7 +186,8 @@ function CadastrosProduto() {
         <div className="flex gap-1.5 pb-3">
           <button
             onClick={() => {
-              back();
+              // back();
+              push("/home");
             }}
           >
             <ChevronLeft size={25} />
@@ -212,6 +239,7 @@ function CadastrosProduto() {
           onDelete={(id) => {
             alert(id);
           }}
+          onChangeStatus={alterarStatusProduto}
         />
 
         <span className="px-5 py-3 text-sm">

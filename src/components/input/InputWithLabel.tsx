@@ -1,5 +1,5 @@
 import { InfoIcon } from "lucide-react";
-import { InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, useState } from "react";
 import {
   HoverCard,
   HoverCardContent,
@@ -29,20 +29,52 @@ const CardInfo = ({ info, label }: { info: string; label: string }) => {
   );
 };
 
-export function InputWithLabel({ label, info, ...rest }: Props) {
+export function InputWithLabel({
+  label,
+  info,
+  maxLength,
+  value,
+  onBlur,
+  onFocus,
+  ...rest
+}: Props) {
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleFocus = () => setIsFocused(true);
+  const handleBlur = () => setIsFocused(false);
+
   return (
     <div className="flex w-full flex-1 flex-col-reverse gap-1.5">
       <Input
         {...rest}
         id={label}
+        maxLength={maxLength}
+        value={value}
+        onFocus={(e) => {
+          handleFocus();
+          onFocus && onFocus(e);
+        }}
+        onBlur={(e) => {
+          handleBlur();
+          onBlur && onBlur(e);
+        }}
         // className="peer" // Adiciona a classe peer para referência
       />
       <Label
         // htmlFor={label}
         className="peer-focus:text-lc-sunsetsky-ligh flex items-center gap-1 text-[12px] font-semibold text-foreground/70"
       >
-        {label}
-        {info && <CardInfo info={info} label={label} />}
+        <div className="flex flex-1 items-end justify-between">
+          <div className="flex items-center gap-1">
+            {label}
+            {info && <CardInfo info={info} label={label} />}
+          </div>
+          {maxLength && isFocused && (
+            <p className="text-right text-[10px] font-light text-muted-foreground/50">
+              {value?.toString().length}/{maxLength}
+            </p>
+          )}
+        </div>
       </Label>
     </div>
   );

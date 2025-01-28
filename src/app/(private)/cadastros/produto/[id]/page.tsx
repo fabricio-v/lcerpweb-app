@@ -533,7 +533,7 @@ function CadastrosProdutoNovo({ params }: any) {
                   <FormControl>
                     <Switch
                       classNameContainer="mb-4"
-                      title="Ativo"
+                      title={field.value === true ? "Ativo" : "Inativo"}
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
@@ -569,7 +569,11 @@ function CadastrosProdutoNovo({ params }: any) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <InputWithLabel label="Código barras" {...field} />
+                      <InputWithLabel
+                        label="Código barras"
+                        maxLength={15}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -582,7 +586,11 @@ function CadastrosProdutoNovo({ params }: any) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <InputWithLabel label="Referência" {...field} />
+                      <InputWithLabel
+                        label="Referência"
+                        maxLength={50}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -595,7 +603,11 @@ function CadastrosProdutoNovo({ params }: any) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <InputWithLabel label="Código" {...field} />
+                      <InputWithLabel
+                        label="Código"
+                        maxLength={50}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

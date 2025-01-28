@@ -128,6 +128,7 @@ function AddItemListaAtacado({
       <div className="flex flex-1 flex-col items-end gap-4 pb-4 md:grid md:grid-cols-7">
         <InputWithLabel
           label="Código"
+          maxLength={20}
           value={codigo}
           onChange={(v) => {
             setCodigo(v.target.value);

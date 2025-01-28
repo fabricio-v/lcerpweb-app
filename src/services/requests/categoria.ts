@@ -12,10 +12,14 @@ export const requestCategoriasAvailables = async (token: string) => {
 export const requestCategoriasByFilters = async (
   token: string,
   genericFilter: string | null,
+  ativo: boolean | null,
+  nome: string | null,
 ) => {
   return api.get<ICategoriaResponse[]>("/categorias", {
     params: {
       filter: genericFilter,
+      ativo,
+      nome,
     },
     headers: {
       Authorization: "Bearer " + token,

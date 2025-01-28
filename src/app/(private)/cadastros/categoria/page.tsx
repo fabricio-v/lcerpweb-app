@@ -24,7 +24,7 @@ function CadastrosCategoria() {
 
   const [textFilter, setTextFilter] = useState<string>("");
 
-  const searchCategorias = async () => {
+  const pesquisaCategorias = async () => {
     try {
       await loadCategorias({
         genericFilter: textFilter,
@@ -42,8 +42,30 @@ function CadastrosCategoria() {
     }
   };
 
+  const pesquisaAvancadaCategorias = async (
+    ativo: boolean | null,
+    nome: string | null,
+  ) => {
+    try {
+      await loadCategorias({
+        ativo,
+        nome,
+      });
+    } catch (error: any) {
+      if (error?.response?.status < 500) {
+        toast.warning(Messages.TOAST_INFO_TITLE, {
+          description: buildMessageException(error),
+        });
+      } else {
+        toast.error(Messages.TOAST_ERROR_TITLE, {
+          description: buildMessageException(error),
+        });
+      }
+    }
+  };
+
   useEffect(() => {
-    searchCategorias();
+    pesquisaCategorias();
   }, [textFilter]);
 
   return (
@@ -69,7 +91,10 @@ function CadastrosCategoria() {
 
         {/* PESQUISA / NOVO */}
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <Filter onSearch={setTextFilter} onAdvancedSearch={() => {}} />
+          <Filter
+            onSearch={setTextFilter}
+            onAdvancedSearch={pesquisaAvancadaCategorias}
+          />
 
           <div className="flex flex-1 justify-end">
             <Button

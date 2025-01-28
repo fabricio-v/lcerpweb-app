@@ -23,8 +23,6 @@ function Filter({
 }) {
   const isMobile = useIsMobile();
 
-  const [isListasCarregadas, setIsListasCarregadas] = useState(false);
-
   const [searchValue, setSearchValue] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 

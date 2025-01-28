@@ -34,8 +34,8 @@ export default function useSearchCategorias() {
       const response = await requestCategoriasByFilters(
         token!,
         genericFilter || null,
-        // ativo || null,
-        // nome || null,
+        ativo === undefined ? null : ativo,
+        nome || null,
       );
 
       setData({

@@ -63,7 +63,7 @@ export default function usePaginatedResumeProducts() {
       const response = await requestProdutoResumeByFilters(
         token!,
         genericFilter || null,
-        ativo || null,
+        ativo === undefined ? null : ativo,
         nome || null,
         descricao || null,
         codigoInterno || null,

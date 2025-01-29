@@ -83,7 +83,7 @@ export default function usePaginatedResumeProducts() {
 
       setData({
         products: content,
-        totalPages,
+        totalPages: totalPages > 0 ? totalPages : 1,
         totalElements,
       });
       setIsLastPage(last);

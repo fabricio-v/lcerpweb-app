@@ -58,7 +58,7 @@ export default function useSearchClientes() {
       setData({
         clientes: content,
         totalItens: totalElements,
-        totalPaginas: totalPages,
+        totalPaginas: totalPages > 0 ? totalPages : 1,
       });
 
       setIsLastPage(last);

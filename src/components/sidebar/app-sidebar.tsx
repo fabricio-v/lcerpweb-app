@@ -66,10 +66,10 @@ const navMain = [
         title: "Categoria",
         url: "/cadastros/categoria",
       },
-      // {
-      //   title: "Cliente",
-      //   url: "/cadastros/cliente",
-      // },
+      {
+        title: "Cliente",
+        url: "/cadastros/cliente",
+      },
       {
         title: "Fabricante",
         url: "/cadastros/fabricante",

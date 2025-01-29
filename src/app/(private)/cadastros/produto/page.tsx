@@ -137,7 +137,7 @@ function CadastrosProduto() {
       const response = await requestChangeStatusProduto(token!, id, ativo);
 
       if (response.status === 200) {
-        toast.success(`Produto ${ativo ? "ativado" : "inativado"} com sucesso`);
+        toast.success(`Produto${ativo ? " ativado" : "inativado"} com sucesso`);
         searchProduto();
       }
     } catch (error: any) {

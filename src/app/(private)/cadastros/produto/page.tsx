@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Filter from "./components/filter";
-import { Table } from "./components/Table";
+import { Table } from "./components/table";
 
 function CadastrosProduto() {
   const { push, back } = useRouter();

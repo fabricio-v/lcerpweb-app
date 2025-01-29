@@ -9,7 +9,7 @@ import { useState } from "react";
 export default function useSearchClientes() {
   const [data, setData] = useState({
     clientes: [],
-    totalPaginas: 0,
+    totalPaginas: 1,
     totalItens: 0,
   } as {
     clientes: IClienteResponse[];

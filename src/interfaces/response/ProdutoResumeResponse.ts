@@ -4,6 +4,15 @@ export interface IProdutoResumeResponse {
   referencia: string;
   codigoBarras: string;
   nome: string;
+  descricao: string;
+  categoria: {
+    id: number;
+    nome: string;
+  };
+  subcategoria: {
+    id: number;
+    nome: string;
+  };
   fabricante: {
     id: number;
     nome: string;

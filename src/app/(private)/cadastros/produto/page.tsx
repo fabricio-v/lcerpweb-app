@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Filter from "./components/filter";
-import { TableProdutos, TableProdutosPagination } from "./components/table";
+import { Table } from "./components/Table";
 
 function CadastrosProduto() {
   const { push, back } = useRouter();
@@ -220,17 +220,7 @@ function CadastrosProduto() {
 
         <Separator className="my-3" />
 
-        <TableProdutosPagination
-          totalPages={data.totalPages}
-          currPage={currentPage}
-          onJumpToPage={(page) => {
-            setCurrentPage(page);
-          }}
-          onPreviousPage={handlePreviousPage}
-          onNextPage={handleNextPage}
-        />
-
-        <TableProdutos
+        <Table
           isLoading={loading}
           data={data.products}
           onEdit={(id) => {
@@ -240,6 +230,13 @@ function CadastrosProduto() {
             alert(id);
           }}
           onChangeStatus={alterarStatusProduto}
+          totalPages={data.totalPages}
+          currPage={currentPage}
+          onJumpToPage={(page) => {
+            setCurrentPage(page);
+          }}
+          onPreviousPage={handlePreviousPage}
+          onNextPage={handleNextPage}
         />
 
         <span className="px-5 py-3 text-sm">

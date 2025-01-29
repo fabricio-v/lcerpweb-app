@@ -1,5 +1,6 @@
 import BadgeAtivo from "@/components/badge/BadgeAtivo";
 import BadgeInativo from "@/components/badge/BadgeInativo";
+import { TablePagination } from "@/components/TablePagination";
 import { Button } from "@/components/ui/button";
 import {
   ContextMenu,
@@ -14,24 +15,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
-  Table,
   TableBody,
   TableCell,
+  Table as TableComponent,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { LocalStorageKeys } from "@/constants/LocalStorageKeys";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { IProdutoResumeResponse } from "@/interfaces/response/ProdutoResumeResponse";
 import { maskNumber } from "@/utils/Masks";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+  VisibilityState,
+} from "@tanstack/react-table";
 import {
   Edit2,
   Files,
@@ -40,319 +46,392 @@ import {
   ToggleLeft,
   ToggleRight,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import PopoverColumnsTable from "./PopoverColumnsTable";
 
 interface Props {
   data: IProdutoResumeResponse[] | undefined;
   isLoading: boolean;
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
-  onChangeStatus: (id: number, status: boolean) => void;
-}
-
-export function TableProdutos({
-  data,
-  isLoading,
-  onEdit,
-  onDelete,
-  onChangeStatus,
-}: Props) {
-  return (
-    <div className="flex max-w-full overflow-auto rounded-md border px-2 pb-3">
-      <Table>
-        {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">Cód. Interno</TableHead>
-            <TableHead className="w-[149px]">Código</TableHead>
-            <TableHead className="w-[149px]">Referência</TableHead>
-            <TableHead className="w-[149px]">Barras</TableHead>
-            <TableHead className="min-w-[300px] max-w-[500px]">
-              Nome do produto
-            </TableHead>
-            <TableHead>Fabricante</TableHead>
-            <TableHead className="w-auto text-right">Estoque</TableHead>
-            <TableHead className="w-[50px] min-w-[50px]">Unid</TableHead>
-            <TableHead className="w-[130px] min-w-[130px] text-right">
-              Preço R$
-            </TableHead>
-            <TableHead className="text-center">Status</TableHead>
-            <TableHead className="text-center">Ações</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading ? (
-            <TableRow>
-              <TableCell colSpan={10} className="h-16 flex-auto">
-                <h1 className="flex justify-center text-lc-secondary">
-                  <Loader2 className="animate-spin" />
-                </h1>
-              </TableCell>
-            </TableRow>
-          ) : data && data.length > 0 ? (
-            data.map((product, key) => (
-              <ContextMenu key={key}>
-                <ContextMenuTrigger asChild>
-                  <TableRow
-                    key={key}
-                    className="odd:bg-zinc-100 dark:odd:bg-zinc-700"
-                    onDoubleClick={() => {
-                      onEdit(product.id);
-                    }}
-                  >
-                    <TableCell className="w-[100px]">{product.id}</TableCell>
-                    <TableCell className="w-[149px]">
-                      {product.codigo}
-                    </TableCell>
-                    <TableCell className="w-[149px]">
-                      {product.referencia}
-                    </TableCell>
-                    <TableCell className="w-[149px]">
-                      {product.codigoBarras}
-                    </TableCell>
-                    {/* <TableCell>789456123021548</TableCell> */}
-                    <TableCell className="min-w-[300px] max-w-[500px] whitespace-normal break-words">
-                      {product.nome}
-                    </TableCell>
-                    <TableCell>{product.fabricante.nome}</TableCell>
-                    <TableCell className="text-right">
-                      {maskNumber(product.estoque, false, 3, ",", "")}
-                    </TableCell>
-                    <TableCell>{product.unidade.nome}</TableCell>
-                    <TableCell className="text-right">
-                      {maskNumber(product.precoVenda, true, 2)}
-                      {/* R$ 1.000.000,00 */}
-                    </TableCell>
-
-                    <TableCell className="text-center">
-                      {product.ativo ? <BadgeAtivo /> : <BadgeInativo />}
-                    </TableCell>
-
-                    <TableCell className="text-center">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreVertical />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              onEdit(product.id);
-                            }}
-                          >
-                            <p className="flex items-center gap-2">
-                              <Edit2 size={15} />
-                              Editar
-                            </p>
-                          </DropdownMenuItem>
-                          {product.ativo ? (
-                            <DropdownMenuItem
-                              onClick={() => {
-                                onChangeStatus(product.id, false);
-                              }}
-                            >
-                              <p className="flex items-center gap-2">
-                                <ToggleLeft size={16} />
-                                Inativar
-                              </p>
-                            </DropdownMenuItem>
-                          ) : (
-                            <DropdownMenuItem
-                              onClick={() => {
-                                onChangeStatus(product.id, true);
-                              }}
-                            >
-                              <p className="flex items-center gap-2">
-                                <ToggleRight size={16} />
-                                Ativar
-                              </p>
-                            </DropdownMenuItem>
-                          )}
-                          {/* <DropdownMenuItem
-                            onClick={() => {
-                              onDelete(product.id);
-                            }}
-                          >
-                            <p className="flex items-center gap-2">
-                              <Trash2 size={15} />
-                              Excluir
-                            </p>
-                          </DropdownMenuItem> */}
-                          <DropdownMenuItem
-                            onClick={() => {
-                              onDelete(product.id);
-                            }}
-                          >
-                            <p className="flex items-center gap-2">
-                              <Files size={15} />
-                              Duplicar produto
-                            </p>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                </ContextMenuTrigger>
-
-                <ContextMenuContent className="p-4">
-                  <ContextMenuItem onClick={() => onEdit(product.id)}>
-                    <p className="flex items-center gap-2">
-                      <Edit2 size={15} />
-                      Editar
-                    </p>
-                  </ContextMenuItem>
-                  {product.ativo ? (
-                    <ContextMenuItem
-                      onClick={() => onChangeStatus(product.id, false)}
-                    >
-                      <p className="flex items-center gap-2">
-                        <ToggleLeft size={16} />
-                        Inativar
-                      </p>
-                    </ContextMenuItem>
-                  ) : (
-                    <ContextMenuItem
-                      onClick={() => onChangeStatus(product.id, true)}
-                    >
-                      <p className="flex items-center gap-2">
-                        <ToggleRight size={16} />
-                        Ativar
-                      </p>
-                    </ContextMenuItem>
-                  )}
-                  {/* <ContextMenuItem onClick={() => onDelete(product.id)}>
-                    <p className="flex items-center gap-2">
-                      <Trash2 size={15} />
-                      Excluir
-                    </p>
-                  </ContextMenuItem> */}
-                  <ContextMenuItem onClick={() => onDelete(product.id)}>
-                    <p className="flex items-center gap-2">
-                      <Files size={15} />
-                      Duplicar produto
-                    </p>
-                  </ContextMenuItem>
-                </ContextMenuContent>
-              </ContextMenu>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={10} className="h-16 flex-auto">
-                <h1 className="flex justify-center text-lc-secondary">
-                  Nenhum registro encontrado
-                </h1>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
-
-export function TableProdutosPagination({
-  totalPages,
-  currPage,
-  onPreviousPage,
-  onNextPage,
-  onJumpToPage,
-}: {
   totalPages: number;
   currPage: number;
   onJumpToPage: (page: number) => void;
   onPreviousPage: () => void;
   onNextPage: () => void;
-}) {
-  const DOTS = "...";
-  const siblingCount = 1;
+  onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
+  onChangeStatus: (id: number, status: boolean) => void;
+}
 
-  const range = (start: number, end: number) => {
-    const length = end - start + 1;
-    return Array.from({ length }, (_, idx) => idx + start);
-  };
+export function Table({
+  data,
+  isLoading,
+  totalPages,
+  currPage,
+  onJumpToPage,
+  onPreviousPage,
+  onNextPage,
+  onEdit,
+  onDelete,
+  onChangeStatus,
+}: Props) {
+  const isMobile = useIsMobile();
 
-  const paginationRange = () => {
-    const totalPageNumbers = siblingCount + 5;
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnsList, setColumnsList] = useState<string[]>([]);
+  const [isOpenPopover, setIsOpenPopover] = useState(false);
 
-    if (totalPageNumbers >= totalPages) {
-      return range(1, totalPages);
+  const columns: ColumnDef<IProdutoResumeResponse>[] = [
+    {
+      accessorKey: "id",
+      header: () => <TableHead className="w-[90px]">Cód. Interno</TableHead>,
+      cell: ({ row }) => (
+        <TableCell className="w-[90px]">{row.getValue("id")}</TableCell>
+      ),
+    },
+    {
+      accessorKey: "codigoBarras",
+      header: () => <TableHead className="min-w-[160px]">Barras</TableHead>,
+      cell: ({ row }) => (
+        <TableCell className="min-w-[160px]">
+          {row.getValue("codigoBarras")}
+        </TableCell>
+      ),
+    },
+    {
+      accessorKey: "referencia",
+      header: () => <TableHead className="min-w-[160px]">Referência</TableHead>,
+      cell: ({ row }) => (
+        <TableCell className="min-w-[160px]">
+          {row.getValue("referencia")}
+        </TableCell>
+      ),
+    },
+    {
+      accessorKey: "codigo",
+      header: () => <TableHead className="min-w-[160px]">Código</TableHead>,
+      cell: ({ row }) => (
+        <TableCell className="min-w-[160px]">
+          {row.getValue("codigo")}
+        </TableCell>
+      ),
+    },
+    {
+      accessorKey: "nome",
+      header: () => (
+        <TableHead className="w-full min-w-[300px]">Nome do produto</TableHead>
+      ),
+      cell: ({ row }) => (
+        <TableCell className="w-full min-w-[300px]">
+          {row.getValue("nome")}
+        </TableCell>
+      ),
+    },
+    {
+      accessorKey: "descricao",
+      header: () => (
+        <TableHead className="w-full min-w-[300px]">Descrição</TableHead>
+      ),
+      cell: ({ row }) => (
+        <TableCell className="w-full min-w-[300px]">
+          {row.getValue("descricao")}
+        </TableCell>
+      ),
+    },
+    {
+      accessorKey: "fabricante",
+      header: () => <TableHead className="">Fabricante</TableHead>,
+      cell: ({ row }) => (
+        <TableCell className="">{row.original.fabricante.nome}</TableCell>
+      ),
+    },
+    {
+      accessorKey: "categoria",
+      header: () => <TableHead className="">Categoria</TableHead>,
+      cell: ({ row }) => (
+        <TableCell className="">{row.original.categoria.nome}</TableCell>
+      ),
+    },
+    {
+      accessorKey: "subcategoria",
+      header: () => <TableHead className="">Subcategoria</TableHead>,
+      cell: ({ row }) => (
+        <TableCell className="">{row.original.subcategoria.nome}</TableCell>
+      ),
+    },
+    {
+      accessorKey: "estoque",
+      header: () => (
+        <TableHead className="min-w-[130px] text-right">Estoque</TableHead>
+      ),
+      cell: ({ row }) => (
+        <TableCell className="min-w-[130px] text-right">
+          {maskNumber(row.getValue("estoque"), false, 3)}
+        </TableCell>
+      ),
+    },
+    {
+      accessorKey: "unidade",
+      header: () => <TableHead className="min-w-[90px]">Unid</TableHead>,
+      cell: ({ row }) => (
+        <TableCell className="min-w-[90px]">
+          {row.original.unidade.nome}
+        </TableCell>
+      ),
+    },
+    {
+      accessorKey: "precoVenda",
+      header: () => (
+        <TableHead className="min-w-[130px] text-right">Preço R$</TableHead>
+      ),
+      cell: ({ row }) => (
+        <TableCell className="min-w-[130px] text-right">
+          {maskNumber(row.getValue("precoVenda"), true)}
+        </TableCell>
+      ),
+    },
+    {
+      accessorKey: "ativo",
+      header: () => (
+        <TableHead className="w-[75px] text-center">Status</TableHead>
+      ),
+      cell: ({ row }) => (
+        <TableCell className="w-[75px] text-center">
+          {row.getValue("ativo") ? <BadgeAtivo /> : <BadgeInativo />}
+        </TableCell>
+      ),
+    },
+    {
+      id: "actions",
+      header: () => (
+        <TableHead className="w-[75px] text-center">Ações</TableHead>
+      ),
+      enableHiding: false,
+      cell: ({ row }) => (
+        <TableCell className="w-[75px] text-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <MoreVertical />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => {
+                  onEdit(row.original.id);
+                }}
+              >
+                <p className="flex items-center gap-2">
+                  <Edit2 size={15} />
+                  Editar
+                </p>
+              </DropdownMenuItem>
+              {row.original.ativo ? (
+                <DropdownMenuItem
+                  onClick={() => {
+                    onChangeStatus(row.original.id, false);
+                  }}
+                >
+                  <p className="flex items-center gap-2">
+                    <ToggleLeft size={16} />
+                    Inativar
+                  </p>
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem
+                  onClick={() => {
+                    onChangeStatus(row.original.id, true);
+                  }}
+                >
+                  <p className="flex items-center gap-2">
+                    <ToggleRight size={16} />
+                    Ativar
+                  </p>
+                </DropdownMenuItem>
+              )}
+
+              <DropdownMenuItem
+                onClick={() => {
+                  onDelete(row.original.id);
+                }}
+              >
+                <p className="flex items-center gap-2">
+                  <Files size={15} />
+                  Duplicar produto
+                </p>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </TableCell>
+      ),
+    },
+  ];
+
+  useEffect(() => {
+    const columnsStorage = localStorage.getItem(
+      LocalStorageKeys.ORDERS_COLUMNS_PRODUCT,
+    );
+
+    if (columnsStorage !== null) {
+      const colsParse = JSON.parse(columnsStorage);
+      setColumnsList(
+        colsParse
+          .filter((col: any) => col.isSelected)
+          .map((col: any) => col.value),
+      );
     }
+  }, []);
 
-    const leftSiblingIndex = Math.max(currPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(currPage + siblingCount, totalPages);
+  const orderedColumns = columnsList
+    .map((key) =>
+      columns.find((col) => "accessorKey" in col && col.accessorKey === key),
+    )
+    .filter(Boolean) as ColumnDef<IProdutoResumeResponse>[];
 
-    const shouldShowLeftDots = leftSiblingIndex > 2;
-    const shouldShowRightDots = rightSiblingIndex < totalPages - 2;
+  const actionColumn = columns.find((col) => col.id === "actions");
 
-    const firstPageIndex = 1;
-    const lastPageIndex = totalPages;
+  const finalColumns: ColumnDef<IProdutoResumeResponse>[] = [
+    ...orderedColumns,
+    ...(actionColumn ? [actionColumn] : []), // Adicionar coluna de ações, se encontrada
+  ];
 
-    if (!shouldShowLeftDots && shouldShowRightDots) {
-      const leftItemCount = 3 + 2 * siblingCount;
-      const leftRange = range(1, leftItemCount);
-
-      return [...leftRange, DOTS, totalPages];
-    }
-
-    if (shouldShowLeftDots && !shouldShowRightDots) {
-      const rightItemCount = 3 + 2 * siblingCount;
-      const rightRange = range(totalPages - rightItemCount + 1, totalPages);
-      return [firstPageIndex, DOTS, ...rightRange];
-    }
-
-    if (shouldShowLeftDots && shouldShowRightDots) {
-      const middleRange = range(leftSiblingIndex, rightSiblingIndex);
-      return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
-    }
-  };
+  const table = useReactTable({
+    data,
+    columns: finalColumns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+  });
 
   return (
-    <div className="select-none pb-3">
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={onPreviousPage}
-              className={currPage === 0 ? "pointer-events-none opacity-50" : ""}
-            />
-          </PaginationItem>
-
-          {paginationRange()?.map((pageNumber, index) => {
-            if (pageNumber === DOTS) {
-              return (
-                <PaginationItem key={index}>
-                  <PaginationEllipsis />
-                </PaginationItem>
-              );
-            }
-
-            return (
-              <PaginationItem key={index} className="cursor-pointer">
-                <PaginationLink
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onJumpToPage(Number(pageNumber) - 1);
-                  }}
-                  isActive={pageNumber === currPage + 1}
-                >
-                  {pageNumber}
-                </PaginationLink>
-              </PaginationItem>
+    <div>
+      <div className="flex items-center justify-end pb-3">
+        <PopoverColumnsTable
+          isMobile={isMobile}
+          isOpenPopover={isOpenPopover}
+          setIsOpenPopover={setIsOpenPopover}
+          changeColumns={(columns) => {
+            setColumnsList(
+              columns
+                .filter((col: any) => col.isSelected)
+                .map((col: any) => col.value),
             );
-          })}
+          }}
+        />
 
-          <PaginationItem>
-            <PaginationNext
-              onClick={onNextPage}
-              className={
-                currPage === totalPages - 1
-                  ? "pointer-events-none opacity-50"
-                  : "cursor-pointer"
-              }
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+        <TablePagination
+          totalPages={totalPages}
+          currPage={currPage}
+          onJumpToPage={onJumpToPage}
+          onPreviousPage={onPreviousPage}
+          onNextPage={onNextPage}
+        />
+      </div>
+
+      <div className="w-full overflow-x-auto rounded-md border px-2 pb-3">
+        <TableComponent>
+          <TableHeader>
+            {!isLoading &&
+              table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    );
+                  })}
+                </TableRow>
+              ))}
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={10} className="h-16 flex-auto">
+                  <h1 className="flex justify-center text-lc-secondary">
+                    <Loader2 className="animate-spin" />
+                  </h1>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <ContextMenu key={row.id}>
+                  <ContextMenuTrigger asChild>
+                    <TableRow
+                      className="odd:bg-zinc-100 dark:odd:bg-zinc-700"
+                      onDoubleClick={() => {
+                        onEdit(row.original.id);
+                      }}
+                    >
+                      {row
+                        .getVisibleCells()
+                        .map((cell) =>
+                          flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          ),
+                        )}
+                    </TableRow>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent className="p-4">
+                    <ContextMenuItem onClick={() => onEdit(row.original.id)}>
+                      <p className="flex items-center gap-2">
+                        <Edit2 size={15} />
+                        Editar
+                      </p>
+                    </ContextMenuItem>
+                    {row.original.ativo ? (
+                      <ContextMenuItem
+                        onClick={() => onChangeStatus(row.original.id, false)}
+                      >
+                        <p className="flex items-center gap-2">
+                          <ToggleLeft size={16} />
+                          Inativar
+                        </p>
+                      </ContextMenuItem>
+                    ) : (
+                      <ContextMenuItem
+                        onClick={() => onChangeStatus(row.original.id, true)}
+                      >
+                        <p className="flex items-center gap-2">
+                          <ToggleRight size={16} />
+                          Ativar
+                        </p>
+                      </ContextMenuItem>
+                    )}
+                    <ContextMenuItem onClick={() => onDelete(row.original.id)}>
+                      <p className="flex items-center gap-2">
+                        <Files size={15} />
+                        Duplicar produto
+                      </p>
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                </ContextMenu>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={10} className="h-16 flex-auto">
+                  <h1 className="flex justify-center text-lc-secondary">
+                    Nenhum registro encontrado
+                  </h1>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </TableComponent>
+      </div>
     </div>
   );
 }

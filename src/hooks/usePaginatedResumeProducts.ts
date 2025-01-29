@@ -8,7 +8,7 @@ import { useState } from "react";
 export default function usePaginatedResumeProducts() {
   const [data, setData] = useState({
     products: [],
-    totalPages: 0,
+    totalPages: 1,
     totalElements: 0,
   } as {
     products: IProdutoResumeResponse[];

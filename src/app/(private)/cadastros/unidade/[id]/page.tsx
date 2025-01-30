@@ -143,7 +143,7 @@ function CadastrosUnidadeNova({ params }: any) {
   }, []);
 
   return (
-    <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-scroll overflow-x-hidden bg-lc-gray-light px-3 py-4 md:pl-8 md:pr-5">
+    <main className="flex h-[calc(100vh-55px)] flex-1 flex-col overflow-scroll overflow-x-hidden bg-lc-gray-light px-3 py-4 md:pl-8 md:pr-5">
       <div className="flex items-center gap-3">
         <SidebarTrigger />
 

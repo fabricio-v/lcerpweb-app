@@ -319,6 +319,14 @@ export function Table({
   return (
     <div>
       <div className="flex items-center justify-end pb-3">
+        <TablePagination
+          totalPages={totalPages}
+          currPage={currPage}
+          onJumpToPage={onJumpToPage}
+          onPreviousPage={onPreviousPage}
+          onNextPage={onNextPage}
+        />
+
         <PopoverColumnsTable
           isMobile={isMobile}
           isOpenPopover={isOpenPopover}
@@ -330,14 +338,6 @@ export function Table({
                 .map((col: any) => col.value),
             );
           }}
-        />
-
-        <TablePagination
-          totalPages={totalPages}
-          currPage={currPage}
-          onJumpToPage={onJumpToPage}
-          onPreviousPage={onPreviousPage}
-          onNextPage={onNextPage}
         />
       </div>
 

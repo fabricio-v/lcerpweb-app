@@ -20,7 +20,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden p-4">
+    <main className="flex h-[calc(100vh-55px)] flex-1 flex-col overflow-auto overflow-x-hidden p-4">
       <SidebarTrigger>
         <MenuIcon />
       </SidebarTrigger>
@@ -36,7 +36,7 @@ export default function Home() {
           Novo produto
         </Link>
         <Link
-          href={""}
+          href={"/cadastros/cliente/null"}
           className="w-[130px] text-sm hover:text-lc-sunsetsky-light"
         >
           Novo cliente

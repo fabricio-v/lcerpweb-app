@@ -115,8 +115,9 @@ const PopoverColumnsTable = ({
     <div className="">
       <Popover open={isOpenPopover} onOpenChange={setIsOpenPopover}>
         <PopoverTrigger asChild>
-          <Button size={"icon"} variant={"ghost"} className="ml-auto">
+          <Button style={{ width: 55 }} variant={"ghost"} className="ml-0">
             <Settings />
+            <ChevronDown />
           </Button>
         </PopoverTrigger>
 
@@ -178,7 +179,7 @@ import {
 import { LocalStorageKeys } from "@/constants/LocalStorageKeys";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Grip, Settings } from "lucide-react";
+import { ChevronDown, Grip, Settings } from "lucide-react";
 import { FC } from "react";
 
 interface ColumnItemProps {

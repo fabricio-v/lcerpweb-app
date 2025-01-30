@@ -97,7 +97,7 @@ function CadastrosFabricante() {
   }, [textFilter]);
 
   return (
-    <main className="flex h-[calc(100vh-50px)] flex-1 flex-col overflow-auto overflow-x-hidden bg-lc-gray-light px-3 py-4 md:px-8">
+    <main className="flex h-[calc(100vh-55px)] flex-1 flex-col overflow-auto overflow-x-hidden bg-lc-gray-light px-3 py-4 md:px-8">
       <div className="flex items-center gap-3">
         <SidebarTrigger />
 

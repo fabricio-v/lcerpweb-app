@@ -1,4 +1,6 @@
+import { IClienteInput } from "@/interfaces/dto/ClienteInput";
 import { IClienteResponse } from "@/interfaces/response/ClienteResponse";
+import { IClienteRefResponse } from "@/interfaces/response/ref/ClienteRefResponse";
 import { IResponsePaged } from "@/interfaces/response/ResponsePaged";
 import api from "../axios";
 
@@ -22,6 +24,17 @@ export const requestClientesByFilters = async (
       page,
       size,
     },
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+};
+
+export const requestInsertOrUpdateCliente = async (
+  cliente: IClienteInput,
+  token: string,
+) => {
+  return api.post<IClienteRefResponse>("/clientes", cliente, {
     headers: {
       Authorization: "Bearer " + token,
     },

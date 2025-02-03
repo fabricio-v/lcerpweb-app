@@ -102,7 +102,7 @@ function AddItemListaTabelaPrecos({
   };
 
   return (
-    <div className="flex flex-1 flex-col items-end gap-4 pb-4 md:flex-row">
+    <div className="flex flex-1 flex-col items-end gap-6 pb-4 md:flex-row">
       <Combobox
         label="Tabela de preços"
         data={data.map((item) => ({

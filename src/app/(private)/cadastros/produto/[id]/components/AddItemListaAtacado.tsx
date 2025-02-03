@@ -124,8 +124,8 @@ function AddItemListaAtacado({
   }, [unidadeSelId]);
 
   return (
-    <div className="flex flex-1 flex-col gap-4 pb-4 md:flex-row">
-      <div className="flex flex-1 flex-col items-end gap-4 pb-4 md:grid md:grid-cols-7">
+    <div className="flex flex-1 flex-col gap-6 pb-4 md:flex-row">
+      <div className="flex flex-1 flex-col items-end gap-6 pb-4 md:grid md:grid-cols-7">
         <InputWithLabel
           label="Código"
           maxLength={20}

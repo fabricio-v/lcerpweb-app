@@ -88,7 +88,7 @@ function AddItemListaLeveXPagueY({
   };
 
   return (
-    <div className="flex flex-1 flex-col items-end gap-4 pb-4 md:flex-row">
+    <div className="flex flex-1 flex-col items-end gap-6 pb-4 md:flex-row">
       <AmountInput
         label="Quantidade mínima"
         value={quantidadeMinima}

@@ -543,8 +543,8 @@ function CadastrosProdutoNovo({ params }: any) {
               )}
             />
           </div>
-          <div className="flex flex-1 flex-col">
-            <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-4">
+          <div className="flex flex-1 flex-col gap-4">
+            <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-4">
               <FormField
                 control={form.control}
                 name="id"
@@ -615,7 +615,7 @@ function CadastrosProdutoNovo({ params }: any) {
               />
             </div>
 
-            <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-2 md:items-start">
+            <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-2 md:items-start">
               <FormField
                 control={form.control}
                 name="nome"
@@ -643,7 +643,7 @@ function CadastrosProdutoNovo({ params }: any) {
               />
             </div>
 
-            <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-5">
+            <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-5">
               <FormField
                 control={form.control}
                 name="categoria"
@@ -744,7 +744,7 @@ function CadastrosProdutoNovo({ params }: any) {
               />
             </div>
 
-            <div className="flex flex-1 flex-col gap-4 pb-2 md:grid md:grid-cols-5">
+            <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-5">
               <AmountInput
                 label="Estoque"
                 value={estoque}
@@ -887,7 +887,7 @@ function CadastrosProdutoNovo({ params }: any) {
               <TabsTrigger value="ipi">IPI</TabsTrigger>
             </TabsList>
             <TabsContent value="geral">
-              <div className="flex flex-1 flex-col gap-4 px-4">
+              <div className="flex flex-1 flex-col gap-6 px-4">
                 <FormField
                   control={form.control}
                   name="cst"
@@ -1035,7 +1035,7 @@ function CadastrosProdutoNovo({ params }: any) {
 
           <Separator />
 
-          <div className="flex flex-1 flex-col gap-3 py-4">
+          <div className="flex flex-1 flex-col gap-6 py-4">
             {precosLeveXPagueYLista.map((item, index) => (
               <ItemListaLeveXPagueY
                 item={item}
@@ -1072,7 +1072,7 @@ function CadastrosProdutoNovo({ params }: any) {
 
           <Separator />
 
-          <div className="flex flex-1 flex-col gap-3 pt-4">
+          <div className="flex flex-1 flex-col gap-6 pt-4">
             {precosAtacadoLista.map((item, index) => (
               <ItemListaAtacado
                 item={item}
@@ -1099,7 +1099,6 @@ function CadastrosProdutoNovo({ params }: any) {
     return (
       <CollapsibleSection
         isShow={isShowSectionTabelaPreco}
-        // isShow={true}
         title="Tabela de preço"
         changeShow={setIsShowSectionTabelaPreco}
         isOpcional
@@ -1124,7 +1123,7 @@ function CadastrosProdutoNovo({ params }: any) {
 
           <Separator />
 
-          <div className="flex flex-1 flex-col gap-3 py-4">
+          <div className="flex flex-1 flex-col gap-6 py-4">
             {precosTabelaPrecoLista.map((item, index) => (
               <ItemListaTabelaPrecos
                 item={item}
@@ -1440,19 +1439,19 @@ function CadastrosProdutoNovo({ params }: any) {
 
               {grade === "SIM" && renderGrade}
 
+              {renderCodigosAdicionais}
+
               {renderTributacao}
 
-              {renderEmpresas}
+              {renderPrecosLeveXPagueY}
 
               {renderTabelaPreco}
-
-              {renderPrecosLeveXPagueY}
 
               {renderPrecosAtacadoEmbalagem}
 
               {renderAdicionais}
 
-              {renderCodigosAdicionais}
+              {renderEmpresas}
 
               {renderImagens}
 

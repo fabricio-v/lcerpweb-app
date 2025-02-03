@@ -4,6 +4,14 @@ import { IClienteRefResponse } from "@/interfaces/response/ref/ClienteRefRespons
 import { IResponsePaged } from "@/interfaces/response/ResponsePaged";
 import api from "../axios";
 
+export const requestClienteById = async (token: string, id: number) => {
+  return api.get<IClienteResponse>(`/clientes/${id}`, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+};
+
 export const requestClientesByFilters = async (
   token: string,
   genericFilter: string | null,

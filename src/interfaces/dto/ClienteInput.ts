@@ -1,3 +1,5 @@
+import { IPessoaEnderecoInput } from "./PessoaEnderecoInput";
+
 export interface IClienteInput {
   id: number | null;
   ativo: boolean;
@@ -24,18 +26,18 @@ export interface IClienteInput {
   idCidade: number;
   idEstado: number;
   idPais: number;
-  idCidadeEntrega: number;
-  idEstadoEntrega: number;
-  idCidadeNaturalidade: number;
-  idEstadoNaturalidade: number;
-  idCidadeConjuge: number;
-  idEstadoConjuge: number;
-  idCidadeEmpresa: number;
-  idEstadoEmpresa: number;
-  idCidadeFiliacao: number;
-  idEstadoFiliacao: number;
-  idCidadeAvalista: number;
-  idEstadoAvalista: number;
+  idCidadeEntrega: number | null;
+  idEstadoEntrega: number | null;
+  idCidadeNaturalidade: number | null;
+  idEstadoNaturalidade: number | null;
+  idCidadeConjuge: number | null;
+  idEstadoConjuge: number | null;
+  idCidadeEmpresa: number | null;
+  idEstadoEmpresa: number | null;
+  idCidadeFiliacao: number | null;
+  idEstadoFiliacao: number | null;
+  idCidadeAvalista: number | null;
+  idEstadoAvalista: number | null;
 
   contato1: string;
   contato2: string;
@@ -102,4 +104,5 @@ export interface IClienteInput {
   estadoCivil: string;
   limiteCredito: number;
   obs: string;
+  enderecosAdicionais: IPessoaEnderecoInput[];
 }

@@ -1,5 +1,6 @@
 import { ICidadeResponse } from "./CidadeResponse";
 import { IEstadoResponse } from "./EstadoResponse";
+import { IPessoaEnderecoResponse } from "./PessoaEnderecoResponse";
 
 export interface IClienteResponse {
   id: number;
@@ -101,4 +102,5 @@ export interface IClienteResponse {
   };
   obs: string;
   datahoraCadastro: string;
+  enderecosAdicionais: IPessoaEnderecoResponse[];
 }

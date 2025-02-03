@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { InfoIcon } from "lucide-react";
 import { InputHTMLAttributes, useState } from "react";
 import {
@@ -34,6 +35,7 @@ export function InputWithLabel({
   info,
   maxLength,
   value,
+  disabled,
   onBlur,
   onFocus,
   ...rest
@@ -58,11 +60,15 @@ export function InputWithLabel({
           handleBlur();
           onBlur && onBlur(e);
         }}
+        disabled={disabled}
         // className="peer" // Adiciona a classe peer para referência
       />
       <Label
         // htmlFor={label}
-        className="peer-focus:text-lc-sunsetsky-ligh flex items-center gap-1 text-[12px] font-semibold text-foreground/70"
+        className={cn(
+          "peer-focus:text-lc-sunsetsky-ligh flex items-center gap-1 text-[12px] font-semibold text-foreground/70",
+          disabled && "cursor-not-allowed opacity-50",
+        )}
       >
         <div className="flex flex-1 items-end justify-between">
           <div className="flex items-center gap-1">

@@ -35,6 +35,7 @@ import {
   requestClienteById,
   requestInsertOrUpdateCliente,
 } from "@/services/requests/cliente";
+import { formataDataBRParaUSA, formataDataUSAParaBR } from "@/utils/Format";
 import { buildMessageException, isValidDateDDMMYYYY } from "@/utils/Funcoes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft } from "lucide-react";
@@ -74,7 +75,7 @@ export const formClienteSchema = z.object({
     .string()
     .optional()
     .refine((val) => !val || isValidDateDDMMYYYY(val), {
-      message: "Data inválida",
+      message: "Data inválida. Deve ter o formato DD/MM/YYYY",
     }),
   dataNascimento: z
     .string()
@@ -369,8 +370,12 @@ function CadastrosClienteNovo({ params }: any) {
         isuf: data.isuf || "",
         rg: data.rg || "",
         rgOrgao: data.rgOrgao || "",
-        rgDataEmissao: data.rgDataEmissao || null,
-        dataNascimento: data.dataNascimento || null,
+        rgDataEmissao: data.rgDataEmissao
+          ? formataDataBRParaUSA(data.rgDataEmissao)
+          : null,
+        dataNascimento: data.dataNascimento
+          ? formataDataBRParaUSA(data.dataNascimento)
+          : null,
 
         endereco: data.endereco || "",
         numero: data.numero || "",
@@ -1282,8 +1287,14 @@ function CadastrosClienteNovo({ params }: any) {
       form.setValue("isuf", cliente.isuf);
       form.setValue("rg", cliente.rg);
       form.setValue("rgOrgao", cliente.rgOrgao);
-      form.setValue("rgDataEmissao", cliente.rgDataEmissao);
-      form.setValue("dataNascimento", cliente.dataNascimento || "");
+      form.setValue(
+        "rgDataEmissao",
+        formataDataUSAParaBR(cliente.rgDataEmissao),
+      );
+      form.setValue(
+        "dataNascimento",
+        formataDataUSAParaBR(cliente.dataNascimento),
+      );
 
       form.setValue("endereco", cliente.endereco);
       form.setValue("numero", cliente.numero);

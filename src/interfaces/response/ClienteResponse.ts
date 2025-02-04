@@ -21,7 +21,7 @@ export interface IClienteResponse {
   isuf: string;
   rg: string;
   rgOrgao: string;
-  rgDataEmissao: string;
+  rgDataEmissao: string | null;
   dataNascimento: string | null;
   endereco: string;
   numero: string;

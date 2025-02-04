@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { InfoIcon } from "lucide-react";
 import { forwardRef, InputHTMLAttributes, useRef, useState } from "react";
-import InputMask, { ReactInputMask } from "react-input-mask";
+import InputMask from "react-input-mask";
 import {
   HoverCard,
   HoverCardContent,
@@ -57,14 +57,20 @@ const DateInput = forwardRef<HTMLInputElement, Props>(
     const handleFocus = () => setIsFocused(true);
     const handleBlur = () => setIsFocused(false);
 
-    const inputRef = useRef<ReactInputMask>(null);
+    const inputRef = useRef<any>(null);
 
     return (
       <div className="flex w-full flex-1 flex-col-reverse gap-1.5">
         <InputMask
           {...rest}
-          id={label}
-          ref={ref || inputRef}
+          ref={(el: any) => {
+            if (typeof ref === "function") {
+              ref(el?.inputElement || null);
+            } else if (ref) {
+              ref.current = el?.inputElement || null;
+            }
+            inputRef.current = el;
+          }}
           className={cn(
             "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lc-sunsetsky-light disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
             className,
@@ -72,8 +78,10 @@ const DateInput = forwardRef<HTMLInputElement, Props>(
           type="text"
           maskChar={""}
           mask="99/99/9999"
-          value={date}
+          value={value}
           onChange={handleChange}
+          {...rest}
+          id={label}
           maxLength={maxLength}
           onFocus={(e) => {
             handleFocus();

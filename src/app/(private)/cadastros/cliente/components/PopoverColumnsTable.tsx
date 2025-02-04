@@ -97,6 +97,16 @@ const PopoverColumnsTable = ({
     setIsOpenPopover(false);
   };
 
+  const handleAplicarPadrao = () => {
+    localStorage.setItem(
+      LocalStorageKeys.ORDERS_COLUMNS_CLIENT,
+      JSON.stringify(defaultColumns),
+    );
+    changeColumns(defaultColumns);
+    setColumnsList(defaultColumns);
+    setIsOpenPopover(false);
+  };
+
   useEffect(() => {
     const columnsStorage = localStorage.getItem(
       LocalStorageKeys.ORDERS_COLUMNS_CLIENT,
@@ -127,7 +137,7 @@ const PopoverColumnsTable = ({
           className="overflow-hidden"
           style={{
             // width: popoverWidth,
-            maxHeight: !isMobile ? "60vh" : "50vh", // Cresce até 80% da altura da viewport
+            maxHeight: !isMobile ? "60vh" : "45vh", // Cresce até 80% da altura da viewport
             overflowY: "auto", // Ativa o scroll vertical, se necessário
           }}
         >
@@ -156,6 +166,13 @@ const PopoverColumnsTable = ({
             </div>
           </DndContext>
           <div className="absolute bottom-0 left-0 flex w-full bg-lc-primary px-4 py-3">
+            <Button
+              onClick={handleAplicarPadrao}
+              variant={"link"}
+              className="mt-4 w-min"
+            >
+              Redefinir padrão
+            </Button>
             <Button
               onClick={handleAplicar}
               variant={"outline"}

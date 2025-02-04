@@ -229,7 +229,8 @@ function Filter({
       className="flex max-w-[600px] flex-1 items-end gap-2"
     >
       <InputWithLabel
-        label="Pesquisa por nome, barras, código interno, código e referência"
+        // label="Pesquisa por nome, barras, código interno, código e referência"
+        label="Pesquisa por nome e códigos"
         placeholder="Digite aqui para pesquisar"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}

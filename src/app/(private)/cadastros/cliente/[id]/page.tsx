@@ -5,6 +5,7 @@ import { CepInput } from "@/components/input/CepInput";
 import { CpfCnpjInput } from "@/components/input/CpfCnpjInput";
 import { DateInput } from "@/components/input/DateInput";
 import { InputWithLabel } from "@/components/input/InputWithLabel";
+import { MonetaryInput } from "@/components/input/MonetaryInput";
 import { PhoneInput } from "@/components/input/PhoneInput";
 import { Switch } from "@/components/switch";
 import { Button } from "@/components/ui/button";
@@ -593,7 +594,7 @@ function CadastrosClienteNovo({ params }: any) {
             />
           </div>
 
-          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-[1fr_1fr_200px]">
+          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-3">
             <FormField
               control={form.control}
               name="nome"
@@ -758,7 +759,19 @@ function CadastrosClienteNovo({ params }: any) {
             />
           </div>
 
-          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-[1fr_120px_1fr_200px]">
+          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-[200px_1fr_120px_1fr]">
+            <FormField
+              control={form.control}
+              name="cep"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <CepInput label="CEP" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="endereco"
@@ -801,22 +814,9 @@ function CadastrosClienteNovo({ params }: any) {
                 </FormItem>
               )}
             />
-
-            <FormField
-              control={form.control}
-              name="cep"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <CepInput label="CEP" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
 
-          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-[1fr_250px_250px_1fr]">
+          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-4">
             <FormField
               control={form.control}
               name="referencia"
@@ -910,7 +910,7 @@ function CadastrosClienteNovo({ params }: any) {
             />
           </div>
 
-          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-[minmax(auto,150px)_minmax(auto,150px)_minmax(auto,150px)_1fr_1fr]">
+          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-5">
             <FormField
               control={form.control}
               name="contato1"
@@ -1115,72 +1115,146 @@ function CadastrosClienteNovo({ params }: any) {
         changeShow={setIsShowSectionAdicionais}
         isOpcional
       >
-        <div>
-          <FormField
-            control={form.control}
-            name="ativo"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Switch
-                    classNameContainer=""
-                    title={field.value === true ? "Ativo" : "Inativo"}
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <div className="flex flex-col gap-6">
+          <div className="flex">
+            <FormField
+              control={form.control}
+              name="ativo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Switch
+                      classNameContainer="w-[120px]"
+                      title={field.value === true ? "Ativo" : "Inativo"}
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      label="Status"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-          <FormField
-            control={form.control}
-            name="sexo"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Combobox
-                    data={SexoPessoa.map((item) => {
-                      return { label: item.label, value: item.value };
-                    })}
-                    valueSelected={field.value}
-                    onChangeValueSelected={field.onChange}
-                    label="Sexo"
-                    disableFilter
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
+            <FormField
+              control={form.control}
+              name="dataNascimento"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <DateInput label="Data nascimento" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="estadoCivil"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Combobox
-                    data={EstadoCivilPessoa.map((item) => {
-                      return { label: item.label, value: item.value };
-                    })}
-                    valueSelected={field.value}
-                    onChangeValueSelected={field.onChange}
-                    label="Estado civil"
-                    disableFilter
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="sexo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Combobox
+                      data={SexoPessoa.map((item) => {
+                        return { label: item.label, value: item.value };
+                      })}
+                      valueSelected={field.value}
+                      onChangeValueSelected={field.onChange}
+                      label="Sexo"
+                      disableFilter
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="estadoCivil"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Combobox
+                      data={EstadoCivilPessoa.map((item) => {
+                        return { label: item.label, value: item.value };
+                      })}
+                      valueSelected={field.value}
+                      onChangeValueSelected={field.onChange}
+                      label="Estado civil"
+                      disableFilter
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
+            <Combobox
+              label="Nacionalidade"
+              data={dataPaises.paises.map((item) => {
+                return {
+                  label: item.nome,
+                  value: item.id + "",
+                };
+              })}
+              valueSelected={""}
+              onChangeValueSelected={() => {}}
+            />
+
+            <Combobox
+              label="Estado naturalidade"
+              data={dataEstados.estados.map((item) => {
+                return {
+                  label: item.uf + " - " + item.nome,
+                  value: item.id + "",
+                };
+              })}
+              valueSelected={""}
+              onChangeValueSelected={(value) => {}}
+            />
+
+            <Combobox
+              label="Cidade naturalidade"
+              data={dataCidades.cidades.map((item) => {
+                return {
+                  label: item.nome,
+                  value: item.id + "",
+                };
+              })}
+              valueSelected={""}
+              onChangeValueSelected={() => {}}
+            />
+          </div>
+
+          <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
+            <Combobox
+              label="Vendedor"
+              data={[]}
+              valueSelected={""}
+              onChangeValueSelected={(value) => {}}
+            />
+
+            <Combobox
+              label="Tabela de preço"
+              data={[]}
+              valueSelected={""}
+              onChangeValueSelected={(value) => {}}
+            />
+
+            <MonetaryInput label="Limite de crédito" />
+          </div>
         </div>
       </CollapsibleSection>
     );
-  }, [isShowSectionAdicionais, form]);
+  }, [isShowSectionAdicionais, form, dataCidades, dataEstados, dataPaises]);
 
   const renderFiliacao = useMemo(() => {
     return (

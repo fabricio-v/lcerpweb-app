@@ -36,7 +36,13 @@ const CpfCnpjInput = forwardRef<HTMLInputElement, CpfCnpjInputProps>(
             {...props}
           />
         </div>
-        <Button type="button" size={"icon"} variant={"ghost"} className="mt-6">
+        <Button
+          type="button"
+          size={"icon"}
+          variant={"ghost"}
+          className="mt-6"
+          info={"Consultar " + typeInput.toUpperCase()}
+        >
           <Search />
         </Button>
       </div>

@@ -18,7 +18,7 @@ function ItemListaEnderecosAdicionais({ item, onRemove, onEdit }: Props) {
         className="flex flex-1 cursor-pointer flex-col"
         onClick={() => onEdit(item)}
       >
-        <h1 className="text-lc-secondary">
+        <h1 className="text-sm text-lc-secondary">
           <h1 className="font-semibold text-lc-secondary">{`${item.descricao}`}</h1>
           {`${item.endereco}, Nº ${item.numero}, ${item.bairro} - ${item.cidade.nome}/${item.estado.uf} - CEP: ${item.cep}`}
           <h1 className="text-lc-secondary">{`${item.referencia && `(${item.referencia})`}`}</h1>

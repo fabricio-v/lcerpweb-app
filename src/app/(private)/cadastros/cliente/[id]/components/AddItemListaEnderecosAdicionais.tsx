@@ -105,28 +105,33 @@ function AddItemListaEnderecosAdicionais({
     <div>
       {enderecosAdicionaisLista.length > 0 && (
         <>
-          <div className="flex flex-1 flex-col gap-4 py-4">
-            {enderecosAdicionaisLista.map((item, index) => (
-              <ItemListaEnderecosAdicionais
-                item={item}
-                key={index}
-                onRemove={onRemove}
-                onEdit={(item) => {
-                  setIsShowForm(true);
-                  setId(item.id);
-                  setDescricao(item.descricao);
-                  setCep(item.cep);
-                  setEndereco(item.endereco);
-                  setNumero(item.numero);
-                  setBairro(item.bairro);
-                  setReferencia(item.referencia);
-                  setEstadoSel(item.estado.id + "");
-                  setCidadeSel(item.cidade.id + "");
-                  setCidadeSelNome(item.cidade.nome);
-                  setEstadoSelUf(item.estado.uf);
-                }}
-              />
-            ))}
+          <div className="flex flex-1 flex-col py-4">
+            <h1 className="pb-2 text-xs font-semibold">
+              Endereços cadastrados
+            </h1>
+            <div className="flex flex-1 flex-col gap-4">
+              {enderecosAdicionaisLista.map((item, index) => (
+                <ItemListaEnderecosAdicionais
+                  item={item}
+                  key={index}
+                  onRemove={onRemove}
+                  onEdit={(item) => {
+                    setIsShowForm(true);
+                    setId(item.id);
+                    setDescricao(item.descricao);
+                    setCep(item.cep);
+                    setEndereco(item.endereco);
+                    setNumero(item.numero);
+                    setBairro(item.bairro);
+                    setReferencia(item.referencia);
+                    setEstadoSel(item.estado.id + "");
+                    setCidadeSel(item.cidade.id + "");
+                    setCidadeSelNome(item.cidade.nome);
+                    setEstadoSelUf(item.estado.uf);
+                  }}
+                />
+              ))}
+            </div>
           </div>
           <Separator className="mb-4" />
         </>
@@ -151,6 +156,7 @@ function AddItemListaEnderecosAdicionais({
         </div>
       ) : (
         <div className="items-end">
+          <h1 className="pb-4 text-xs font-semibold">Novo endereço</h1>
           <div className="flex flex-1 flex-col gap-6 pb-6">
             <InputWithLabel
               ref={inputRef}

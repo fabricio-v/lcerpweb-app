@@ -137,7 +137,7 @@ function AddItemListaEnderecosAdicionais({
           <Button
             type="button"
             variant={"secondary"}
-            info="Adicionar endereço"
+            info="Cadastrar novo endereço adicional"
             onClick={() => {
               setIsShowForm(true);
               setTimeout(() => {

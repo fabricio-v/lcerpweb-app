@@ -130,6 +130,16 @@ export function Table({
       },
     },
     {
+      accessorKey: "pais",
+      header: () => <TableHead className="min-w-[200px]">País</TableHead>,
+      cell: ({ row }) => {
+        const cliente = row.original;
+        return (
+          <TableCell className="min-w-[200px]">{cliente.pais.nome}</TableCell>
+        );
+      },
+    },
+    {
       accessorKey: "ativo",
       header: () => (
         <TableHead className="w-[75px] text-center">Status</TableHead>

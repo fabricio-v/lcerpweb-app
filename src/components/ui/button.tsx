@@ -4,6 +4,12 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { LucideLoader2 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./tooltip";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
@@ -35,16 +41,30 @@ const buttonVariants = cva(
   },
 );
 
+export function TooltipDemo() {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipContent>
+          <p>Add to library</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   isLoading?: boolean;
+  info?: string;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
+      info,
       className,
       variant,
       size,
@@ -57,13 +77,28 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const Comp = asChild ? Slot : "button";
     return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      >
-        {isLoading ? <LucideLoader2 className="animate-spin" /> : children}
-      </Comp>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Comp
+              className={cn(buttonVariants({ variant, size, className }))}
+              ref={ref}
+              {...props}
+            >
+              {isLoading ? (
+                <LucideLoader2 className="animate-spin" />
+              ) : (
+                children
+              )}
+            </Comp>
+          </TooltipTrigger>
+          {info && (
+            <TooltipContent>
+              <p>{info}</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
     );
   },
 );

@@ -39,7 +39,7 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <head />
         <body
-          className={`${gothamBook.variable} ${gothamBlack.variable} ${gothamBold.variable} antialiased`}
+          className={`${gothamBook.variable} ${gothamBlack.variable} ${gothamBold.variable} m-h-screen overflow-hidden antialiased`}
         >
           <ThemeProvider
             attribute="class"
@@ -48,6 +48,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Loading />
+
             <main>{children}</main>
 
             <Toaster

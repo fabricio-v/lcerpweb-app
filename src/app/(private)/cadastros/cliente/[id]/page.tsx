@@ -3,6 +3,7 @@
 import { Combobox } from "@/components/combobox/Combobox";
 import { CepInput } from "@/components/input/CepInput";
 import { CpfCnpjInput } from "@/components/input/CpfCnpjInput";
+import { DateInput } from "@/components/input/DateInput";
 import { InputWithLabel } from "@/components/input/InputWithLabel";
 import { PhoneInput } from "@/components/input/PhoneInput";
 import { Switch } from "@/components/switch";
@@ -18,10 +19,14 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Textarea } from "@/components/ui/textarea";
 import { CookiesKeys } from "@/constants/CookiesKeys";
+import { EstadoCivilPessoa } from "@/constants/EstadoCivilPessoa";
 import { Messages } from "@/constants/Messages";
+import { SexoPessoa } from "@/constants/SexoPessoa";
 import useSearchCidades from "@/hooks/useSearchCidades";
 import useSearchEstados from "@/hooks/useSearchEstados";
+import useSearchPaises from "@/hooks/useSearchPaises";
 import { IClienteInput } from "@/interfaces/dto/ClienteInput";
+import { IPessoaEnderecoInput } from "@/interfaces/dto/PessoaEnderecoInput";
 import { IClienteResponse } from "@/interfaces/response/ClienteResponse";
 import { IPessoaEnderecoResponse } from "@/interfaces/response/PessoaEnderecoResponse";
 import { getCookieClient } from "@/lib/cookieClient";
@@ -30,7 +35,7 @@ import {
   requestClienteById,
   requestInsertOrUpdateCliente,
 } from "@/services/requests/cliente";
-import { buildMessageException } from "@/utils/Funcoes";
+import { buildMessageException, isValidDateDDMMYYYY } from "@/utils/Funcoes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -38,13 +43,18 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import AddItemListaEnderecosAdicionais from "./components/AddItemListaEnderecosAdicionais";
 import Breadcrumbs from "./components/Breadcrumbs";
 import CollapsibleSection from "./components/CollapsibleSection";
 
 export const formClienteSchema = z.object({
   id: z.number().optional(),
   ativo: z.boolean(),
-  tipoPessoaFisicaJuridica: z.string(),
+  isCliente: z.boolean(),
+  isFornecedor: z.boolean(),
+  isTransportadora: z.boolean(),
+  isFuncionario: z.boolean(),
+  tipoPessoa: z.string(),
   nome: z.string().min(1, {
     message: "Informe o Nome do cliente",
   }),
@@ -60,8 +70,18 @@ export const formClienteSchema = z.object({
   isuf: z.string().optional(),
   rg: z.string().optional(),
   rgOrgao: z.string().optional(),
-  rgDataEmissao: z.string().optional(),
-  dataNascimento: z.string().optional(),
+  rgDataEmissao: z
+    .string()
+    .optional()
+    .refine((val) => !val || isValidDateDDMMYYYY(val), {
+      message: "Data inválida",
+    }),
+  dataNascimento: z
+    .string()
+    .optional()
+    .refine((val) => !val || isValidDateDDMMYYYY(val), {
+      message: "Data inválida",
+    }),
 
   endereco: z.string().optional(),
   numero: z.string().optional(),
@@ -74,7 +94,9 @@ export const formClienteSchema = z.object({
   estado: z.string().min(1, {
     message: "Selecione um Estado",
   }),
-  pais: z.string().optional(),
+  pais: z.string().min(1, {
+    message: "Selecione um País",
+  }),
 
   naturalidadeCidade: z.string().optional(),
   naturalidadeEstado: z.string().optional(),
@@ -84,14 +106,6 @@ export const formClienteSchema = z.object({
   contato3: z.string().optional(),
   email: z.string().optional(),
   email2: z.string().optional(),
-
-  enderecoEntrega: z.string().optional(),
-  numeroEntrega: z.string().optional(),
-  bairroEntrega: z.string().optional(),
-  referenciaEntrega: z.string().optional(),
-  cepEntrega: z.string().optional(),
-  entregaCidade: z.string().optional(),
-  entregaEstado: z.string().optional(),
 
   filiacaoPai: z.string().optional(),
   filiacaoPaiContato: z.string().optional(),
@@ -149,9 +163,9 @@ export const formClienteSchema = z.object({
   avalistaCidade: z.string().optional(),
   avalistaEstado: z.string().optional(),
 
-  tabelaPreco: z.string().optional(),
-  sexo: z.string().optional(),
-  estadoCivil: z.string().optional(),
+  tabelaPreco: z.number().optional(),
+  sexo: z.string(),
+  estadoCivil: z.string(),
   limiteCredito: z.number().optional(),
   obs: z.string().optional(),
 });
@@ -163,10 +177,12 @@ function CadastrosClienteNovo({ params }: any) {
 
   const { loadEstados, dataEstados } = useSearchEstados();
   const { loadCidades, dataCidades } = useSearchCidades();
+  const { loadPaises, dataPaises } = useSearchPaises();
 
   const [cliente, setCliente] = useState<IClienteResponse>();
 
   const [isShowSectionGeral, setIsShowSectionGeral] = useState(true);
+  const [isShowSectionTipoPessoa, setIsShowSectionTipoPessoa] = useState(false);
   const [isShowSectionAdicionais, setIsShowSectionAdicionais] = useState(false);
   const [isShowSectionEnderecoAdicionais, setIsShowSectionEnderecoAdicionais] =
     useState(false);
@@ -186,13 +202,17 @@ function CadastrosClienteNovo({ params }: any) {
     defaultValues: {
       id: undefined,
       ativo: true,
-      tipoPessoaFisicaJuridica: "F",
+      isCliente: true,
+      isFornecedor: false,
+      isTransportadora: false,
+      isFuncionario: false,
+      tipoPessoa: "F",
       nome: "",
       razaoSocial: "",
       apelido: "",
 
       cpfCnpj: "",
-      ieIndicador: "",
+      ieIndicador: "9",
       ie: "",
       im: "",
       isuf: "",
@@ -208,7 +228,7 @@ function CadastrosClienteNovo({ params }: any) {
       cep: "",
       cidade: "",
       estado: "",
-      pais: "",
+      pais: "1058",
 
       naturalidadeCidade: "",
       naturalidadeEstado: "",
@@ -218,14 +238,6 @@ function CadastrosClienteNovo({ params }: any) {
       contato3: "",
       email: "",
       email2: "",
-
-      enderecoEntrega: "",
-      numeroEntrega: "",
-      bairroEntrega: "",
-      referenciaEntrega: "",
-      cepEntrega: "",
-      entregaCidade: "",
-      entregaEstado: "",
 
       filiacaoPai: "",
       filiacaoPaiContato: "",
@@ -283,9 +295,9 @@ function CadastrosClienteNovo({ params }: any) {
       avalistaCidade: "",
       avalistaEstado: "",
 
-      tabelaPreco: "",
-      sexo: "",
-      estadoCivil: "",
+      tabelaPreco: undefined,
+      sexo: SexoPessoa[0].value,
+      estadoCivil: EstadoCivilPessoa[0].value,
       limiteCredito: 0,
       obs: "",
     },
@@ -318,6 +330,7 @@ function CadastrosClienteNovo({ params }: any) {
       await carregaCliente();
     }
 
+    await loadPaises();
     await loadEstados();
 
     hideLoading();
@@ -329,14 +342,26 @@ function CadastrosClienteNovo({ params }: any) {
 
   const handleSave = async (data: z.infer<typeof formClienteSchema>) => {
     try {
-      console.log(data.estado);
+      showLoading();
+
+      const enderecosAdicionaisAux: IPessoaEnderecoInput[] =
+        enderecosAdicionaisLista.map((item) => ({
+          ...item,
+          idCidade: item.cidade.id,
+          idEstado: item.estado.id,
+        }));
+
       const newCliente: IClienteInput = {
         id: data.id || null,
         ativo: data.ativo,
+        isCliente: data.isCliente,
+        isFornecedor: data.isFornecedor,
+        isTransportadora: data.isTransportadora,
+        isFuncionario: data.isFuncionario,
         nome: data.nome,
         razaoSocial: data.razaoSocial || "",
         apelido: data.apelido || "",
-        tipoPessoaFisicaJuridica: data.tipoPessoaFisicaJuridica,
+        tipoPessoa: data.tipoPessoa,
         cpfCnpj: data.cpfCnpj || "",
         ieIndicador: Number(data.ieIndicador),
         ie: data.ie || "",
@@ -344,8 +369,8 @@ function CadastrosClienteNovo({ params }: any) {
         isuf: data.isuf || "",
         rg: data.rg || "",
         rgOrgao: data.rgOrgao || "",
-        rgDataEmissao: data.rgDataEmissao || "",
-        dataNascimento: data.dataNascimento || "",
+        rgDataEmissao: data.rgDataEmissao || null,
+        dataNascimento: data.dataNascimento || null,
 
         endereco: data.endereco || "",
         numero: data.numero || "",
@@ -356,8 +381,6 @@ function CadastrosClienteNovo({ params }: any) {
         idCidade: Number(data.cidade),
         idEstado: Number(data.estado),
         idPais: Number(data.pais),
-        idCidadeEntrega: data.entregaCidade ? Number(data.entregaCidade) : null,
-        idEstadoEntrega: data.entregaEstado ? Number(data.entregaEstado) : null,
         idCidadeNaturalidade: data.naturalidadeCidade
           ? Number(data.naturalidadeCidade)
           : null,
@@ -387,12 +410,6 @@ function CadastrosClienteNovo({ params }: any) {
         email: data.email || "",
         email2: data.email2 || "",
 
-        enderecoEntrega: data.enderecoEntrega || "",
-        numeroEntrega: data.numeroEntrega || "",
-        bairroEntrega: data.bairroEntrega || "",
-        referenciaEntrega: data.referenciaEntrega || "",
-        cepEntrega: data.cepEntrega || "",
-
         filiacaoPai: data.filiacaoPai || "",
         filiacaoPaiContato: data.filiacaoPaiContato || "",
         filiacaoMae: data.filiacaoMae || "",
@@ -411,11 +428,11 @@ function CadastrosClienteNovo({ params }: any) {
         conjugeNumero: data.conjugeNumero || "",
         conjugeBairro: data.conjugeBairro || "",
         conjugeCep: data.conjugeCep || "",
-        conjugeDataNascimento: data.conjugeDataNascimento || "",
+        conjugeDataNascimento: data.conjugeDataNascimento || null,
         conjugeEmpresa: data.conjugeEmpresa || "",
         conjugeEmpresaCargo: data.conjugeEmpresaCargo || "",
         conjugeEmpresaRenda: data.conjugeEmpresaRenda || 0,
-        conjugeEmpresaAdmissao: data.conjugeEmpresaAdmissao || "",
+        conjugeEmpresaAdmissao: data.conjugeEmpresaAdmissao || null,
 
         empresaNome: data.empresaNome || "",
         empresaContato: data.empresaContato || "",
@@ -425,7 +442,7 @@ function CadastrosClienteNovo({ params }: any) {
         empresaCep: data.empresaCep || "",
         empresaCargo: data.empresaCargo || "",
         empresaRenda: data.empresaRenda || 0,
-        empresaAdmissao: data.empresaAdmissao || "",
+        empresaAdmissao: data.empresaAdmissao || null,
 
         avalistaNome: data.avalistaNome || "",
         avalistaCpf: data.avalistaCpf || "",
@@ -438,16 +455,16 @@ function CadastrosClienteNovo({ params }: any) {
         avalistaEmpresa: data.avalistaEmpresa || "",
         avalistaEmpresaCargo: data.avalistaEmpresaCargo || "",
         avalistaEmpresaRenda: data.avalistaEmpresaRenda || 0,
-        avalistaDataNascimento: data.avalistaDataNascimento || "",
-        avalistaEmpresaAdmissao: data.avalistaEmpresaAdmissao || "",
+        avalistaDataNascimento: data.avalistaDataNascimento || null,
+        avalistaEmpresaAdmissao: data.avalistaEmpresaAdmissao || null,
 
-        idTabelaPreco: Number(data.tabelaPreco),
+        idTabelaPreco: data.tabelaPreco ? Number(data.tabelaPreco) : null,
         sexo: data.sexo || "",
         estadoCivil: data.estadoCivil || "",
         limiteCredito: data.limiteCredito || 0,
         obs: data.obs || "",
 
-        enderecosAdicionais: [],
+        enderecosAdicionais: enderecosAdicionaisAux,
       };
       const token = await getCookieClient(CookiesKeys.TOKEN);
       const response = await requestInsertOrUpdateCliente(newCliente, token!);
@@ -462,7 +479,10 @@ function CadastrosClienteNovo({ params }: any) {
           resetForm();
         }
       }
+
+      hideLoading();
     } catch (error: any) {
+      hideLoading();
       if (error?.response?.status < 500) {
         toast.error(error.response.data.message);
       } else {
@@ -481,7 +501,7 @@ function CadastrosClienteNovo({ params }: any) {
         changeShow={setIsShowSectionGeral}
       >
         <div className="flex flex-1 flex-col gap-4">
-          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-[minmax(auto,150px)_minmax(auto,300px)_minmax(auto,300px)_minmax(auto,300px)]">
+          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-[minmax(auto,150px)_1fr_1fr_1fr]">
             <FormField
               control={form.control}
               name="id"
@@ -502,7 +522,7 @@ function CadastrosClienteNovo({ params }: any) {
 
             <FormField
               control={form.control}
-              name="tipoPessoaFisicaJuridica"
+              name="tipoPessoa"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -510,6 +530,7 @@ function CadastrosClienteNovo({ params }: any) {
                       data={[
                         { label: "Pessoa Física", value: "F" },
                         { label: "Pessoa Jurídica", value: "J" },
+                        { label: "Estrangeira", value: "E" },
                       ]}
                       valueSelected={field.value}
                       onChangeValueSelected={field.onChange}
@@ -531,15 +552,9 @@ function CadastrosClienteNovo({ params }: any) {
                   <FormControl>
                     <CpfCnpjInput
                       typeInput={
-                        form.watch("tipoPessoaFisicaJuridica") === "F"
-                          ? "cpf"
-                          : "cnpj"
+                        form.watch("tipoPessoa") === "F" ? "cpf" : "cnpj"
                       }
-                      label={
-                        form.watch("tipoPessoaFisicaJuridica") === "F"
-                          ? "CPF"
-                          : "CNPJ"
-                      }
+                      label={form.watch("tipoPessoa") === "F" ? "CPF" : "CNPJ"}
                       {...field}
                     />
                   </FormControl>
@@ -596,6 +611,7 @@ function CadastrosClienteNovo({ params }: any) {
                     <InputWithLabel
                       label="Razão Social"
                       maxLength={100}
+                      disabled={form.watch("tipoPessoa") !== "J"}
                       {...field}
                     />
                   </FormControl>
@@ -631,7 +647,7 @@ function CadastrosClienteNovo({ params }: any) {
                   <FormControl>
                     <InputWithLabel
                       label="RG"
-                      disabled={form.watch("tipoPessoaFisicaJuridica") === "J"}
+                      disabled={form.watch("tipoPessoa") === "J"}
                       info="Campo específico para Pessoa Física"
                       maxLength={17}
                       {...field}
@@ -648,12 +664,10 @@ function CadastrosClienteNovo({ params }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <InputWithLabel
+                    <DateInput
                       label="Emissão"
-                      disabled={form.watch("tipoPessoaFisicaJuridica") === "J"}
+                      disabled={form.watch("tipoPessoa") === "J"}
                       info="Campo específico para Pessoa Física"
-                      type="date"
-                      placeholder=""
                       {...field}
                     />
                   </FormControl>
@@ -670,7 +684,7 @@ function CadastrosClienteNovo({ params }: any) {
                   <FormControl>
                     <InputWithLabel
                       label="Órgão"
-                      disabled={form.watch("tipoPessoaFisicaJuridica") === "J"}
+                      disabled={form.watch("tipoPessoa") === "J"}
                       info="Campo específico para Pessoa Física"
                       maxLength={17}
                       {...field}
@@ -689,7 +703,7 @@ function CadastrosClienteNovo({ params }: any) {
                   <FormControl>
                     <InputWithLabel
                       label="IE"
-                      disabled={form.watch("tipoPessoaFisicaJuridica") === "F"}
+                      disabled={form.watch("tipoPessoa") !== "J"}
                       info="Campo específico para Pessoa Jurídica"
                       maxLength={20}
                       {...field}
@@ -708,7 +722,7 @@ function CadastrosClienteNovo({ params }: any) {
                   <FormControl>
                     <InputWithLabel
                       label="IM"
-                      disabled={form.watch("tipoPessoaFisicaJuridica") === "F"}
+                      disabled={form.watch("tipoPessoa") !== "J"}
                       info="Campo específico para Pessoa Jurídica"
                       maxLength={20}
                       {...field}
@@ -727,7 +741,7 @@ function CadastrosClienteNovo({ params }: any) {
                   <FormControl>
                     <InputWithLabel
                       label="ISUF"
-                      disabled={form.watch("tipoPessoaFisicaJuridica") === "F"}
+                      disabled={form.watch("tipoPessoa") !== "J"}
                       info="Campo específico para Pessoa Jurídica"
                       maxLength={10}
                       {...field}
@@ -797,7 +811,7 @@ function CadastrosClienteNovo({ params }: any) {
             />
           </div>
 
-          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-[1fr_250px_1fr]">
+          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-[1fr_250px_250px_1fr]">
             <FormField
               control={form.control}
               name="referencia"
@@ -807,6 +821,30 @@ function CadastrosClienteNovo({ params }: any) {
                     <InputWithLabel
                       label="Referência"
                       maxLength={150}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="pais"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Combobox
+                      label="País"
+                      data={dataPaises.paises.map((item) => {
+                        return {
+                          label: item.nome,
+                          value: item.id + "",
+                        };
+                      })}
+                      valueSelected={field.value}
+                      onChangeValueSelected={field.onChange}
                       {...field}
                     />
                   </FormControl>
@@ -936,7 +974,133 @@ function CadastrosClienteNovo({ params }: any) {
         </div>
       </CollapsibleSection>
     );
-  }, [isShowSectionGeral, form, dataEstados, dataCidades]);
+  }, [isShowSectionGeral, form, dataEstados, dataCidades, dataPaises]);
+
+  const renderTipoPessoa = useMemo(() => {
+    return (
+      <CollapsibleSection
+        isShow={isShowSectionTipoPessoa}
+        title="Tipo pessoa"
+        changeShow={setIsShowSectionTipoPessoa}
+        isOpcional
+      >
+        <div className="flex flex-1 flex-col gap-6">
+          {/* <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-4"> */}
+          <FormField
+            control={form.control}
+            name="isCliente"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Switch
+                    classNameContainer=""
+                    title={"Cliente"}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="isFornecedor"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Switch
+                    classNameContainer=""
+                    title={"Fornecedor"}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="isTransportadora"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Switch
+                    classNameContainer=""
+                    title={"Transportadora"}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="isFuncionario"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Switch
+                    classNameContainer=""
+                    title={"Funcionário"}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      </CollapsibleSection>
+    );
+  }, [isShowSectionTipoPessoa, form]);
+
+  const renderEnderecosAdicionais = useMemo(() => {
+    return (
+      <CollapsibleSection
+        isShow={isShowSectionEnderecoAdicionais}
+        title="Endereços adicionais"
+        changeShow={setIsShowSectionEnderecoAdicionais}
+        isOpcional
+      >
+        <AddItemListaEnderecosAdicionais
+          enderecosAdicionaisLista={enderecosAdicionaisLista}
+          estados={dataEstados.estados}
+          onAdd={(item) => {
+            setEnderecosAdicionaisLista((prev) => {
+              const index = prev.findIndex(
+                (endereco) => endereco.id === item.id,
+              );
+
+              if (index !== -1) {
+                // Atualiza o item existente
+                return prev.map((endereco, i) =>
+                  i === index ? { ...endereco, ...item } : endereco,
+                );
+              } else {
+                // Adiciona um novo item
+                return [...prev, item];
+              }
+            });
+          }}
+          onRemove={(item) => {
+            setEnderecosAdicionaisLista((prev) => {
+              return prev.filter((i) => i.id !== item.id);
+            });
+          }}
+        />
+      </CollapsibleSection>
+    );
+  }, [
+    isShowSectionEnderecoAdicionais,
+    enderecosAdicionaisLista,
+    form,
+    dataEstados,
+  ]);
 
   const renderAdicionais = useMemo(() => {
     return (
@@ -964,27 +1128,54 @@ function CadastrosClienteNovo({ params }: any) {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="sexo"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Combobox
+                    data={SexoPessoa.map((item) => {
+                      return { label: item.label, value: item.value };
+                    })}
+                    valueSelected={field.value}
+                    onChangeValueSelected={field.onChange}
+                    label="Sexo"
+                    disableFilter
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="estadoCivil"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Combobox
+                    data={EstadoCivilPessoa.map((item) => {
+                      return { label: item.label, value: item.value };
+                    })}
+                    valueSelected={field.value}
+                    onChangeValueSelected={field.onChange}
+                    label="Estado civil"
+                    disableFilter
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </CollapsibleSection>
     );
   }, [isShowSectionAdicionais, form]);
-
-  const renderEnderecosAdicionais = useMemo(() => {
-    return (
-      <CollapsibleSection
-        isShow={isShowSectionEnderecoAdicionais}
-        title="Endereços adicionais"
-        changeShow={setIsShowSectionEnderecoAdicionais}
-        isOpcional
-      >
-        <div>
-          {enderecosAdicionaisLista.map((item, index) => {
-            return <p>{item.descricao}</p>;
-          })}
-        </div>
-      </CollapsibleSection>
-    );
-  }, [isShowSectionEnderecoAdicionais, enderecosAdicionaisLista, form]);
 
   const renderFiliacao = useMemo(() => {
     return (
@@ -1075,10 +1266,11 @@ function CadastrosClienteNovo({ params }: any) {
     if (cliente !== undefined) {
       form.setValue("id", Number(params.id));
       form.setValue("ativo", cliente.ativo);
-      form.setValue(
-        "tipoPessoaFisicaJuridica",
-        cliente.tipoPessoaFisicaJuridica,
-      );
+      form.setValue("isCliente", cliente.isCliente);
+      form.setValue("isFornecedor", cliente.isFornecedor);
+      form.setValue("isTransportadora", cliente.isTransportadora);
+      form.setValue("isFuncionario", cliente.isFuncionario);
+      form.setValue("tipoPessoa", cliente.tipoPessoa);
       form.setValue("nome", cliente.nome);
       form.setValue("razaoSocial", cliente.razaoSocial);
       form.setValue("apelido", cliente.apelido);
@@ -1091,7 +1283,7 @@ function CadastrosClienteNovo({ params }: any) {
       form.setValue("rg", cliente.rg);
       form.setValue("rgOrgao", cliente.rgOrgao);
       form.setValue("rgDataEmissao", cliente.rgDataEmissao);
-      form.setValue("dataNascimento", cliente.dataNascimento);
+      form.setValue("dataNascimento", cliente.dataNascimento || "");
 
       form.setValue("endereco", cliente.endereco);
       form.setValue("numero", cliente.numero);
@@ -1106,12 +1298,6 @@ function CadastrosClienteNovo({ params }: any) {
       form.setValue("contato3", cliente.contato3);
       form.setValue("email", cliente.email);
       form.setValue("email2", cliente.email2);
-
-      form.setValue("enderecoEntrega", cliente.enderecoEntrega);
-      form.setValue("numeroEntrega", cliente.numeroEntrega);
-      form.setValue("bairroEntrega", cliente.bairroEntrega);
-      form.setValue("referenciaEntrega", cliente.referenciaEntrega);
-      form.setValue("cepEntrega", cliente.cepEntrega);
 
       form.setValue("filiacaoPai", cliente.filiacaoPai);
       form.setValue("filiacaoPaiContato", cliente.filiacaoPaiContato);
@@ -1131,11 +1317,17 @@ function CadastrosClienteNovo({ params }: any) {
       form.setValue("conjugeNumero", cliente.conjugeNumero);
       form.setValue("conjugeBairro", cliente.conjugeBairro);
       form.setValue("conjugeCep", cliente.conjugeCep);
-      form.setValue("conjugeDataNascimento", cliente.conjugeDataNascimento);
+      form.setValue(
+        "conjugeDataNascimento",
+        cliente.conjugeDataNascimento || "",
+      );
       form.setValue("conjugeEmpresa", cliente.conjugeEmpresa);
       form.setValue("conjugeEmpresaCargo", cliente.conjugeEmpresaCargo);
       form.setValue("conjugeEmpresaRenda", cliente.conjugeEmpresaRenda);
-      form.setValue("conjugeEmpresaAdmissao", cliente.conjugeEmpresaAdmissao);
+      form.setValue(
+        "conjugeEmpresaAdmissao",
+        cliente.conjugeEmpresaAdmissao || "",
+      );
 
       form.setValue("empresaNome", cliente.empresaNome);
       form.setValue("empresaContato", cliente.empresaContato);
@@ -1145,7 +1337,7 @@ function CadastrosClienteNovo({ params }: any) {
       form.setValue("empresaCep", cliente.empresaCep);
       form.setValue("empresaCargo", cliente.empresaCargo);
       form.setValue("empresaRenda", cliente.empresaRenda);
-      form.setValue("empresaAdmissao", cliente.empresaAdmissao);
+      form.setValue("empresaAdmissao", cliente.empresaAdmissao || "");
 
       form.setValue("avalistaNome", cliente.avalistaNome);
       form.setValue("avalistaCpf", cliente.avalistaCpf);
@@ -1158,10 +1350,19 @@ function CadastrosClienteNovo({ params }: any) {
       form.setValue("avalistaEmpresa", cliente.avalistaEmpresa);
       form.setValue("avalistaEmpresaCargo", cliente.avalistaEmpresaCargo);
       form.setValue("avalistaEmpresaRenda", cliente.avalistaEmpresaRenda);
-      form.setValue("avalistaDataNascimento", cliente.avalistaDataNascimento);
-      form.setValue("avalistaEmpresaAdmissao", cliente.avalistaEmpresaAdmissao);
+      form.setValue(
+        "avalistaDataNascimento",
+        cliente.avalistaDataNascimento || "",
+      );
+      form.setValue(
+        "avalistaEmpresaAdmissao",
+        cliente.avalistaEmpresaAdmissao || "",
+      );
 
-      form.setValue("tabelaPreco", String(cliente.tabelaPreco.id));
+      form.setValue(
+        "tabelaPreco",
+        cliente.tabelaPreco ? cliente.tabelaPreco.id : undefined,
+      );
       form.setValue("sexo", cliente.sexo);
       form.setValue("estadoCivil", cliente.estadoCivil);
       form.setValue("limiteCredito", cliente.limiteCredito);
@@ -1214,6 +1415,7 @@ function CadastrosClienteNovo({ params }: any) {
               }}
               className="flex flex-1 flex-col"
               onSubmit={form.handleSubmit(handleSave, (errors) => {
+                console.log(errors);
                 toast.warning("Preencha todos os campos obrigatórios");
               })}
             >
@@ -1231,11 +1433,11 @@ function CadastrosClienteNovo({ params }: any) {
 
               {renderAvalista}
 
+              {renderTipoPessoa}
+
               {renderFoto}
 
               {renderObservacao}
-
-              <p>{form.watch("rgDataEmissao")}</p>
 
               <Separator className="my-4" />
 

@@ -1,11 +1,16 @@
 import { ICidadeResponse } from "./CidadeResponse";
 import { IEstadoResponse } from "./EstadoResponse";
+import { IPaisResponse } from "./PaisResponse";
 import { IPessoaEnderecoResponse } from "./PessoaEnderecoResponse";
 
 export interface IClienteResponse {
   id: number;
-  ativo: true;
-  tipoPessoaFisicaJuridica: string;
+  ativo: boolean;
+  isCliente: boolean;
+  isFornecedor: boolean;
+  isTransportadora: boolean;
+  isFuncionario: boolean;
+  tipoPessoa: string;
   nome: string;
   razaoSocial: string;
   apelido: string;
@@ -17,7 +22,7 @@ export interface IClienteResponse {
   rg: string;
   rgOrgao: string;
   rgDataEmissao: string;
-  dataNascimento: string;
+  dataNascimento: string | null;
   endereco: string;
   numero: string;
   bairro: string;
@@ -25,6 +30,7 @@ export interface IClienteResponse {
   cep: string;
   cidade: ICidadeResponse;
   estado: IEstadoResponse;
+  pais: IPaisResponse;
   idPais: number;
   contato1: string;
   contato2: string;
@@ -54,7 +60,7 @@ export interface IClienteResponse {
   conjugeNome: string;
   conjugeCpf: string;
   conjugeRg: string;
-  conjugeDataNascimento: string;
+  conjugeDataNascimento: string | null;
   conjugeContato: string;
   conjugeEndereco: string;
   conjugeNumero: string;
@@ -65,7 +71,7 @@ export interface IClienteResponse {
   conjugeEmpresa: string;
   conjugeEmpresaCargo: string;
   conjugeEmpresaRenda: number;
-  conjugeEmpresaAdmissao: string;
+  conjugeEmpresaAdmissao: string | null;
   empresaNome: string;
   empresaContato: string;
   empresaEndereco: string;
@@ -76,11 +82,11 @@ export interface IClienteResponse {
   estadoEmpresa: IEstadoResponse;
   empresaCargo: string;
   empresaRenda: number;
-  empresaAdmissao: string;
+  empresaAdmissao: string | null;
   avalistaNome: string;
   avalistaCpf: string;
   avalistaRg: string;
-  avalistaDataNascimento: string;
+  avalistaDataNascimento: string | null;
   avalistaContato: string;
   avalistaEndereco: string;
   avalistaNumero: string;
@@ -91,15 +97,14 @@ export interface IClienteResponse {
   avalistaEmpresa: string;
   avalistaEmpresaCargo: string;
   avalistaEmpresaRenda: number;
-  avalistaEmpresaAdmissao: string;
-  tipoPessoa: string;
+  avalistaEmpresaAdmissao: string | null;
   sexo: string;
   estadoCivil: string;
   limiteCredito: number;
   tabelaPreco: {
     id: number;
     nome: string;
-  };
+  } | null;
   obs: string;
   datahoraCadastro: string;
   enderecosAdicionais: IPessoaEnderecoResponse[];

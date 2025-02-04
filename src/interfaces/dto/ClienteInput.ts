@@ -3,10 +3,14 @@ import { IPessoaEnderecoInput } from "./PessoaEnderecoInput";
 export interface IClienteInput {
   id: number | null;
   ativo: boolean;
+  isCliente: boolean;
+  isFornecedor: boolean;
+  isTransportadora: boolean;
+  isFuncionario: boolean;
   nome: string;
   razaoSocial: string;
   apelido: string;
-  tipoPessoaFisicaJuridica: string;
+  tipoPessoa: string;
   cpfCnpj: string;
   ieIndicador: number;
   ie: string;
@@ -14,8 +18,8 @@ export interface IClienteInput {
   isuf: string;
   rg: string;
   rgOrgao: string;
-  rgDataEmissao: string;
-  dataNascimento: string;
+  rgDataEmissao: string | null;
+  dataNascimento: string | null;
 
   endereco: string;
   numero: string;
@@ -26,8 +30,6 @@ export interface IClienteInput {
   idCidade: number;
   idEstado: number;
   idPais: number;
-  idCidadeEntrega: number | null;
-  idEstadoEntrega: number | null;
   idCidadeNaturalidade: number | null;
   idEstadoNaturalidade: number | null;
   idCidadeConjuge: number | null;
@@ -44,12 +46,6 @@ export interface IClienteInput {
   contato3: string;
   email: string;
   email2: string;
-
-  enderecoEntrega: string;
-  numeroEntrega: string;
-  bairroEntrega: string;
-  referenciaEntrega: string;
-  cepEntrega: string;
 
   filiacaoPai: string;
   filiacaoPaiContato: string;
@@ -69,11 +65,11 @@ export interface IClienteInput {
   conjugeNumero: string;
   conjugeBairro: string;
   conjugeCep: string;
-  conjugeDataNascimento: string;
+  conjugeDataNascimento: string | null;
   conjugeEmpresa: string;
   conjugeEmpresaCargo: string;
   conjugeEmpresaRenda: number;
-  conjugeEmpresaAdmissao: string;
+  conjugeEmpresaAdmissao: string | null;
 
   empresaNome: string;
   empresaContato: string;
@@ -83,7 +79,7 @@ export interface IClienteInput {
   empresaCep: string;
   empresaCargo: string;
   empresaRenda: number;
-  empresaAdmissao: string;
+  empresaAdmissao: string | null;
 
   avalistaNome: string;
   avalistaCpf: string;
@@ -96,13 +92,14 @@ export interface IClienteInput {
   avalistaEmpresa: string;
   avalistaEmpresaCargo: string;
   avalistaEmpresaRenda: number;
-  avalistaDataNascimento: string;
-  avalistaEmpresaAdmissao: string;
+  avalistaDataNascimento: string | null;
+  avalistaEmpresaAdmissao: string | null;
 
-  idTabelaPreco: number;
+  idTabelaPreco: number | null;
   sexo: string;
   estadoCivil: string;
   limiteCredito: number;
   obs: string;
+
   enderecosAdicionais: IPessoaEnderecoInput[];
 }

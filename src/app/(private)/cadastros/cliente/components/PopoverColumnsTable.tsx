@@ -24,10 +24,11 @@ interface ItemsProps {
 }
 
 const defaultColumns: ItemsProps[] = [
-  { id: 1, value: "id", nome: "Código", isSelected: true },
+  { id: 1, value: "id", nome: "Cód. Interno", isSelected: false },
   { id: 3, value: "nome", nome: "Nome", isSelected: true },
   { id: 6, value: "cpfCnpj", nome: "CPF/CNPJ", isSelected: true },
   { id: 18, value: "cidade", nome: "Cidade/UF", isSelected: true },
+  { id: 19, value: "pais", nome: "País", isSelected: false },
   { id: 2, value: "ativo", nome: "Status", isSelected: true },
   { id: 5, value: "apelido", nome: "Apelido", isSelected: false },
   { id: 4, value: "razaoSocial", nome: "Razão Social", isSelected: false },

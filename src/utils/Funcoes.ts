@@ -77,3 +77,19 @@ export function isValidCNPJ(cnpj: any) {
   resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
   return resultado === parseInt(digitos.charAt(1));
 }
+
+export const isValidDateDDMMYYYY = (dateString: string) => {
+  const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+
+  if (!regex.test(dateString)) return false; // Verifica o formato DD/MM/YYYY
+
+  const [day, month, year] = dateString.split("/").map(Number);
+  const date = new Date(year, month - 1, day);
+
+  // Verifica se a data é válida
+  return (
+    date.getDate() === day &&
+    date.getMonth() + 1 === month &&
+    date.getFullYear() === year
+  );
+};

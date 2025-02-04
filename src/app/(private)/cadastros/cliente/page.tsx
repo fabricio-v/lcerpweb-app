@@ -7,6 +7,7 @@ import { Messages } from "@/constants/Messages";
 import { useIsMobile } from "@/hooks/use-mobile";
 import useSearchClientes from "@/hooks/useSearchClientes";
 import { cn } from "@/lib/utils";
+import { useLoadingStore } from "@/providers/loading";
 import { buildMessageException } from "@/utils/Funcoes";
 import { ChevronLeft, CirclePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -18,6 +19,8 @@ import { Table } from "./components/Table";
 
 function CadastrosCliente() {
   const { push } = useRouter();
+
+  const { showLoading } = useLoadingStore();
 
   const isMobile = useIsMobile();
 
@@ -110,6 +113,7 @@ function CadastrosCliente() {
                 isMobile && "w-full",
               )}
               onClick={() => {
+                showLoading();
                 push("cliente/" + null);
               }}
             >

@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 import { InfoIcon } from "lucide-react";
 import { forwardRef, InputHTMLAttributes, useRef, useState } from "react";
+import InputMask, { ReactInputMask } from "react-input-mask";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
-import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
@@ -30,26 +30,51 @@ const CardInfo = ({ info, label }: { info: string; label: string }) => {
   );
 };
 
-const InputWithLabel = forwardRef<HTMLInputElement, Props>(
+const DateInput = forwardRef<HTMLInputElement, Props>(
   (
-    { label, info, maxLength, value, disabled, onBlur, onFocus, ...rest },
+    {
+      label,
+      info,
+      maxLength,
+      value,
+      disabled,
+      className,
+      onBlur,
+      onFocus,
+      onChange,
+      ...rest
+    },
     ref,
   ) => {
     const [isFocused, setIsFocused] = useState(false);
+    const [date, setDate] = useState("");
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDate(e.target.value);
+      onChange && onChange(e);
+    };
 
     const handleFocus = () => setIsFocused(true);
     const handleBlur = () => setIsFocused(false);
 
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<ReactInputMask>(null);
 
     return (
       <div className="flex w-full flex-1 flex-col-reverse gap-1.5">
-        <Input
+        <InputMask
           {...rest}
-          ref={ref || inputRef}
           id={label}
+          ref={ref || inputRef}
+          className={cn(
+            "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lc-sunsetsky-light disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+            className,
+          )}
+          type="text"
+          maskChar={""}
+          mask="99/99/9999"
+          value={date}
+          onChange={handleChange}
           maxLength={maxLength}
-          value={value}
           onFocus={(e) => {
             handleFocus();
             onFocus && onFocus(e);
@@ -59,8 +84,8 @@ const InputWithLabel = forwardRef<HTMLInputElement, Props>(
             onBlur && onBlur(e);
           }}
           disabled={disabled}
-          // className="peer" // Adiciona a classe peer para referência
         />
+
         <Label
           // htmlFor={label}
           className={cn(
@@ -85,6 +110,6 @@ const InputWithLabel = forwardRef<HTMLInputElement, Props>(
   },
 );
 
-InputWithLabel.displayName = "InputWithLabel";
+DateInput.displayName = "DateInput";
 
-export { InputWithLabel };
+export { DateInput };

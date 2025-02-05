@@ -241,20 +241,22 @@ export default function Signin() {
             <h1 className="mb-5 text-[25px] text-lc-tertiary">Faça o login</h1>
 
             <form action={handleSignin} className="flex flex-1 flex-col gap-3">
-              <InputWithLabel
-                className="w-full"
-                name="email"
-                type="email"
-                label="Digite seu email"
-                required
-              />
+              <div className="flex flex-col gap-6">
+                <InputWithLabel
+                  className="w-full"
+                  name="email"
+                  type="email"
+                  label="Digite seu email"
+                  required
+                />
 
-              <InputWithLabel
-                name="password"
-                label="Digite sua senha"
-                type="password"
-                required
-              />
+                <InputWithLabel
+                  name="password"
+                  label="Digite sua senha"
+                  type="password"
+                  required
+                />
+              </div>
 
               <Link
                 href={"/forgot-password"}

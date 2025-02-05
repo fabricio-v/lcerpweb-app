@@ -11,10 +11,11 @@ export interface CpfCnpjInputProps
   className?: string;
   label: string;
   typeInput: "cpf" | "cnpj";
+  showButton?: boolean;
 }
 
 const CpfCnpjInput = forwardRef<HTMLInputElement, CpfCnpjInputProps>(
-  ({ className, label, typeInput, ...props }, ref) => {
+  ({ className, label, typeInput, showButton = true, ...props }, ref) => {
     return (
       <div className="flex w-full flex-1 items-center gap-1.5">
         <div className="flex w-full flex-1 flex-col gap-1.5">
@@ -36,15 +37,17 @@ const CpfCnpjInput = forwardRef<HTMLInputElement, CpfCnpjInputProps>(
             {...props}
           />
         </div>
-        <Button
-          type="button"
-          size={"icon"}
-          variant={"ghost"}
-          className="mt-6"
-          info={"Consultar " + typeInput.toUpperCase()}
-        >
-          <Search />
-        </Button>
+        {showButton && (
+          <Button
+            type="button"
+            size={"icon"}
+            variant={"ghost"}
+            className="mt-6"
+            info={"Consultar " + typeInput.toUpperCase()}
+          >
+            <Search />
+          </Button>
+        )}
       </div>
     );
   },

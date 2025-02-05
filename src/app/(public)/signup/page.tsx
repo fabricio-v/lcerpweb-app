@@ -1,19 +1,18 @@
 "use client";
 
 import { Combobox, ComboboxDataProps } from "@/components/combobox/Combobox";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ICidadeResponse } from "@/interfaces/response/CidadeResponse";
 import { IEstadoResponse } from "@/interfaces/response/EstadoResponse";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTheme } from "next-themes";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { CpfCnpjInput } from "@/components/input/CpfCnpjInput";
 import { InputWithLabel } from "@/components/input/InputWithLabel";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -21,10 +20,13 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { Separator } from "@/components/ui/separator";
 import { Messages } from "@/constants/Messages";
 import { noCharsLetters, noSpaces, noSpecialChars } from "@/constants/regex";
 import api from "@/services/axios";
 import { buildMessageException, isValidCNPJ } from "@/utils/Funcoes";
+import { ChevronLeft } from "lucide-react";
+import Image from "next/image";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -214,194 +216,193 @@ export default function Signup() {
   }, []);
 
   return (
-    <div>
-      <div className="flex flex-col md:flex-row md:items-center">
-        <div className="flex h-screen flex-1 items-center justify-center">
-          <Image
-            src={
-              theme === "dark" ? "/logo-lc-white.webp" : "/logo-lc-black.webp"
-            }
-            width={isMobile ? 250 : 350}
-            height={50}
-            alt="Logo"
-          />
-        </div>
+    <div className="flex h-screen flex-1 flex-col items-center md:flex-row">
+      <div className="hidden items-center justify-center md:mx-2 md:my-4 md:flex md:flex-1">
+        <Image
+          src={theme === "dark" ? "/logo-lc-white.webp" : "/logo-lc-black.webp"}
+          width={isMobile ? 250 : 350}
+          height={50}
+          alt="Logo"
+        />
+      </div>
 
-        <Separator orientation="vertical" className="hidden h-half md:block" />
+      <Separator orientation="vertical" className="hidden h-half md:block" />
 
-        <div className="m-4 flex flex-1 items-center justify-center">
-          <div className="w-full max-w-[450px] rounded-lg border px-5 py-10">
-            <h1 className="mb-5 text-[25px] text-lc-tertiary">
-              Informe os dados para efetuar o cadastro
-            </h1>
+      <div className="m-2 flex h-min max-h-full flex-1 justify-center overflow-auto md:m-4 md:mx-2 md:my-4">
+        <div className="m-4 flex h-min w-full max-w-[450px] flex-col rounded-lg border p-6">
+          <h1 className="mb-5 text-[25px] text-lc-tertiary">
+            Informe os dados para efetuar o cadastro
+          </h1>
 
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(handleSignup)}
-                className="flex flex-1 flex-col gap-3"
-              >
-                <FormField
-                  control={form.control}
-                  name="subdomain"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <InputWithLabel label="Domínio" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSignup)}
+              className="flex flex-1 flex-col gap-6"
+            >
+              <FormField
+                control={form.control}
+                name="subdomain"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <InputWithLabel label="Domínio" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="enterpriseName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <InputWithLabel label="Nome da empresa" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="enterpriseName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <InputWithLabel label="Nome da empresa" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="enterpriseCnpj"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <InputWithLabel
-                          label="CNPJ"
-                          maxLength={18}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="enterpriseCnpj"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <CpfCnpjInput
+                        typeInput="cnpj"
+                        showButton={false}
+                        label="CNPJ"
+                        maxLength={18}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <div className="flex flex-col justify-between gap-3 lg:flex-row">
-                  <div className="flex-1">
-                    <FormField
-                      control={form.control}
-                      name="state"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Combobox
-                              label="Estado"
-                              data={estados}
-                              valueSelected={field.value}
-                              onChangeValueSelected={(e: any) => {
-                                field.onChange(e);
-                                form.setValue("city", "");
-                                // setStateSel(e);
-                                buscarCidades(e);
-                              }}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <FormField
-                      control={form.control}
-                      name="city"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Combobox
-                              label="Cidade"
-                              messageWhenNotfound="Selecione um estado"
-                              data={cidades}
-                              valueSelected={field.value}
-                              onChangeValueSelected={field.onChange}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+              <div className="flex flex-col justify-between gap-3 lg:flex-row">
+                <div className="flex-1">
+                  <FormField
+                    control={form.control}
+                    name="state"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Combobox
+                            label="Estado"
+                            data={estados}
+                            valueSelected={field.value}
+                            onChangeValueSelected={(e: any) => {
+                              field.onChange(e);
+                              form.setValue("city", "");
+                              // setStateSel(e);
+                              buscarCidades(e);
+                            }}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <InputWithLabel label="Digite seu email" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <InputWithLabel
-                          label="Digite sua senha"
-                          type="password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <InputWithLabel
-                          label="Confirme sua senha"
-                          type="password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex items-center justify-between gap-2">
-                  <Button
-                    type="button"
-                    className="mt-4 w-[100px]"
-                    variant={"secondary"}
-                    onClick={() => {
-                      replace("/");
-                    }}
-                  >
-                    Voltar
-                  </Button>
-
-                  <Button
-                    className="mt-4 w-[100px] bg-lc-sunsetsky-light text-white hover:bg-lc-sunsetsky"
-                    type="submit"
-                    isLoading={isLoadingRegister}
-                  >
-                    Finalizar
-                  </Button>
+                <div className="flex-1">
+                  <FormField
+                    control={form.control}
+                    name="city"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Combobox
+                            label="Cidade"
+                            messageWhenNotfound="Selecione um estado"
+                            data={cidades}
+                            valueSelected={field.value}
+                            onChangeValueSelected={field.onChange}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              </form>
-            </Form>
-          </div>
+              </div>
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <InputWithLabel label="Digite seu email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <InputWithLabel
+                        label="Digite sua senha"
+                        type="password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <InputWithLabel
+                        label="Confirme sua senha"
+                        type="password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <Button
+                  type="button"
+                  className="w-[100px]"
+                  variant={"outline"}
+                  onClick={() => {
+                    replace("/");
+                  }}
+                >
+                  <ChevronLeft />
+                  Voltar
+                </Button>
+
+                <Button
+                  className="w-[100px]"
+                  type="submit"
+                  isLoading={isLoadingRegister}
+                >
+                  Cadastrar
+                </Button>
+              </div>
+            </form>
+          </Form>
         </div>
       </div>
     </div>

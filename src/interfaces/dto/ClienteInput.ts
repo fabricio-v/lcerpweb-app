@@ -30,6 +30,7 @@ export interface IClienteInput {
   idCidade: number;
   idEstado: number;
   idPais: number;
+  idPaisNacionalidade: number | null;
   idCidadeNaturalidade: number | null;
   idEstadoNaturalidade: number | null;
   idCidadeConjuge: number | null;

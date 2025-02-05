@@ -100,8 +100,9 @@ export const formClienteSchema = z.object({
     message: "Selecione um País",
   }),
 
-  naturalidadeCidade: z.string().optional(),
-  naturalidadeEstado: z.string().optional(),
+  nacionalidadePais: z.any().optional(),
+  naturalidadeCidade: z.any().optional(),
+  naturalidadeEstado: z.any().optional(),
 
   contato1: z.string().optional(),
   contato2: z.string().optional(),
@@ -168,7 +169,7 @@ export const formClienteSchema = z.object({
   tabelaPreco: z.number().optional(),
   sexo: z.string(),
   estadoCivil: z.string(),
-  limiteCredito: z.number().optional(),
+  limiteCredito: z.number(),
   obs: z.string().optional(),
 });
 
@@ -179,6 +180,10 @@ function CadastrosClienteNovo({ params }: any) {
 
   const { loadEstados, dataEstados } = useSearchEstados();
   const { loadCidades, dataCidades } = useSearchCidades();
+  const {
+    loadCidades: loadCidadesNaturalidade,
+    dataCidades: dataCidadesNaturalidade,
+  } = useSearchCidades();
   const { loadPaises, dataPaises } = useSearchPaises();
 
   const [cliente, setCliente] = useState<IClienteResponse>();
@@ -232,6 +237,7 @@ function CadastrosClienteNovo({ params }: any) {
       estado: "",
       pais: "1058",
 
+      nacionalidadePais: "1058",
       naturalidadeCidade: "",
       naturalidadeEstado: "",
 
@@ -356,7 +362,7 @@ function CadastrosClienteNovo({ params }: any) {
       const newCliente: IClienteInput = {
         id: data.id || null,
         ativo: data.ativo,
-        isCliente: data.isCliente,
+        isCliente: true,
         isFornecedor: data.isFornecedor,
         isTransportadora: data.isTransportadora,
         isFuncionario: data.isFuncionario,
@@ -387,6 +393,9 @@ function CadastrosClienteNovo({ params }: any) {
         idCidade: Number(data.cidade),
         idEstado: Number(data.estado),
         idPais: Number(data.pais),
+        idPaisNacionalidade: data.nacionalidadePais
+          ? Number(data.nacionalidadePais)
+          : null,
         idCidadeNaturalidade: data.naturalidadeCidade
           ? Number(data.naturalidadeCidade)
           : null,
@@ -479,14 +488,12 @@ function CadastrosClienteNovo({ params }: any) {
         toast.success(
           `Cliente ${data.id === null ? "cadastrado" : "atualizado"} com sucesso`,
         );
-        if (data.id !== null) {
-          back();
-        } else {
-          resetForm();
-        }
-      }
+        back();
 
-      hideLoading();
+        setTimeout(() => {
+          hideLoading();
+        }, 1);
+      }
     } catch (error: any) {
       hideLoading();
       if (error?.response?.status < 500) {
@@ -991,7 +998,7 @@ function CadastrosClienteNovo({ params }: any) {
       >
         <div className="grid grid-cols-2 gap-6 md:grid-cols-6">
           {/* <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-4"> */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name="isCliente"
             render={({ field }) => (
@@ -1008,7 +1015,7 @@ function CadastrosClienteNovo({ params }: any) {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
           <FormField
             control={form.control}
             name="isFornecedor"
@@ -1198,40 +1205,79 @@ function CadastrosClienteNovo({ params }: any) {
           </div>
 
           <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
-            <Combobox
-              label="Nacionalidade"
-              data={dataPaises.paises.map((item) => {
-                return {
-                  label: item.nome,
-                  value: item.id + "",
-                };
-              })}
-              valueSelected={""}
-              onChangeValueSelected={() => {}}
+            <FormField
+              control={form.control}
+              name="nacionalidadePais"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Combobox
+                      label="Nacionalidade"
+                      data={dataPaises.paises.map((item) => {
+                        return {
+                          label: item.nome,
+                          value: item.id + "",
+                        };
+                      })}
+                      valueSelected={field.value}
+                      onChangeValueSelected={field.onChange}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
 
-            <Combobox
-              label="Estado naturalidade"
-              data={dataEstados.estados.map((item) => {
-                return {
-                  label: item.uf + " - " + item.nome,
-                  value: item.id + "",
-                };
-              })}
-              valueSelected={""}
-              onChangeValueSelected={(value) => {}}
+            <FormField
+              control={form.control}
+              name="naturalidadeEstado"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Combobox
+                      label="Estado naturalidade"
+                      data={dataEstados.estados.map((item) => {
+                        return {
+                          label: item.uf + " - " + item.nome,
+                          value: item.id + "",
+                        };
+                      })}
+                      valueSelected={field.value}
+                      onChangeValueSelected={(value) => {
+                        field.onChange(value);
+                        form.setValue("naturalidadeCidade", "");
+                      }}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
 
-            <Combobox
-              label="Cidade naturalidade"
-              data={dataCidades.cidades.map((item) => {
-                return {
-                  label: item.nome,
-                  value: item.id + "",
-                };
-              })}
-              valueSelected={""}
-              onChangeValueSelected={() => {}}
+            <FormField
+              control={form.control}
+              name="naturalidadeCidade"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Combobox
+                      label="Cidade naturalidade"
+                      data={dataCidadesNaturalidade.cidades.map((item) => {
+                        return {
+                          label: item.nome,
+                          value: item.id + "",
+                        };
+                      })}
+                      valueSelected={field.value}
+                      onChangeValueSelected={field.onChange}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
           </div>
 
@@ -1250,12 +1296,29 @@ function CadastrosClienteNovo({ params }: any) {
               onChangeValueSelected={(value) => {}}
             />
 
-            <MonetaryInput label="Limite de crédito" />
+            <FormField
+              control={form.control}
+              name="limiteCredito"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <MonetaryInput label="Limite de crédito" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </div>
       </CollapsibleSection>
     );
-  }, [isShowSectionAdicionais, form, dataCidades, dataEstados, dataPaises]);
+  }, [
+    isShowSectionAdicionais,
+    form,
+    dataCidadesNaturalidade,
+    dataEstados,
+    dataPaises,
+  ]);
 
   const renderFiliacao = useMemo(() => {
     return (
@@ -1346,7 +1409,6 @@ function CadastrosClienteNovo({ params }: any) {
     if (cliente !== undefined) {
       form.setValue("id", Number(params.id));
       form.setValue("ativo", cliente.ativo);
-      form.setValue("isCliente", cliente.isCliente);
       form.setValue("isFornecedor", cliente.isFornecedor);
       form.setValue("isTransportadora", cliente.isTransportadora);
       form.setValue("isFuncionario", cliente.isFuncionario);
@@ -1384,6 +1446,20 @@ function CadastrosClienteNovo({ params }: any) {
       form.setValue("contato3", cliente.contato3);
       form.setValue("email", cliente.email);
       form.setValue("email2", cliente.email2);
+
+      form.setValue(
+        "nacionalidadePais",
+        String(cliente.paisNacionalidade ? cliente.paisNacionalidade.id : ""),
+      );
+
+      form.setValue(
+        "naturalidadeCidade",
+        String(cliente.cidadeNaturalidade ? cliente.cidadeNaturalidade.id : ""),
+      );
+      form.setValue(
+        "naturalidadeEstado",
+        String(cliente.estadoNaturalidade ? cliente.estadoNaturalidade.id : ""),
+      );
 
       form.setValue("filiacaoPai", cliente.filiacaoPai);
       form.setValue("filiacaoPaiContato", cliente.filiacaoPaiContato);
@@ -1465,6 +1541,14 @@ function CadastrosClienteNovo({ params }: any) {
       loadCidades(null);
     }
   }, [form.watch("estado")]);
+
+  useEffect(() => {
+    if (form.watch("naturalidadeEstado") !== "") {
+      loadCidadesNaturalidade(Number(form.watch("naturalidadeEstado")));
+    } else {
+      loadCidades(null);
+    }
+  }, [form.watch("naturalidadeEstado")]);
 
   return (
     <main className="flex h-[calc(100vh-55px)] flex-1 flex-col overflow-scroll overflow-x-hidden bg-lc-gray-light px-3 py-4 md:pl-8 md:pr-5">

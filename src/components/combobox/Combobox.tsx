@@ -95,14 +95,16 @@ export const Combobox: React.FC<Props> = ({
                       setOpen(false);
                     }}
                   >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        valueSelected === item.value
-                          ? "opacity-100"
-                          : "opacity-0",
-                      )}
-                    />
+                    {valueSelected && (
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          valueSelected === item.value
+                            ? "opacity-100"
+                            : "opacity-0",
+                        )}
+                      />
+                    )}
                     {item.label}
                   </CommandItem>
                 ))}

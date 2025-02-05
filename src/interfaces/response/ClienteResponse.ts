@@ -31,14 +31,14 @@ export interface IClienteResponse {
   cidade: ICidadeResponse;
   estado: IEstadoResponse;
   pais: IPaisResponse;
-  idPais: number;
   contato1: string;
   contato2: string;
   contato3: string;
   email: string;
   email2: string;
-  cidadeNaturalidade: ICidadeResponse;
-  estadoNaturalidade: IEstadoResponse;
+  paisNacionalidade: IPaisResponse;
+  cidadeNaturalidade?: ICidadeResponse;
+  estadoNaturalidade?: IEstadoResponse;
   enderecoEntrega: string;
   numeroEntrega: string;
   bairroEntrega: string;

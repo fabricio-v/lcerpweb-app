@@ -989,7 +989,7 @@ function CadastrosClienteNovo({ params }: any) {
         changeShow={setIsShowSectionTipoPessoa}
         isOpcional
       >
-        <div className="flex flex-1 flex-col gap-6">
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-6">
           {/* <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-4"> */}
           <FormField
             control={form.control}
@@ -998,10 +998,11 @@ function CadastrosClienteNovo({ params }: any) {
               <FormItem>
                 <FormControl>
                   <Switch
-                    classNameContainer=""
-                    title={"Cliente"}
+                    label="Cliente"
+                    title={field.value === true ? "Sim" : "Não"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    disabled
                   />
                 </FormControl>
                 <FormMessage />
@@ -1015,8 +1016,8 @@ function CadastrosClienteNovo({ params }: any) {
               <FormItem>
                 <FormControl>
                   <Switch
-                    classNameContainer=""
-                    title={"Fornecedor"}
+                    label={"Fornecedor"}
+                    title={field.value === true ? "Sim" : "Não"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   />
@@ -1032,8 +1033,8 @@ function CadastrosClienteNovo({ params }: any) {
               <FormItem>
                 <FormControl>
                   <Switch
-                    classNameContainer=""
-                    title={"Transportadora"}
+                    label={"Transportadora"}
+                    title={field.value === true ? "Sim" : "Não"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   />
@@ -1049,8 +1050,8 @@ function CadastrosClienteNovo({ params }: any) {
               <FormItem>
                 <FormControl>
                   <Switch
-                    classNameContainer=""
-                    title={"Funcionário"}
+                    label={"Funcionário"}
+                    title={field.value === true ? "Sim" : "Não"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   />

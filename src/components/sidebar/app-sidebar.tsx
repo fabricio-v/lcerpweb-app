@@ -9,9 +9,12 @@ import {
 } from "@/components/ui/sidebar";
 
 import {
+  DollarSign,
+  FileChartColumn,
+  FolderPlus,
   HomeIcon,
   LayoutDashboardIcon,
-  PackagePlusIcon,
+  PackageOpen,
   ShoppingCartIcon,
 } from "lucide-react";
 import { NavMain } from "../ui/nav-main";
@@ -56,10 +59,26 @@ const navMain = [
     ],
   },
   {
+    title: "Financeiro",
+    url: "",
+    icon: <DollarSign />,
+    isActive: true,
+    items: [
+      {
+        title: "Contas a receber",
+        url: "/financeiro/contas-a-receber",
+      },
+      {
+        title: "Contas a pagar",
+        url: "/financeiro/contas-a-pagar",
+      },
+    ],
+  },
+  {
     type: "group",
     title: "Cadastros",
     url: "",
-    icon: <PackagePlusIcon />,
+    icon: <FolderPlus />,
     isActive: true,
     items: [
       {
@@ -78,6 +97,10 @@ const navMain = [
       //   title: "Fornecedor",
       //   url: "/cadastros/fornecedor",
       // },
+      {
+        title: "Funcionário",
+        url: "/cadastros/funcionario",
+      },
       // {
       //   title: "Grade",
       //   url: "/cadastros/grade",
@@ -102,11 +125,25 @@ const navMain = [
         title: "Unidade",
         url: "/cadastros/unidade",
       },
-      // {
-      //   title: "Usuário",
-      //   url: "/cadastros/usuario",
-      // },
+      {
+        title: "Usuário",
+        url: "/cadastros/usuario",
+      },
     ],
+  },
+  {
+    title: "Estoque",
+    url: "",
+    icon: <PackageOpen />,
+    isActive: true,
+    items: [],
+  },
+  {
+    title: "Relatórios",
+    url: "",
+    icon: <FileChartColumn />,
+    isActive: true,
+    items: [],
   },
 ];
 

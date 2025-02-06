@@ -11,6 +11,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { ListFilterIcon, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -24,7 +25,6 @@ function Filter({
   const isMobile = useIsMobile();
 
   const [searchValue, setSearchValue] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const [isOpenPopover, setIsOpenPopover] = useState(false);
   const [popoverWidth, setPopoverWidth] = useState<number | undefined>();
@@ -33,15 +33,7 @@ function Filter({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(searchValue);
-    }, 1000); // Ajuste o tempo de debounce aqui
-
-    return () => {
-      clearTimeout(handler); // Limpa o timeout anterior ao digitar novamente
-    };
-  }, [searchValue]);
+  const debouncedSearch = useDebouncedValue(searchValue);
 
   useEffect(() => {
     onSearch(debouncedSearch);

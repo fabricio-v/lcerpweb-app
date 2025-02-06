@@ -14,6 +14,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { CookiesKeys } from "@/constants/CookiesKeys";
 import { Messages } from "@/constants/Messages";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { ICategoriaResponse } from "@/interfaces/response/CategoriaResponse";
 import { IFabricanteResponse } from "@/interfaces/response/FabricanteResponse";
 import { ISubcategoriaResponse } from "@/interfaces/response/SubcategoriaResponse";
@@ -52,7 +53,6 @@ function Filter({
   const [isListasCarregadas, setIsListasCarregadas] = useState(false);
 
   const [searchValue, setSearchValue] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const [isOpenPopover, setIsOpenPopover] = useState(false);
   const [popoverWidth, setPopoverWidth] = useState<number | undefined>();
@@ -79,15 +79,7 @@ function Filter({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(searchValue);
-    }, 1000); // Ajuste o tempo de debounce aqui
-
-    return () => {
-      clearTimeout(handler); // Limpa o timeout anterior ao digitar novamente
-    };
-  }, [searchValue]);
+  const debouncedSearch = useDebouncedValue(searchValue);
 
   useEffect(() => {
     onSearch(debouncedSearch);

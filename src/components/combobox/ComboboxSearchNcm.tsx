@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/popover";
 import { CookiesKeys } from "@/constants/CookiesKeys";
 import { Messages } from "@/constants/Messages";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { INcmResponse } from "@/interfaces/response/NcmResponse";
 import { getCookieClient } from "@/lib/cookieClient";
 import { cn } from "@/lib/utils";
@@ -48,9 +49,9 @@ export const ComboboxSearchNcm: React.FC<Props> = ({
   const [open, setOpen] = useState(false);
 
   const [searchValue, setSearchValue] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
   const [data, setData] = useState<INcmResponse[]>([]);
+
+  const debouncedSearchTerm = useDebouncedValue(searchValue);
 
   const searchNcm = async (search: string) => {
     try {
@@ -74,21 +75,7 @@ export const ComboboxSearchNcm: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchValue);
-    }, 400); // Ajuste o tempo de debounce aqui
-
-    return () => {
-      clearTimeout(handler); // Limpa o timeout anterior ao digitar novamente
-    };
-  }, [searchValue]);
-
-  useEffect(() => {
-    if (debouncedSearchTerm && debouncedSearchTerm.trim().length > 0) {
-      searchNcm(debouncedSearchTerm);
-    } else if (debouncedSearchTerm.trim().length === 0) {
-      setData([]);
-    }
+    searchNcm(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
 
   return (
@@ -102,7 +89,13 @@ export const ComboboxSearchNcm: React.FC<Props> = ({
         </Label>
       )}
 
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover
+        open={open}
+        onOpenChange={(v) => {
+          setSearchValue("");
+          setOpen(v);
+        }}
+      >
         <PopoverTrigger asChild>
           <Button
             variant="ghost"

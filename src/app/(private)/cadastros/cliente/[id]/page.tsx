@@ -1,6 +1,8 @@
 "use client";
 
 import { Combobox } from "@/components/combobox/Combobox";
+import { ComboboxSearchCidade } from "@/components/combobox/ComboboxSearchCidade";
+import { ComboboxSearchPais } from "@/components/combobox/ComboboxSearchPais";
 import { CepInput } from "@/components/input/CepInput";
 import { CpfCnpjInput } from "@/components/input/CpfCnpjInput";
 import { DateInput } from "@/components/input/DateInput";
@@ -28,7 +30,9 @@ import useSearchEstados from "@/hooks/useSearchEstados";
 import useSearchPaises from "@/hooks/useSearchPaises";
 import { IClienteInput } from "@/interfaces/dto/ClienteInput";
 import { IPessoaEnderecoInput } from "@/interfaces/dto/PessoaEnderecoInput";
+import { ICidadeResponse } from "@/interfaces/response/CidadeResponse";
 import { IClienteResponse } from "@/interfaces/response/ClienteResponse";
+import { IPaisResponse } from "@/interfaces/response/PaisResponse";
 import { IPessoaEnderecoResponse } from "@/interfaces/response/PessoaEnderecoResponse";
 import { getCookieClient } from "@/lib/cookieClient";
 import { useLoadingStore } from "@/providers/loading";
@@ -204,6 +208,20 @@ function CadastrosClienteNovo({ params }: any) {
     IPessoaEnderecoResponse[]
   >([]);
 
+  const [paisSelected, setPaisSelected] = useState<IPaisResponse | undefined>();
+
+  const [paisNacionalidadeSelected, setPaisNacionalidadeSelected] = useState<
+    IPaisResponse | undefined
+  >();
+
+  const [cidadeSelected, setCidadeSelected] = useState<
+    ICidadeResponse | undefined
+  >();
+
+  const [cidadeNaturalidadeSelected, setCidadeNaturalidadeSelected] = useState<
+    ICidadeResponse | undefined
+  >();
+
   const form = useForm<z.infer<typeof formClienteSchema>>({
     resolver: zodResolver(formClienteSchema),
     defaultValues: {
@@ -338,7 +356,6 @@ function CadastrosClienteNovo({ params }: any) {
       await carregaCliente();
     }
 
-    await loadPaises();
     await loadEstados();
 
     hideLoading();
@@ -346,6 +363,11 @@ function CadastrosClienteNovo({ params }: any) {
 
   const resetForm = () => {
     form.reset();
+    setCidadeSelected(undefined);
+    setPaisSelected(undefined);
+    setCidadeNaturalidadeSelected(undefined);
+    setPaisNacionalidadeSelected(undefined);
+    setEnderecosAdicionaisLista([]);
   };
 
   const handleSave = async (data: z.infer<typeof formClienteSchema>) => {
@@ -847,17 +869,14 @@ function CadastrosClienteNovo({ params }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Combobox
-                      label="País"
-                      data={dataPaises.paises.map((item) => {
-                        return {
-                          label: item.nome,
-                          value: item.id + "",
-                        };
-                      })}
-                      valueSelected={field.value}
-                      onChangeValueSelected={field.onChange}
-                      {...field}
+                    <ComboboxSearchPais
+                      label="Pais"
+                      onChangeValueSelected={(pais) => {
+                        setPaisSelected(pais);
+                        form.setValue("pais", pais.id + "");
+                        form.clearErrors("pais");
+                      }}
+                      valueSelected={paisSelected}
                     />
                   </FormControl>
                   <FormMessage />
@@ -898,17 +917,19 @@ function CadastrosClienteNovo({ params }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Combobox
+                    <ComboboxSearchCidade
                       label="Cidade"
-                      data={dataCidades.cidades.map((item) => {
-                        return {
-                          label: item.nome,
-                          value: item.id + "",
-                        };
-                      })}
-                      valueSelected={field.value}
-                      onChangeValueSelected={field.onChange}
-                      {...field}
+                      idEstado={
+                        form.watch("estado")
+                          ? Number(form.watch("estado"))
+                          : null
+                      }
+                      onChangeValueSelected={(cidade) => {
+                        setCidadeSelected(cidade);
+                        form.setValue("cidade", cidade.id + "");
+                        form.clearErrors("cidade");
+                      }}
+                      valueSelected={cidadeSelected}
                     />
                   </FormControl>
                   <FormMessage />
@@ -986,7 +1007,16 @@ function CadastrosClienteNovo({ params }: any) {
         </div>
       </CollapsibleSection>
     );
-  }, [isShowSectionGeral, form, dataEstados, dataCidades, dataPaises]);
+  }, [
+    isShowSectionGeral,
+    form,
+    // form.watch("estado"),
+    dataEstados,
+    dataCidades,
+    dataPaises,
+    cidadeSelected,
+    paisSelected,
+  ]);
 
   const renderTipoPessoa = useMemo(() => {
     return (
@@ -1211,17 +1241,14 @@ function CadastrosClienteNovo({ params }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Combobox
+                    <ComboboxSearchPais
                       label="Nacionalidade"
-                      data={dataPaises.paises.map((item) => {
-                        return {
-                          label: item.nome,
-                          value: item.id + "",
-                        };
-                      })}
-                      valueSelected={field.value}
-                      onChangeValueSelected={field.onChange}
-                      {...field}
+                      onChangeValueSelected={(pais) => {
+                        setPaisNacionalidadeSelected(pais);
+                        form.setValue("nacionalidadePais", pais.id + "");
+                        form.clearErrors("nacionalidadePais");
+                      }}
+                      valueSelected={paisNacionalidadeSelected}
                     />
                   </FormControl>
                   <FormMessage />
@@ -1262,17 +1289,19 @@ function CadastrosClienteNovo({ params }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Combobox
+                    <ComboboxSearchCidade
                       label="Cidade naturalidade"
-                      data={dataCidadesNaturalidade.cidades.map((item) => {
-                        return {
-                          label: item.nome,
-                          value: item.id + "",
-                        };
-                      })}
-                      valueSelected={field.value}
-                      onChangeValueSelected={field.onChange}
-                      {...field}
+                      idEstado={
+                        form.watch("naturalidadeEstado")
+                          ? Number(form.watch("naturalidadeEstado"))
+                          : null
+                      }
+                      onChangeValueSelected={(cidade) => {
+                        setCidadeSelected(cidade);
+                        form.setValue("naturalidadeCidade", cidade.id + "");
+                        form.clearErrors("naturalidadeCidade");
+                      }}
+                      valueSelected={cidadeSelected}
                     />
                   </FormControl>
                   <FormMessage />
@@ -1318,6 +1347,8 @@ function CadastrosClienteNovo({ params }: any) {
     dataCidadesNaturalidade,
     dataEstados,
     dataPaises,
+    cidadeNaturalidadeSelected,
+    paisNacionalidadeSelected,
   ]);
 
   const renderFiliacao = useMemo(() => {
@@ -1530,25 +1561,13 @@ function CadastrosClienteNovo({ params }: any) {
       form.setValue("limiteCredito", cliente.limiteCredito);
       form.setValue("obs", cliente.obs);
 
+      setCidadeSelected(cliente.cidade);
+      setCidadeNaturalidadeSelected(cliente.cidadeNaturalidade);
+      setPaisSelected(cliente.pais);
+      setPaisNacionalidadeSelected(cliente.paisNacionalidade);
       setEnderecosAdicionaisLista(cliente.enderecosAdicionais);
     }
   }, [cliente, params]);
-
-  useEffect(() => {
-    if (form.watch("estado") !== "") {
-      loadCidades(Number(form.watch("estado")));
-    } else {
-      loadCidades(null);
-    }
-  }, [form.watch("estado")]);
-
-  useEffect(() => {
-    if (form.watch("naturalidadeEstado") !== "") {
-      loadCidadesNaturalidade(Number(form.watch("naturalidadeEstado")));
-    } else {
-      loadCidades(null);
-    }
-  }, [form.watch("naturalidadeEstado")]);
 
   return (
     <main className="flex h-[calc(100vh-55px)] flex-1 flex-col overflow-scroll overflow-x-hidden bg-lc-gray-light px-3 py-4 md:pl-8 md:pr-5">

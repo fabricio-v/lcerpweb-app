@@ -1,4 +1,4 @@
-import { Check, Search } from "lucide-react";
+import { Check, Loader2, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -15,15 +15,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CookiesKeys } from "@/constants/CookiesKeys";
-import { Messages } from "@/constants/Messages";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { ICestResponse } from "@/interfaces/response/CestResponse";
-import { getCookieClient } from "@/lib/cookieClient";
+import useSearchPaises from "@/hooks/useSearchPaises";
+import { IPaisResponse } from "@/interfaces/response/PaisResponse";
 import { cn } from "@/lib/utils";
-import { requestCestByFilter } from "@/services/requests/cest";
-import { buildMessageException } from "@/utils/Funcoes";
-import { toast } from "sonner";
 import { Label } from "../ui/label";
 
 export interface ComboboxDataProps {
@@ -33,13 +28,13 @@ export interface ComboboxDataProps {
 
 interface Props {
   label?: string;
-  valueSelected: ICestResponse | undefined;
+  valueSelected: IPaisResponse | undefined;
   messageWhenNotfound?: string;
-  onChangeValueSelected: (cest: ICestResponse) => void;
+  onChangeValueSelected: (cfop: IPaisResponse) => void;
   disabled?: boolean;
 }
 
-export const ComboboxSearchCest: React.FC<Props> = ({
+export const ComboboxSearchPais: React.FC<Props> = ({
   label,
   messageWhenNotfound = "Nenhum registro",
   onChangeValueSelected,
@@ -48,33 +43,12 @@ export const ComboboxSearchCest: React.FC<Props> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [data, setData] = useState<ICestResponse[]>([]);
+  const { loadPaises, dataPaises, loading } = useSearchPaises();
 
   const debouncedSearchTerm = useDebouncedValue(searchValue);
 
-  const searchCest = async (search: string) => {
-    try {
-      const token = await getCookieClient(CookiesKeys.TOKEN);
-      const response = await requestCestByFilter(token!.toString(), search);
-
-      if (response.status === 200) {
-        setData(response.data);
-      }
-    } catch (error: any) {
-      if (error?.response?.status < 500) {
-        toast.warning(Messages.TOAST_INFO_TITLE, {
-          description: buildMessageException(error),
-        });
-      } else {
-        toast.error(Messages.TOAST_ERROR_TITLE, {
-          description: buildMessageException(error),
-        });
-      }
-    }
-  };
-
   useEffect(() => {
-    searchCest(debouncedSearchTerm);
+    loadPaises(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
 
   return (
@@ -104,9 +78,7 @@ export const ComboboxSearchCest: React.FC<Props> = ({
             disabled={disabled}
           >
             <p className="truncate">
-              {valueSelected
-                ? valueSelected.codigo + " - " + valueSelected.descricao
-                : "Selecione"}
+              {valueSelected ? valueSelected.nome : "Selecione"}
             </p>
             <Search className="ml-2 h-4 w-full shrink-0 opacity-50" />
           </Button>
@@ -121,13 +93,20 @@ export const ComboboxSearchCest: React.FC<Props> = ({
               onValueChange={setSearchValue}
             />
             <CommandList>
-              <CommandEmpty>{messageWhenNotfound}</CommandEmpty>
+              {loading && (
+                <CommandEmpty className="flex h-10 items-center justify-center">
+                  <Loader2 className="animate-spin text-center" size={20} />
+                </CommandEmpty>
+              )}
+              {dataPaises.paises.length === 0 &&
+                searchValue.length > 0 &&
+                !loading && <CommandEmpty>{messageWhenNotfound}</CommandEmpty>}
               <CommandGroup>
-                {data.map((item) => (
+                {dataPaises.paises.map((item) => (
                   <CommandItem
                     key={item.id}
-                    value={item.id + " " + item.codigo + " " + item.descricao}
-                    onSelect={() => {
+                    value={item.id + "  " + item.nome}
+                    onSelect={(currentValue: any) => {
                       onChangeValueSelected(item);
                       setOpen(false);
                     }}
@@ -140,7 +119,7 @@ export const ComboboxSearchCest: React.FC<Props> = ({
                           : "opacity-0",
                       )}
                     />
-                    {item.codigo + " - " + item.descricao}
+                    {item.nome}
                   </CommandItem>
                 ))}
               </CommandGroup>

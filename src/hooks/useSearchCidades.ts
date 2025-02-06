@@ -3,7 +3,7 @@
 import { CookiesKeys } from "@/constants/CookiesKeys";
 import { ICidadeResponse } from "@/interfaces/response/CidadeResponse";
 import { getCookieClient } from "@/lib/cookieClient";
-import { requestCidadesByEstado } from "@/services/requests/cidade";
+import { requestCidadesByFilter } from "@/services/requests/cidade";
 import { useState } from "react";
 
 export default function useSearchCidades() {
@@ -17,18 +17,18 @@ export default function useSearchCidades() {
 
   const [loading, setLoading] = useState(true);
 
-  const loadCidades = async (idEstado: number | null) => {
+  const loadCidades = async (idEstado: number | null, filter: string) => {
     try {
       setLoading(true);
 
-      if (idEstado === null) {
+      if (idEstado === null || filter.trim() === "") {
         setDataCidades({ cidades: [], totalItens: 0 });
         return;
       }
 
       const token = await getCookieClient(CookiesKeys.TOKEN);
 
-      const response = await requestCidadesByEstado(token!, idEstado);
+      const response = await requestCidadesByFilter(token!, idEstado, filter);
 
       setDataCidades({
         cidades: response.data,

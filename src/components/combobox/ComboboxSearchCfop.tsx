@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/popover";
 import { CookiesKeys } from "@/constants/CookiesKeys";
 import { Messages } from "@/constants/Messages";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { ICfopResponse } from "@/interfaces/response/CfopResponse";
 import { getCookieClient } from "@/lib/cookieClient";
 import { cn } from "@/lib/utils";
@@ -46,11 +47,10 @@ export const ComboboxSearchCfop: React.FC<Props> = ({
   valueSelected,
 }) => {
   const [open, setOpen] = useState(false);
-
   const [searchValue, setSearchValue] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
   const [data, setData] = useState<ICfopResponse[]>([]);
+
+  const debouncedSearchTerm = useDebouncedValue(searchValue);
 
   const searchCfop = async (search: string) => {
     try {
@@ -74,21 +74,7 @@ export const ComboboxSearchCfop: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchValue);
-    }, 400); // Ajuste o tempo de debounce aqui
-
-    return () => {
-      clearTimeout(handler); // Limpa o timeout anterior ao digitar novamente
-    };
-  }, [searchValue]);
-
-  useEffect(() => {
-    if (debouncedSearchTerm) {
-      searchCfop(debouncedSearchTerm);
-    } else if (debouncedSearchTerm.trim().length === 0) {
-      setData([]);
-    }
+    searchCfop(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
 
   return (
@@ -102,7 +88,13 @@ export const ComboboxSearchCfop: React.FC<Props> = ({
         </Label>
       )}
 
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover
+        open={open}
+        onOpenChange={(v) => {
+          setSearchValue("");
+          setOpen(v);
+        }}
+      >
         <PopoverTrigger asChild>
           <Button
             variant="ghost"

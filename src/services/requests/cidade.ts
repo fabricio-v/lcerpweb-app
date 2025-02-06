@@ -11,3 +11,16 @@ export const requestCidadesByEstado = async (
     },
   });
 };
+
+export const requestCidadesByFilter = async (
+  token: string,
+  idEstado: number,
+  filter: string,
+) => {
+  return api.get<ICidadeResponse[]>(`/cidades`, {
+    params: { filter, estado: idEstado },
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+};

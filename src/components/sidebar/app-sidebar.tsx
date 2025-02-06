@@ -101,6 +101,10 @@ const navMain = [
         title: "Funcionário",
         url: "/cadastros/funcionario",
       },
+      {
+        title: "Grupo usuário",
+        url: "/cadastros/grupo-usuario",
+      },
       // {
       //   title: "Grade",
       //   url: "/cadastros/grade",

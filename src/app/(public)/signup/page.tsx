@@ -63,6 +63,9 @@ export const createAccountSchema = z
     city: z.string().min(1, {
       message: "A cidade é obrigatória",
     }),
+    username: z.string().nonempty({
+      message: "Seu nome é obrigatório",
+    }),
     email: z
       .string()
       .nonempty({
@@ -114,7 +117,8 @@ export default function Signup() {
       const resp = await api.post("/auth/create-account", {
         subdomain: values.subdomain,
         cnpj: values.enterpriseCnpj,
-        nome: values.enterpriseName,
+        nomeEmpresa: values.enterpriseName,
+        nomeUsuario: values.username,
         email: values.email,
         senha: values.password,
         cidade: values.city,
@@ -229,7 +233,7 @@ export default function Signup() {
       <Separator orientation="vertical" className="hidden h-half md:block" />
 
       <div className="m-2 flex h-min max-h-full flex-1 justify-center overflow-auto md:m-4 md:mx-2 md:my-4">
-        <div className="m-4 flex h-min w-full max-w-[450px] flex-col rounded-lg border p-6">
+        <div className="m-4 flex h-min w-full max-w-[550px] flex-col rounded-lg border p-6">
           <h1 className="mb-5 text-[25px] text-lc-tertiary">
             Informe os dados para efetuar o cadastro
           </h1>
@@ -284,54 +288,63 @@ export default function Signup() {
                 )}
               />
 
-              <div className="flex flex-col justify-between gap-3 lg:flex-row">
-                <div className="flex-1">
-                  <FormField
-                    control={form.control}
-                    name="state"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Combobox
-                            label="Estado"
-                            data={estados}
-                            valueSelected={field.value}
-                            onChangeValueSelected={(e: any) => {
-                              field.onChange(e);
-                              form.setValue("city", "");
-                              // setStateSel(e);
-                              buscarCidades(e);
-                            }}
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="flex-1">
-                  <FormField
-                    control={form.control}
-                    name="city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Combobox
-                            label="Cidade"
-                            messageWhenNotfound="Selecione um estado"
-                            data={cidades}
-                            valueSelected={field.value}
-                            onChangeValueSelected={field.onChange}
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+              <div className="flex flex-col justify-between gap-6 md:grid md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="state"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Combobox
+                          label="Estado"
+                          data={estados}
+                          valueSelected={field.value}
+                          onChangeValueSelected={(e: any) => {
+                            field.onChange(e);
+                            form.setValue("city", "");
+                            // setStateSel(e);
+                            buscarCidades(e);
+                          }}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Combobox
+                          label="Cidade"
+                          messageWhenNotfound="Selecione um estado"
+                          data={cidades}
+                          valueSelected={field.value}
+                          onChangeValueSelected={field.onChange}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
+
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <InputWithLabel label="Seu nome" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
@@ -345,40 +358,41 @@ export default function Signup() {
                   </FormItem>
                 )}
               />
+              <div className="flex flex-col justify-between gap-6 md:grid md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <InputWithLabel
+                          label="Digite sua senha"
+                          type="password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <InputWithLabel
-                        label="Digite sua senha"
-                        type="password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <InputWithLabel
-                        label="Confirme sua senha"
-                        type="password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <InputWithLabel
+                          label="Confirme sua senha"
+                          type="password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <div className="mt-2 flex items-center justify-between gap-2">
                 <Button

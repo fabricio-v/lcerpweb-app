@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { ComboboxSearchCidade } from "@/components/combobox/ComboboxSearchCidade";
 import { CpfCnpjInput } from "@/components/input/CpfCnpjInput";
 import { InputWithLabel } from "@/components/input/InputWithLabel";
 import { Button } from "@/components/ui/button";
@@ -94,6 +95,10 @@ export default function Signup() {
   const [listaEstados, setListaEstados] = useState<IEstadoResponse[]>([]);
   const [listaCidades, setListaCidades] = useState<ICidadeResponse[]>([]);
   const [stateSel, setStateSel] = useState("");
+
+  const [cidadeSelected, setCidadeSelected] = useState<
+    ICidadeResponse | undefined
+  >();
 
   const form = useForm<z.infer<typeof createAccountSchema>>({
     resolver: zodResolver(createAccountSchema),
@@ -318,13 +323,27 @@ export default function Signup() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Combobox
+                        {/* <Combobox
                           label="Cidade"
                           messageWhenNotfound="Selecione um estado"
                           data={cidades}
                           valueSelected={field.value}
                           onChangeValueSelected={field.onChange}
                           {...field}
+                        /> */}
+                        <ComboboxSearchCidade
+                          label="Cidade"
+                          idEstado={
+                            form.watch("state")
+                              ? Number(form.watch("state"))
+                              : null
+                          }
+                          onChangeValueSelected={(cidade) => {
+                            setCidadeSelected(cidade);
+                            form.setValue("city", cidade.id + "");
+                            form.clearErrors("city");
+                          }}
+                          valueSelected={cidadeSelected}
                         />
                       </FormControl>
                       <FormMessage />
@@ -352,7 +371,11 @@ export default function Signup() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <InputWithLabel label="Digite seu email" {...field} />
+                      <InputWithLabel
+                        type="email"
+                        label="Digite seu email"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -21,23 +21,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IFuncionarioResponse } from "@/interfaces/response/FuncionarioResponse";
+import { IFornecedorResponse } from "@/interfaces/response/FornecedorResponse";
 import { Edit2, Loader2, MoreVertical } from "lucide-react";
 
 interface Props {
-  data: IFuncionarioResponse[] | undefined;
+  data: IFornecedorResponse[] | undefined;
   isLoading: boolean;
   onEdit: (id: string) => void;
 }
 
-export function TableFuncionarios({ data, isLoading, onEdit }: Props) {
+export function TableFornecedor({ data, isLoading, onEdit }: Props) {
   return (
     <div className="flex max-w-full overflow-auto rounded-md border px-2 pb-3">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[90px]">Cód. Interno</TableHead>
-            <TableHead className="md:w-full">Nome do funcionário</TableHead>
+            <TableHead className="md:w-full">Nome do fornecedor</TableHead>
             <TableHead className="w-[75px] text-center">Status</TableHead>
             <TableHead className="w-[75px] text-center">Ações</TableHead>
           </TableRow>

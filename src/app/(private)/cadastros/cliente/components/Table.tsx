@@ -86,10 +86,10 @@ export function Table({
 
   const columns: ColumnDef<IClienteResponse>[] = [
     {
-      accessorKey: "id",
+      accessorKey: "codInterno",
       header: () => <TableHead className="w-[90px]">Cód. Interno</TableHead>,
       cell: ({ row }) => (
-        <TableCell className="w-[90px]">{row.getValue("id")}</TableCell>
+        <TableCell className="w-[90px]">{row.getValue("codInterno")}</TableCell>
       ),
     },
     {

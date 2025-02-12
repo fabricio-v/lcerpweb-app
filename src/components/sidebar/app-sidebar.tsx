@@ -98,6 +98,10 @@ const navMain = [
         url: "/cadastros/fabricante",
       },
       {
+        title: "Forma de pagamento",
+        url: "/cadastros/forma-pagamento",
+      },
+      {
         title: "Fornecedor",
         url: "/cadastros/fornecedor",
       },

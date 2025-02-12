@@ -27,10 +27,8 @@ import { EstadoCivilPessoa } from "@/constants/EstadoCivilPessoa";
 import { Messages } from "@/constants/Messages";
 import { SexoPessoa } from "@/constants/SexoPessoa";
 import { StatusFuncionario } from "@/constants/StatusFuncionario";
-import useSearchCidades from "@/hooks/useSearchCidades";
 import useSearchEstados from "@/hooks/useSearchEstados";
 import useSearchGruposUsuario from "@/hooks/useSearchGruposUsuario";
-import useSearchPaises from "@/hooks/useSearchPaises";
 import useSearchUsuarioFuncao from "@/hooks/useSearchUsuarioFuncao";
 import { IFuncionarioInput } from "@/interfaces/dto/FuncionarioInput";
 import { ICidadeResponse } from "@/interfaces/response/CidadeResponse";
@@ -169,7 +167,10 @@ export const formFuncionarioSchema = z
       usuarioSenhaConfirmacao,
     } = data;
 
-    if (usuarioId !== undefined || usuarioEmail !== "") {
+    if (
+      usuarioId !== undefined ||
+      (usuarioEmail && usuarioEmail.trim().length > 0)
+    ) {
       if (usuarioEmail === "") {
         ctx.addIssue({
           code: "custom",
@@ -219,12 +220,6 @@ function CadastrosFuncionarioNovo({ params }: any) {
   const { showLoading, hideLoading } = useLoadingStore();
 
   const { loadEstados, dataEstados } = useSearchEstados();
-  const { loadCidades, dataCidades } = useSearchCidades();
-  const {
-    loadCidades: loadCidadesNaturalidade,
-    dataCidades: dataCidadesNaturalidade,
-  } = useSearchCidades();
-  const { loadPaises, dataPaises } = useSearchPaises();
 
   const { loadGruposUsuario, data: dataGruposUsuario } =
     useSearchGruposUsuario();
@@ -338,11 +333,11 @@ function CadastrosFuncionarioNovo({ params }: any) {
       usuarioDescontoPermitido: undefined,
       usuarioMaster: false,
       usuarioAtivo: true,
-      usuarioGrupo: "",
-      usuarioFuncao: "",
-      usuarioEmail: "",
-      usuarioSenha: "",
-      usuarioSenhaConfirmacao: "",
+      usuarioGrupo: undefined,
+      usuarioFuncao: undefined,
+      usuarioEmail: undefined,
+      usuarioSenha: undefined,
+      usuarioSenhaConfirmacao: undefined,
     },
   });
 
@@ -490,17 +485,17 @@ function CadastrosFuncionarioNovo({ params }: any) {
         obs: data.obs || "",
 
         usuario:
-          data.usuarioId === undefined && data.usuarioEmail === ""
+          !data.usuarioEmail || data.usuarioEmail.trim().length === 0
             ? null
             : {
                 id: data.usuarioId || null,
-                grupo: data.usuarioGrupo,
-                idUsuarioFuncao: data.usuarioFuncao,
-                ativo: data.usuarioAtivo || false,
+                grupo: data.usuarioGrupo!,
+                idUsuarioFuncao: data.usuarioFuncao!,
+                ativo: data.usuarioAtivo!,
                 master: false,
                 nome: data.nome,
-                email: data.usuarioEmail || "",
-                senha: data.usuarioSenha || "",
+                email: data.usuarioEmail!,
+                senha: data.usuarioSenha!,
                 descontoPermitido: data.usuarioDescontoPermitido || 0,
                 permissoes: [],
               },
@@ -971,16 +966,7 @@ function CadastrosFuncionarioNovo({ params }: any) {
         </div>
       </CollapsibleSection>
     );
-  }, [
-    isShowSectionGeral,
-    form,
-    // form.watch("estado"),
-    dataEstados,
-    dataCidades,
-    dataPaises,
-    cidadeSelected,
-    paisSelected,
-  ]);
+  }, [isShowSectionGeral, form, dataEstados, cidadeSelected, paisSelected]);
 
   const renderTipoPessoa = useMemo(() => {
     return (
@@ -1079,7 +1065,7 @@ function CadastrosFuncionarioNovo({ params }: any) {
           </div>
 
           <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
-            <FormField
+            {/* <FormField
               control={form.control}
               name="dataNascimento"
               render={({ field }) => (
@@ -1090,7 +1076,7 @@ function CadastrosFuncionarioNovo({ params }: any) {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             <FormField
               control={form.control}
@@ -1218,9 +1204,7 @@ function CadastrosFuncionarioNovo({ params }: any) {
   }, [
     isShowSectionAdicionais,
     form,
-    dataCidadesNaturalidade,
     dataEstados,
-    dataPaises,
     cidadeNaturalidadeSelected,
     paisNacionalidadeSelected,
   ]);
@@ -1259,7 +1243,18 @@ function CadastrosFuncionarioNovo({ params }: any) {
         changeShow={setIsShowSectionObservacao}
         isOpcional
       >
-        <Textarea />
+        <FormField
+          control={form.control}
+          name="obs"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Textarea {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </CollapsibleSection>
     );
   }, [isShowSectionObservacao, form]);
@@ -1275,7 +1270,7 @@ function CadastrosFuncionarioNovo({ params }: any) {
         <div className="flex flex-1 flex-col gap-4">
           <FormField
             control={form.control}
-            name="ativo"
+            name="usuarioAtivo"
             render={({ field }) => (
               <FormItem>
                 <FormControl>

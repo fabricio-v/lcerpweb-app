@@ -1280,7 +1280,7 @@ function CadastrosFuncionarioNovo({ params }: any) {
             </TabsList>
 
             <TabsContent value="dados">
-              <div className="flex flex-1 flex-col gap-6 px-4">
+              <div className="flex flex-1 flex-col gap-4 px-4">
                 <FormField
                   control={form.control}
                   name="usuarioAtivo"

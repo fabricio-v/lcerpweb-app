@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { CookiesKeys } from "@/constants/CookiesKeys";
 import { EstadoCivilPessoa } from "@/constants/EstadoCivilPessoa";
@@ -1267,145 +1268,164 @@ function CadastrosFuncionarioNovo({ params }: any) {
         changeShow={setIsShowSectionUsuario}
         isOpcional
       >
-        <div className="flex flex-1 flex-col gap-4">
-          <FormField
-            control={form.control}
-            name="usuarioAtivo"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Switch
-                    classNameContainer="w-[120px]"
-                    title={field.value === true ? "Ativo" : "Inativo"}
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    label="Status"
+        <div>
+          <Tabs defaultValue="dados">
+            <TabsList className="w-full">
+              <TabsTrigger value="dados" defaultChecked>
+                Dados
+              </TabsTrigger>
+              <TabsTrigger disabled value="permissoes">
+                Permissões
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="dados">
+              <div className="flex flex-1 flex-col gap-6 px-4">
+                <FormField
+                  control={form.control}
+                  name="usuarioAtivo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Switch
+                          classNameContainer="w-[120px]"
+                          title={field.value === true ? "Ativo" : "Inativo"}
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          label="Status"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-3">
+                  <FormField
+                    control={form.control}
+                    name="usuarioGrupo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Combobox
+                            label="Grupo"
+                            data={dataGruposUsuario.gruposUsuario.map(
+                              (item) => {
+                                return { label: item, value: item };
+                              },
+                            )}
+                            valueSelected={field.value}
+                            onChangeValueSelected={field.onChange}
+                            disableFilter
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-3">
-            <FormField
-              control={form.control}
-              name="usuarioGrupo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Combobox
-                      label="Grupo"
-                      data={dataGruposUsuario.gruposUsuario.map((item) => {
-                        return { label: item, value: item };
-                      })}
-                      valueSelected={field.value}
-                      onChangeValueSelected={field.onChange}
-                      disableFilter
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="usuarioFuncao"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Combobox
-                      label="Função"
-                      data={dataUsuarioFuncao.usuarioFuncao.map((item) => {
-                        return {
-                          label: item.nome,
-                          value: item.id + "",
-                        };
-                      })}
-                      valueSelected={field.value}
-                      onChangeValueSelected={field.onChange}
-                      disableFilter
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                  <FormField
+                    control={form.control}
+                    name="usuarioFuncao"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Combobox
+                            label="Função"
+                            data={dataUsuarioFuncao.usuarioFuncao.map(
+                              (item) => {
+                                return {
+                                  label: item.nome,
+                                  value: item.id + "",
+                                };
+                              },
+                            )}
+                            valueSelected={field.value}
+                            onChangeValueSelected={field.onChange}
+                            disableFilter
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-            <FormField
-              control={form.control}
-              name="usuarioDescontoPermitido"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <MonetaryInput
-                      // {...field}
-                      label="Desconto permitido"
-                      value={field.value}
-                      onValueChange={(v) => {
-                        field.onChange(v.floatValue);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+                  <FormField
+                    control={form.control}
+                    name="usuarioDescontoPermitido"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <MonetaryInput
+                            // {...field}
+                            label="Desconto permitido"
+                            value={field.value}
+                            onValueChange={(v) => {
+                              field.onChange(v.floatValue);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-          <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-3">
-            <FormField
-              control={form.control}
-              name="usuarioEmail"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <InputWithLabel
-                      label="Email"
-                      autoComplete="off"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="usuarioSenha"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <InputWithLabel
-                      label="Senha"
-                      type="password"
-                      autoComplete="off"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="usuarioSenhaConfirmacao"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <InputWithLabel
-                      label="Confirmação de senha"
-                      type="password"
-                      autoComplete="off"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+                <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-3">
+                  <FormField
+                    control={form.control}
+                    name="usuarioEmail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <InputWithLabel
+                            label="Email"
+                            autoComplete="off"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="usuarioSenha"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <InputWithLabel
+                            label="Senha"
+                            type="password"
+                            autoComplete="off"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="usuarioSenhaConfirmacao"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <InputWithLabel
+                            label="Confirmação de senha"
+                            type="password"
+                            autoComplete="off"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </CollapsibleSection>
     );

@@ -41,6 +41,12 @@ export default function Home() {
         >
           Novo cliente
         </Link>
+        <Link
+          href={"/cadastros/funcionario/null"}
+          className="w-[130px] text-sm hover:text-lc-sunsetsky-light"
+        >
+          Novo funcionário
+        </Link>
       </div>
     </main>
   );

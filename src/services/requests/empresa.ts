@@ -8,3 +8,22 @@ export const requestEmpresasAvailables = async (token: string) => {
     },
   });
 };
+
+export const requestEmpresaById = async (token: string, id: string) => {
+  return api.get<IEmpresaResponse>(`/empresas/${id}}`, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+};
+
+export const requestInsertOrUpdateEmpresa = async (
+  empresa: IEmpresaResponse,
+  token: string,
+) => {
+  return api.post<IEmpresaResponse>("/empresas", empresa, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+};

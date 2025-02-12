@@ -938,7 +938,12 @@ function CadastrosFuncionarioNovo({ params }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <InputWithLabel label="Email 1" maxLength={50} {...field} />
+                    <InputWithLabel
+                      label="Email 1"
+                      maxLength={50}
+                      autoComplete="off"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -951,7 +956,12 @@ function CadastrosFuncionarioNovo({ params }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <InputWithLabel label="Email 2" maxLength={50} {...field} />
+                    <InputWithLabel
+                      label="Email 2"
+                      maxLength={50}
+                      autoComplete="off"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -1356,7 +1366,11 @@ function CadastrosFuncionarioNovo({ params }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <InputWithLabel label="Email" {...field} />
+                    <InputWithLabel
+                      label="Email"
+                      autoComplete="off"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -1368,7 +1382,12 @@ function CadastrosFuncionarioNovo({ params }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <InputWithLabel label="Senha" type="password" {...field} />
+                    <InputWithLabel
+                      label="Senha"
+                      type="password"
+                      autoComplete="off"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -1383,6 +1402,7 @@ function CadastrosFuncionarioNovo({ params }: any) {
                     <InputWithLabel
                       label="Confirmação de senha"
                       type="password"
+                      autoComplete="off"
                       {...field}
                     />
                   </FormControl>

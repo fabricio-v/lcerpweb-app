@@ -1,12 +1,14 @@
 "use client";
 
 import { InputWithLabel } from "@/components/input/InputWithLabel";
+import { Switch } from "@/components/switch";
 import { Button } from "@/components/ui/button";
 import { CookiesKeys } from "@/constants/CookiesKeys";
 import { Messages } from "@/constants/Messages";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { IEmpresaResponse } from "@/interfaces/response/EmpresaResponse";
 import { LoginResponse } from "@/interfaces/response/LoginResponse";
+import { useLoadingStore } from "@/providers/loading";
 import api from "@/services/axios";
 import { buildMessageException } from "@/utils/Funcoes";
 import { DOMAIN, HOST, PROTOCOL } from "@/utils/hosts";
@@ -17,7 +19,7 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function Signin() {
@@ -26,7 +28,10 @@ export default function Signin() {
 
   const isMobile = useIsMobile();
 
+  const { hideLoading, showLoading, isShowLoading } = useLoadingStore();
+
   const [isLoading, setIsLoading] = useState(false);
+  const [isRememberSession, setIsRememberSession] = useState(false);
 
   async function handleSignin(formData: FormData) {
     try {
@@ -183,6 +188,14 @@ export default function Signin() {
           secure: process.env.NODE_ENV === "production",
         });
 
+        await setCookie(CookiesKeys.REMEMBER_SESSION, isRememberSession, {
+          domain: DOMAIN,
+          path: "/",
+          httpOnly: false,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+        });
+
         setTimeout(() => {
           push(PROTOCOL + subdomain + "." + HOST + "/home");
         }, 1000);
@@ -207,7 +220,53 @@ export default function Signin() {
       }
     }
   }
-  return (
+
+  //validação do lembrar-me
+  useEffect(() => {
+    showLoading();
+    setTimeout(() => {
+      const exec = async () => {
+        const isRememberSessionCookie = await getCookie(
+          CookiesKeys.REMEMBER_SESSION,
+        );
+
+        const userLogged = await getCookie(CookiesKeys.USER);
+
+        if (
+          isRememberSessionCookie == null ||
+          isRememberSessionCookie == "false"
+        ) {
+          setIsRememberSession(false);
+          hideLoading();
+        } else {
+          setIsRememberSession(true);
+
+          if (userLogged) {
+            let subdomain = "";
+
+            if (typeof window !== "undefined") {
+              const host = window.location.search;
+              const subdomainSplit = host.split("?subdomain=")[1];
+              subdomain = subdomainSplit;
+            }
+
+            if (!subdomain) {
+              alert("subdomain não informado");
+              setIsLoading(false);
+              return;
+            }
+            push(PROTOCOL + subdomain + "." + HOST + "/home");
+          } else {
+            hideLoading();
+          }
+        }
+      };
+
+      exec();
+    }, 200);
+  }, []);
+
+  return isShowLoading ? null : (
     <div className="flex flex-1 flex-col">
       <div className="flex flex-col bg-white md:flex-row md:items-center">
         {/* Área para a imagem ocupar a metade esquerda da tela */}
@@ -258,12 +317,22 @@ export default function Signin() {
                 />
               </div>
 
-              <Link
-                href={"/forgot-password"}
-                className="text-right text-xs hover:text-lc-sunsetsky-light"
-              >
-                Esqueceu sua senha?
-              </Link>
+              <div className="flex items-center justify-between">
+                <Switch
+                  title="Permanecer conectado"
+                  checked={isRememberSession}
+                  onCheckedChange={() => {
+                    setIsRememberSession(!isRememberSession);
+                  }}
+                />
+
+                <Link
+                  href={"/forgot-password"}
+                  className="text-right text-xs hover:text-lc-sunsetsky-light"
+                >
+                  Esqueceu sua senha?
+                </Link>
+              </div>
 
               <div className="flex items-center justify-between gap-2">
                 <Link

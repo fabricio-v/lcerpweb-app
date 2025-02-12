@@ -90,20 +90,24 @@ const navMain = [
         url: "/cadastros/cliente",
       },
       {
+        title: "Empresa",
+        url: "/cadastros/empresa",
+      },
+      {
         title: "Fabricante",
         url: "/cadastros/fabricante",
       },
-      // {
-      //   title: "Fornecedor",
-      //   url: "/cadastros/fornecedor",
-      // },
       {
-        title: "Funcionário",
-        url: "/cadastros/funcionario",
+        title: "Fornecedor",
+        url: "/cadastros/fornecedor",
       },
       {
         title: "Função usuário",
         url: "/cadastros/funcao-usuario",
+      },
+      {
+        title: "Funcionário",
+        url: "/cadastros/funcionario",
       },
       // {
       //   title: "Grade",

@@ -1357,7 +1357,6 @@ function CadastrosFuncionarioNovo({ params }: any) {
                       <FormItem>
                         <FormControl>
                           <MonetaryInput
-                            // {...field}
                             label="Desconto permitido"
                             value={field.value}
                             onValueChange={(v) => {

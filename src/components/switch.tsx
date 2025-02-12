@@ -45,9 +45,7 @@ export function Switch({
         )}
       >
         <SwitchPrimitive {...rest} disabled={disabled} />
-        <Label className="text-[12px] font-semibold text-foreground/70">
-          {title}
-        </Label>
+        <Label className="text-xs">{title}</Label>
       </div>
     </div>
   );

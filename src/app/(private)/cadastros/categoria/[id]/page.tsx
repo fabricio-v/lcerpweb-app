@@ -33,7 +33,8 @@ import { z } from "zod";
 import BreadcrumbsCategoriaCadastro from "./components/BreadcrumbsCategoriaCadastro";
 
 export const formCategoriaSchema = z.object({
-  id: z.number().optional(),
+  id: z.string().optional(),
+  codInterno: z.number().optional(),
   ativo: z.boolean(),
   nome: z.string().min(1, {
     message: "Informe o Nome da Categoria",
@@ -48,6 +49,7 @@ function CadastrosCategoriaNova({ params }: any) {
     resolver: zodResolver(formCategoriaSchema),
     defaultValues: {
       id: undefined,
+      codInterno: undefined,
       ativo: true,
       nome: "",
     },
@@ -125,6 +127,7 @@ function CadastrosCategoriaNova({ params }: any) {
   useEffect(() => {
     if (categoria !== undefined) {
       setValue("id", categoria.id);
+      setValue("codInterno", categoria.codInterno);
       setValue("ativo", categoria.ativo);
       setValue("nome", categoria.nome);
     }

@@ -1,39 +1,39 @@
 export interface IProdutoInput {
-  id: number | null;
+  id: string | null;
   nome: string;
   descricao: string;
   codigo: string;
   referencia: string;
   codigoBarras: string;
   ativo: boolean;
-  idCategoria: number;
-  idSubcategoria: number;
-  idFabricante: number;
-  idUnidade: number;
+  idCategoria: string;
+  idSubcategoria: string;
+  idFabricante: string;
+  idUnidade: string;
   precoCusto: number;
   precoVenda: number;
   markup: number;
   margemLucro: number;
   podeGrade: boolean;
   tipoGrade: string | null;
-  empresas: number[];
+  empresas: string[];
   precosTabelaPreco: IProdutoPrecosTabelaPrecoInput[];
   precosLeveXPagueY: IProdutoPrecoLeveXPagueYInput[];
   precosAtacado: IProdutoPrecoAtacadoInput[];
   tributacao: {
-    idCst: number;
-    idCfop: number;
-    idNcm: number;
-    idCest: number;
-    idOrigem: number;
+    idCst: string;
+    idCfop: string;
+    idNcm: string;
+    idCest: string;
+    idOrigem: string;
   };
   variacoes: IProdutoVariacaoInput[];
   codigosAdicionais: string[];
 }
 
 export interface IProdutoVariacaoInput {
-  id: number | null;
-  idProduto: number;
+  id: string | null;
+  idProduto: string;
   codigo: string;
   variacao: string;
 }
@@ -53,7 +53,7 @@ export interface IProdutoPrecoLeveXPagueYInput {
 }
 
 export interface IProdutoPrecoAtacadoInput {
-  idUnidade: number;
+  idUnidade: string;
   codigo: string;
   quantidade: number;
   preco: number;

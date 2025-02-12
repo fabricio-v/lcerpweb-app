@@ -1,5 +1,6 @@
 export interface INcmResponse {
-  id: number;
+  id: string;
+  codInterno: number;
   codigo: string;
   descricao: string;
 }

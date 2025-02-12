@@ -1,5 +1,6 @@
 export interface IEmpresaResponse {
-  id: number;
+  id: string;
+  codInterno: number;
   ativo: boolean;
   matriz: boolean;
   cnpj: string;
@@ -23,7 +24,7 @@ export interface IEmpresaResponse {
     nome: string;
   };
   localEstoqueVenda: {
-    id: number;
+    id: string;
     nome: string;
   };
 }

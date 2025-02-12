@@ -1,5 +1,6 @@
 export interface IOrigemResponse {
-  id: number;
+  id: string;
+  codInterno: number;
   codigo: string;
   descricao: string;
 }

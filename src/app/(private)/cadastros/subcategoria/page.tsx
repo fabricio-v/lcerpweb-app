@@ -67,7 +67,7 @@ function CadastrosSubcategoria() {
     }
   };
 
-  const alterarStatusSubcategoria = async (id: number, ativo: boolean) => {
+  const alterarStatusSubcategoria = async (id: string, ativo: boolean) => {
     try {
       const token = await getCookieClient(CookiesKeys.TOKEN);
 

@@ -6,7 +6,8 @@ import { IOrigemResponse } from "./OrigemResponse";
 import { IUnidadeRefResponse } from "./ref/UnidadeRefResponse";
 
 export interface IProdutoResponse {
-  id: number | undefined;
+  id: string;
+  codInterno: number;
   ativo: boolean;
   codigo: string;
   referencia: string;
@@ -36,7 +37,7 @@ export interface IProdutoResponse {
   precosTabelaPreco: IProdutoPrecoTabelaPrecoResponse[];
   precosLeveXPagueY: IProdutoPrecoLeveXPagueYResponse[];
   precosAtacado: IProdutoPrecoAtacadoResponse[];
-  empresas: number[];
+  empresas: string[];
   tributacao: {
     cfop: ICfopResponse;
     cst: ICstResponse;

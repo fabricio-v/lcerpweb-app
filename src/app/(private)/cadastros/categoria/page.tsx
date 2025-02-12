@@ -67,7 +67,7 @@ function CadastrosCategoria() {
     }
   };
 
-  const alterarStatusCategoria = async (id: number, ativo: boolean) => {
+  const alterarStatusCategoria = async (id: string, ativo: boolean) => {
     try {
       const token = await getCookieClient(CookiesKeys.TOKEN);
 

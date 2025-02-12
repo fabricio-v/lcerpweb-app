@@ -49,7 +49,7 @@ export const requestInsertOrUpdateFabricante = async (
 
 export const requestChangeStatusFabricante = async (
   token: string,
-  idFabricante: number,
+  idFabricante: string,
   status: boolean,
 ) => {
   return api.post<IFabricanteResponse>(

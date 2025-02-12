@@ -33,7 +33,7 @@ import { z } from "zod";
 import Breadcrumbs from "../components/Breadcrumbs";
 
 export const formUnidadeSchema = z.object({
-  id: z.number().optional(),
+  id: z.string().optional(),
   ativo: z.boolean(),
   nome: z.string().min(1, {
     message: "Informe o Nome da Unidade",

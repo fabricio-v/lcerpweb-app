@@ -1,4 +1,4 @@
 export interface IProdutoRefResponse {
-  id: number;
+  id: string;
   nome: string;
 }

@@ -1,23 +1,23 @@
 "use client";
 
 import { CookiesKeys } from "@/constants/CookiesKeys";
-import { IUsuarioResponse } from "@/interfaces/response/UsuarioResponse";
+import { IFuncionarioResponse } from "@/interfaces/response/FuncionarioResponse";
 import { getCookieClient } from "@/lib/cookieClient";
-import { requestAllUsuarios } from "@/services/requests/usuario";
+import { requestAllFuncionarios } from "@/services/requests/funcionarios";
 import { useState } from "react";
 
-export default function useSearchUsuarios() {
+export default function useSearchFuncionario() {
   const [data, setData] = useState({
-    usuarios: [],
+    funcionarios: [],
     totalItens: 0,
   } as {
-    usuarios: IUsuarioResponse[];
+    funcionarios: IFuncionarioResponse[];
     totalItens: number;
   });
 
   const [loading, setLoading] = useState(true);
 
-  const loadUsuarios = async () =>
+  const loadFuncionarios = async () =>
     //   {
     //   genericFilter,
     //   ativo,
@@ -33,10 +33,10 @@ export default function useSearchUsuarios() {
 
         const token = await getCookieClient(CookiesKeys.TOKEN);
 
-        const response = await requestAllUsuarios(token!);
+        const response = await requestAllFuncionarios(token!);
 
         setData({
-          usuarios: response.data,
+          funcionarios: response.data,
           totalItens: response.data.length,
         });
       } catch (err) {
@@ -46,5 +46,5 @@ export default function useSearchUsuarios() {
       }
     };
 
-  return { loadUsuarios, data, loading };
+  return { loadFuncionarios, data, loading };
 }

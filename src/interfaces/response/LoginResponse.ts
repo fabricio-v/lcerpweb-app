@@ -1,7 +1,7 @@
 export interface LoginResponse {
   token: string;
   expiresIn: number;
-  idUsuario: number;
+  idUsuario: string;
   nome: string;
   email: string;
   permissoes: string[];

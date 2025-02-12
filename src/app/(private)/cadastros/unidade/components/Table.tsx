@@ -33,9 +33,9 @@ import {
 interface Props {
   data: IUnidadeResponse[] | undefined;
   isLoading: boolean;
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
-  onChangeStatus: (id: number, status: boolean) => void;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+  onChangeStatus: (id: string, status: boolean) => void;
 }
 
 export function Table({

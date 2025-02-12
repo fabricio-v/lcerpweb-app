@@ -1,8 +1,12 @@
+import { IUsuarioFuncaoResponse } from "./UsuarioFuncaoResponse";
+
 export interface IUsuarioResponse {
-  id: number;
+  id: string;
+  codInterno: number;
   nome: string;
   grupo: string;
+  funcao: IUsuarioFuncaoResponse;
   email: string;
-  status: string;
+  ativo: boolean;
   permissoes: string[];
 }

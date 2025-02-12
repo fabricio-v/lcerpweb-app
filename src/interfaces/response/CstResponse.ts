@@ -1,5 +1,6 @@
 export interface ICstResponse {
-  id: number;
+  id: string;
+  codInterno: number;
   codigo: string;
   descricao: string;
 }

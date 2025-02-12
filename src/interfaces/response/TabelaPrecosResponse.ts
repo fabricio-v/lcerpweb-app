@@ -1,4 +1,5 @@
 export interface ITabelaPrecosResponse {
-  id: number;
+  id: string;
+  codInterno: number;
   nome: string;
 }

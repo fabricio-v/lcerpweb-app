@@ -59,7 +59,7 @@ export const requestInsertOrUpdateUnidade = async (
 
 export const requestChangeStatusUnidade = async (
   token: string,
-  idCategoria: number,
+  idCategoria: string,
   status: boolean,
 ) => {
   return api.post<IUnidadeResponse>(

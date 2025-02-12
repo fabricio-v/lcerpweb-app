@@ -1,24 +1,25 @@
 export interface IProdutoResumeResponse {
-  id: number;
+  id: string;
+  codInterno: number;
   codigo: string;
   referencia: string;
   codigoBarras: string;
   nome: string;
   descricao: string;
   categoria: {
-    id: number;
+    id: string;
     nome: string;
   };
   subcategoria: {
-    id: number;
+    id: string;
     nome: string;
   };
   fabricante: {
-    id: number;
+    id: string;
     nome: string;
   };
   unidade: {
-    id: number;
+    id: string;
     nome: string;
   };
   estoque: number;

@@ -69,7 +69,7 @@ function CadastrosUnidade() {
     }
   };
 
-  const alterarStatusUnidade = async (id: number, ativo: boolean) => {
+  const alterarStatusUnidade = async (id: string, ativo: boolean) => {
     try {
       const token = await getCookieClient(CookiesKeys.TOKEN);
 

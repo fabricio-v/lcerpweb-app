@@ -1,4 +1,4 @@
 export interface IUnidadeRefResponse {
-  id: number;
+  id: string;
   nome: string;
 }

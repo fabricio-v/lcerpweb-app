@@ -7,6 +7,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import useSearchCidades from "@/hooks/useSearchCidades";
 import { IEstadoResponse } from "@/interfaces/response/EstadoResponse";
 import { IPessoaEnderecoResponse } from "@/interfaces/response/PessoaEnderecoResponse";
+import { randomUUID } from "crypto";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { TableEnderecosAdicionais } from "./TableEnderecosAdicionais";
@@ -30,7 +31,7 @@ function AddItemListaEnderecosAdicionais({
 
   const [isShowForm, setIsShowForm] = useState(false);
 
-  const [id, setId] = useState<number>(0);
+  const [id, setId] = useState<string>("");
   const [descricaoSel, setDescricaoSel] = useState<string | number>("");
   const [endereco, setEndereco] = useState<string>("");
   const [numero, setNumero] = useState<string>("");
@@ -65,7 +66,7 @@ function AddItemListaEnderecosAdicionais({
   };
 
   const limparFormulario = () => {
-    setId(0);
+    setId("");
     setDescricaoSel("");
     setEndereco("");
     setNumero("");
@@ -83,7 +84,7 @@ function AddItemListaEnderecosAdicionais({
     if (estadoSel !== "") {
       const estado = estados.find((e) => e.id === Number(estadoSel))!;
       setEstadoSelUf(estado.uf);
-      loadCidades(Number(estado.id));
+      loadCidades(Number(estado.id), ""); //validar cidade digitada
 
       if (cidadeSel !== "") {
         const cidade = dataCidades.cidades.find(
@@ -94,7 +95,7 @@ function AddItemListaEnderecosAdicionais({
     } else {
       setEstadoSelUf("");
 
-      loadCidades(null);
+      loadCidades(null, "");
     }
   }, [estadoSel, cidadeSel]);
 
@@ -219,7 +220,7 @@ function AddItemListaEnderecosAdicionais({
             onClick={() => {
               if (validate()) {
                 onAdd({
-                  id: id > 0 ? id : new Date().getTime(),
+                  id: id !== "" ? id : randomUUID(),
                   descricao: descricaoSel + "",
                   cep,
                   cidade: {

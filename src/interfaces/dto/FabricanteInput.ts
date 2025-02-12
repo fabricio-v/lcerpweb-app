@@ -1,5 +1,5 @@
 export interface IFabricanteInput {
-  id: number | null;
+  id: string | null;
   nome: string;
   ativo: boolean;
 }

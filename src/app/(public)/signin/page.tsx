@@ -154,7 +154,7 @@ export default function Signin() {
           );
         } else {
           const company = responseCompanies.data.filter(
-            (company) => company.id === Number(cookieCompanySelectedId),
+            (company) => company.id === cookieCompanySelectedId,
           );
 
           if (company.length > 0) {

@@ -1,5 +1,5 @@
 export interface ICategoriaInput {
-  id: number | null;
+  id: string | null;
   nome: string;
   ativo: boolean;
 }

@@ -1,5 +1,6 @@
 export interface IFabricanteResponse {
-  id: number;
+  id: string;
+  codInterno: number;
   nome: string;
   ativo: boolean;
 }

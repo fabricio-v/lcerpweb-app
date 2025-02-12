@@ -73,9 +73,7 @@ function AddItemListaTabelaPrecos({
 
   useEffect(() => {
     if (tabelaPrecoSelectedId) {
-      const item = data.find(
-        (item) => item.id === Number(tabelaPrecoSelectedId),
-      );
+      const item = data.find((item) => item.id === tabelaPrecoSelectedId);
       if (item) {
         setTabelaPrecoSelectedNome(item.nome);
       }

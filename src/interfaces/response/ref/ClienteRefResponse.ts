@@ -1,4 +1,4 @@
 export interface IClienteRefResponse {
-  id: number;
+  id: string;
   nome: string;
 }

@@ -1,5 +1,6 @@
 export interface ICategoriaResponse {
-  id: number;
+  id: string;
+  codInterno: number;
   nome: string;
   ativo: boolean;
 }

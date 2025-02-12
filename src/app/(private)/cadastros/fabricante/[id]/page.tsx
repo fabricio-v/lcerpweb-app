@@ -33,7 +33,7 @@ import { z } from "zod";
 import BreadcrumbsFabricanteCadastro from "./components/BreadcrumbsFabricanteCadastro";
 
 export const formFabricanteSchema = z.object({
-  id: z.number().optional(),
+  id: z.string().optional(),
   ativo: z.boolean(),
   nome: z.string().min(1, {
     message: "Informe o Nome do Fabricante",

@@ -74,7 +74,7 @@ export default function usePaginatedResumeProducts() {
         idSubcategoria || null,
         idFabricante || null,
         idUnidade || null,
-        Number(companySelected),
+        companySelected + "",
         page,
         itensPerPage,
       );

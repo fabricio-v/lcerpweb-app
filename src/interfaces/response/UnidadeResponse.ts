@@ -1,5 +1,6 @@
 export interface IUnidadeResponse {
-  id: number;
+  id: string;
+  codInterno: number;
   nome: string;
   descricao: string;
   ativo: boolean;

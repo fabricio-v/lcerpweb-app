@@ -18,11 +18,7 @@ function Breadcrumbs() {
         <BreadcrumbItem>Cadastros</BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="/cadastros/usuario">Usuário</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Novo</BreadcrumbPage>
+          <BreadcrumbPage>Funcionário</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

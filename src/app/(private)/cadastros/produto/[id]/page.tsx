@@ -78,7 +78,8 @@ import ItemListaLeveXPagueY from "./components/ItemListaLeveXPagueY";
 import ItemListaTabelaPrecos from "./components/ItemListaTabelaPrecos";
 
 export const formProdutoSchema = z.object({
-  id: z.number().optional(),
+  id: z.string().optional(),
+  codInterno: z.number().optional(),
   ativo: z.boolean(),
   codigo: z.string().optional(),
   referencia: z.string().optional(),
@@ -136,6 +137,7 @@ function CadastrosProdutoNovo({ params }: any) {
     resolver: zodResolver(formProdutoSchema),
     defaultValues: {
       id: undefined,
+      codInterno: undefined,
       ativo: true,
       codigo: "",
       referencia: "",
@@ -181,7 +183,7 @@ function CadastrosProdutoNovo({ params }: any) {
 
   const [isLoadingCompanies, setIsLoadingCompanies] = useState(true);
   const [companiesList, setCompaniesList] = useState<IEmpresaResponse[]>([]);
-  const [companiesSelecteds, setCompaniesSelecteds] = useState<number[]>([]);
+  const [companiesSelecteds, setCompaniesSelecteds] = useState<string[]>([]);
 
   const [categoriesList, setCategoriesList] = useState<ICategoriaResponse[]>(
     [],
@@ -233,7 +235,7 @@ function CadastrosProdutoNovo({ params }: any) {
 
       const response = await requestProdutoById(
         params.id,
-        Number(companySelectedId),
+        companySelectedId + "",
         token!.toString(),
       );
 
@@ -547,7 +549,7 @@ function CadastrosProdutoNovo({ params }: any) {
             <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-4">
               <FormField
                 control={form.control}
-                name="id"
+                name="codInterno"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -1274,10 +1276,10 @@ function CadastrosProdutoNovo({ params }: any) {
         nome: data.nome,
         descricao: data.descricao || "",
         ativo: data.ativo,
-        idCategoria: Number(data.categoria),
-        idSubcategoria: Number(data.subcategoria),
-        idFabricante: Number(data.fabricante),
-        idUnidade: Number(data.unidade),
+        idCategoria: data.categoria,
+        idSubcategoria: data.subcategoria,
+        idFabricante: data.fabricante,
+        idUnidade: data.unidade,
         precoCusto: data.precoCusto || 0,
         precoVenda: data.precoVenda,
         markup: data.markupPerc || 0,
@@ -1289,11 +1291,11 @@ function CadastrosProdutoNovo({ params }: any) {
         precosLeveXPagueY: precosLeveXPagueYLista,
         precosAtacado: precosAtacadoAux,
         tributacao: {
-          idCst: Number(data.cst),
-          idCfop: Number(data.cfop),
-          idNcm: Number(data.ncm),
-          idCest: Number(data.cest),
-          idOrigem: Number(data.origem),
+          idCst: data.cst,
+          idCfop: data.cfop,
+          idNcm: data.ncm,
+          idCest: data.cest,
+          idOrigem: data.origem,
         },
         variacoes: [],
         codigosAdicionais: [],
@@ -1338,7 +1340,8 @@ function CadastrosProdutoNovo({ params }: any) {
 
   useEffect(() => {
     if (product !== undefined) {
-      setValue("id", Number(params.id));
+      setValue("id", params.id);
+      setValue("codInterno", product.codInterno);
       setValue("ativo", product.ativo);
       setValue("codigo", product.codigo);
       setValue("referencia", product.referencia);

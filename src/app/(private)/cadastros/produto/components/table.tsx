@@ -57,9 +57,9 @@ interface Props {
   onJumpToPage: (page: number) => void;
   onPreviousPage: () => void;
   onNextPage: () => void;
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
-  onChangeStatus: (id: number, status: boolean) => void;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+  onChangeStatus: (id: string, status: boolean) => void;
 }
 
 export function Table({
@@ -85,10 +85,10 @@ export function Table({
 
   const columns: ColumnDef<IProdutoResumeResponse>[] = [
     {
-      accessorKey: "id",
+      accessorKey: "codInterno",
       header: () => <TableHead className="w-[90px]">Cód. Interno</TableHead>,
       cell: ({ row }) => (
-        <TableCell className="w-[90px]">{row.getValue("id")}</TableCell>
+        <TableCell className="w-[90px]">{row.getValue("codInterno")}</TableCell>
       ),
     },
     {

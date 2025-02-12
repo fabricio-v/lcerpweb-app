@@ -1,5 +1,6 @@
 export interface ICfopResponse {
-  id: number;
+  id: string;
+  codInterno: number;
   codigo: string;
   descricao: string;
   aplicacao: string;

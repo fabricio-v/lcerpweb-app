@@ -1,5 +1,5 @@
 export interface IUnidadeInput {
-  id: number | null;
+  id: string | null;
   nome: string;
   descricao: string;
   ativo: boolean;

@@ -7,7 +7,7 @@ import { IEstadoResponse } from "@/interfaces/response/EstadoResponse";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { ComboboxSearchCidade } from "@/components/combobox/ComboboxSearchCidade";
@@ -123,7 +123,7 @@ export default function Signup() {
         subdomain: values.subdomain,
         cnpj: values.enterpriseCnpj,
         nomeEmpresa: values.enterpriseName,
-        nomeUsuario: values.username,
+        nome: values.username,
         email: values.email,
         senha: values.password,
         cidade: values.city,
@@ -173,34 +173,34 @@ export default function Signup() {
     }
   }
 
-  const buscarCidades = useCallback(
-    async (stateParam: string) => {
-      if (stateParam !== "") {
-        try {
-          const resp = await api.get<ICidadeResponse[]>(
-            `/public/cidades/estado/${stateParam}`,
-          );
+  // const buscarCidades = useCallback(
+  //   async (stateParam: string) => {
+  //     if (stateParam !== "") {
+  //       try {
+  //         const resp = await api.get<ICidadeResponse[]>(
+  //           `/public/cidades/estado/${stateParam}`,
+  //         );
 
-          if (resp.status === 200) {
-            setListaCidades(resp.data);
-          }
-        } catch (error: any) {
-          if (error?.response?.status < 500) {
-            toast.warning(Messages.TOAST_INFO_TITLE, {
-              description: buildMessageException(error),
-            });
-          } else {
-            toast.error(Messages.TOAST_ERROR_TITLE, {
-              description: buildMessageException(error),
-            });
-          }
-        }
-      } else {
-        setListaCidades([]);
-      }
-    },
-    [stateSel],
-  );
+  //         if (resp.status === 200) {
+  //           setListaCidades(resp.data);
+  //         }
+  //       } catch (error: any) {
+  //         if (error?.response?.status < 500) {
+  //           toast.warning(Messages.TOAST_INFO_TITLE, {
+  //             description: buildMessageException(error),
+  //           });
+  //         } else {
+  //           toast.error(Messages.TOAST_ERROR_TITLE, {
+  //             description: buildMessageException(error),
+  //           });
+  //         }
+  //       }
+  //     } else {
+  //       setListaCidades([]);
+  //     }
+  //   },
+  //   [stateSel],
+  // );
 
   const estados: ComboboxDataProps[] = useMemo(() => {
     return listaEstados.map((estado) => {
@@ -211,14 +211,14 @@ export default function Signup() {
     });
   }, [listaEstados]);
 
-  const cidades: ComboboxDataProps[] = useMemo(() => {
-    return listaCidades.map((cidade) => {
-      return {
-        value: cidade.id.toString(),
-        label: cidade.nome,
-      };
-    });
-  }, [listaCidades]);
+  // const cidades: ComboboxDataProps[] = useMemo(() => {
+  //   return listaCidades.map((cidade) => {
+  //     return {
+  //       value: cidade.id.toString(),
+  //       label: cidade.nome,
+  //     };
+  //   });
+  // }, [listaCidades]);
 
   useEffect(() => {
     buscarEstados();
@@ -308,7 +308,7 @@ export default function Signup() {
                             field.onChange(e);
                             form.setValue("city", "");
                             // setStateSel(e);
-                            buscarCidades(e);
+                            // buscarCidades(e);
                           }}
                           {...field}
                         />

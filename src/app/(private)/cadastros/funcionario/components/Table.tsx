@@ -1,4 +1,5 @@
-import BadgeStatusUsuario from "@/components/badge/BadgeStatusUsuario";
+import BadgeAtivo from "@/components/badge/BadgeAtivo";
+import BadgeInativo from "@/components/badge/BadgeInativo";
 import { Button } from "@/components/ui/button";
 import {
   ContextMenu,
@@ -20,21 +21,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IUsuarioResponse } from "@/interfaces/response/UsuarioResponse";
+import { IFuncionarioResponse } from "@/interfaces/response/FuncionarioResponse";
 import { Edit2, Loader2, MoreVertical } from "lucide-react";
 
 interface Props {
-  data: IUsuarioResponse[] | undefined;
+  data: IFuncionarioResponse[] | undefined;
   isLoading: boolean;
-  onEdit: (id: number) => void;
+  onEdit: (id: string) => void;
 }
 
-export function TableUsuarios({ data, isLoading, onEdit }: Props) {
+export function TableFuncionarios({ data, isLoading, onEdit }: Props) {
   return (
     <div className="flex max-w-full overflow-auto rounded-md border px-2 pb-3">
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[90px]">Cód. Interno</TableHead>
             <TableHead className="md:w-full">Nome do usuário</TableHead>
             <TableHead className="w-[75px] text-center">Status</TableHead>
             <TableHead className="w-[75px] text-center">Ações</TableHead>
@@ -50,20 +52,21 @@ export function TableUsuarios({ data, isLoading, onEdit }: Props) {
               </TableCell>
             </TableRow>
           ) : data && data.length > 0 ? (
-            data.map((usuario, key) => (
+            data.map((funcionario, key) => (
               <ContextMenu key={key}>
                 <ContextMenuTrigger asChild>
                   <TableRow
                     key={key}
                     className="odd:bg-zinc-100 dark:odd:bg-zinc-700"
                     onDoubleClick={() => {
-                      onEdit(usuario.id);
+                      onEdit(funcionario.id);
                     }}
                   >
-                    <TableCell>{usuario.nome}</TableCell>
+                    <TableCell>{funcionario.codInterno}</TableCell>
+                    <TableCell>{funcionario.nome}</TableCell>
 
                     <TableCell className="text-center">
-                      <BadgeStatusUsuario status={usuario.status} />
+                      {funcionario.ativo ? <BadgeAtivo /> : <BadgeInativo />}
                     </TableCell>
 
                     <TableCell className="text-center">
@@ -76,7 +79,7 @@ export function TableUsuarios({ data, isLoading, onEdit }: Props) {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
                             onClick={() => {
-                              onEdit(usuario.id);
+                              onEdit(funcionario.id);
                             }}
                           >
                             <p className="flex items-center gap-2">
@@ -91,7 +94,7 @@ export function TableUsuarios({ data, isLoading, onEdit }: Props) {
                 </ContextMenuTrigger>
 
                 <ContextMenuContent className="p-4">
-                  <ContextMenuItem onClick={() => onEdit(usuario.id)}>
+                  <ContextMenuItem onClick={() => onEdit(funcionario.id)}>
                     <p className="flex items-center gap-2">
                       <Edit2 size={15} />
                       Editar

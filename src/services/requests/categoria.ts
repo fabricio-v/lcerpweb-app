@@ -49,7 +49,7 @@ export const requestInsertOrUpdateCategoria = async (
 
 export const requestChangeStatusCategoria = async (
   token: string,
-  idCategoria: number,
+  idCategoria: string,
   status: boolean,
 ) => {
   return api.post<ICategoriaResponse>(

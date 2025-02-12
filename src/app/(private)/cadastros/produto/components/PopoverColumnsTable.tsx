@@ -24,7 +24,7 @@ interface ItemsProps {
 }
 
 const defaultColumns: ItemsProps[] = [
-  { id: 1, value: "id", nome: "Cód. Interno", isSelected: true },
+  { id: 1, value: "codInterno", nome: "Cód. Interno", isSelected: true },
   { id: 2, value: "codigo", nome: "Código", isSelected: true },
   { id: 3, value: "referencia", nome: "Referência", isSelected: true },
   { id: 4, value: "codigoBarras", nome: "Barras", isSelected: true },

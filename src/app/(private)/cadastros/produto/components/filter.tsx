@@ -274,7 +274,7 @@ function Filter({
               </div>
 
               <div className="flex gap-3">
-                <InputWithLabel name="codigoInterno" label="código interno" />
+                <InputWithLabel name="codigoInterno" label="Código interno" />
 
                 <InputWithLabel name="codigoBarras" label="Código barras" />
               </div>
@@ -325,7 +325,7 @@ function Filter({
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label className="peer-focus:text-lc-sunsetsky-ligh flex items-center gap-1 font-gothamBold text-[10px] text-foreground/70">
+                <Label className="text-[12px] font-semibold text-foreground/70">
                   Status
                 </Label>
                 <ToggleGroup

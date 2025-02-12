@@ -49,7 +49,7 @@ export const requestInsertOrUpdateSubcategoria = async (
 
 export const requestChangeStatusSubcategoria = async (
   token: string,
-  idSubcategoria: number,
+  idSubcategoria: string,
   status: boolean,
 ) => {
   return api.post<ISubcategoriaResponse>(

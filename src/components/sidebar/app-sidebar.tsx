@@ -102,8 +102,8 @@ const navMain = [
         url: "/cadastros/funcionario",
       },
       {
-        title: "Grupo usuário",
-        url: "/cadastros/grupo-usuario",
+        title: "Função usuário",
+        url: "/cadastros/funcao-usuario",
       },
       // {
       //   title: "Grade",
@@ -129,10 +129,10 @@ const navMain = [
         title: "Unidade",
         url: "/cadastros/unidade",
       },
-      {
-        title: "Usuário",
-        url: "/cadastros/usuario",
-      },
+      // {
+      //   title: "Usuário",
+      //   url: "/cadastros/usuario",
+      // },
     ],
   },
   {

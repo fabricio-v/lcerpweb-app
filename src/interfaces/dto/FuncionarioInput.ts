@@ -1,21 +1,14 @@
-import { IPessoaEnderecoInput } from "./PessoaEnderecoInput";
-
-export interface IClienteInput {
+export interface IFuncionarioInput {
   id: string | null;
   ativo: boolean;
   isCliente: boolean;
   isFornecedor: boolean;
   isTransportadora: boolean;
   isFuncionario: boolean;
-  nome: string;
-  razaoSocial: string;
-  apelido: string;
   tipoPessoa: string;
+  nome: string;
+  apelido: string;
   cpfCnpj: string;
-  ieIndicador: number;
-  ie: string;
-  im: string;
-  isuf: string;
   rg: string;
   rgOrgao: string;
   rgDataEmissao: string | null;
@@ -35,12 +28,9 @@ export interface IClienteInput {
   idEstadoNaturalidade: number | null;
   idCidadeConjuge: number | null;
   idEstadoConjuge: number | null;
-  idCidadeEmpresa: number | null;
-  idEstadoEmpresa: number | null;
+
   idCidadeFiliacao: number | null;
   idEstadoFiliacao: number | null;
-  idCidadeAvalista: number | null;
-  idEstadoAvalista: number | null;
 
   contato1: string;
   contato2: string;
@@ -72,35 +62,29 @@ export interface IClienteInput {
   conjugeEmpresaRenda: number;
   conjugeEmpresaAdmissao: string | null;
 
-  empresaNome: string;
-  empresaContato: string;
-  empresaEndereco: string;
-  empresaNumero: string;
-  empresaBairro: string;
-  empresaCep: string;
-  empresaCargo: string;
-  empresaRenda: number;
-  empresaAdmissao: string | null;
+  funcionarioStatus: string;
+  funcionarioCtps: string | null;
+  funcionarioSalario: number | null;
+  funcionarioDataAdmissao: string | null;
+  funcionarioDataDemissao: string | null;
+  funcionarioDataAfastamento: string | null;
 
-  avalistaNome: string;
-  avalistaCpf: string;
-  avalistaRg: string;
-  avalistaContato: string;
-  avalistaEndereco: string;
-  avalistaNumero: string;
-  avalistaBairro: string;
-  avalistaCep: string;
-  avalistaEmpresa: string;
-  avalistaEmpresaCargo: string;
-  avalistaEmpresaRenda: number;
-  avalistaDataNascimento: string | null;
-  avalistaEmpresaAdmissao: string | null;
-
-  idTabelaPreco: number | null;
   sexo: string;
   estadoCivil: string;
-  limiteCredito: number;
   obs: string;
 
-  enderecosAdicionais: IPessoaEnderecoInput[];
+  usuario: IUsuarioInput | null;
+}
+
+export interface IUsuarioInput {
+  id: string | null;
+  grupo: string;
+  idUsuarioFuncao: number;
+  ativo: boolean;
+  master: boolean;
+  nome: string;
+  email: string;
+  senha: string;
+  descontoPermitido: number;
+  permissoes: string[];
 }

@@ -24,3 +24,12 @@ export const requestCidadesByFilter = async (
     },
   });
 };
+
+export const requestCidadesPublicByFilter = async (
+  idEstado: number,
+  filter: string,
+) => {
+  return api.get<ICidadeResponse[]>(`/public/cidades`, {
+    params: { filter, estado: idEstado },
+  });
+};

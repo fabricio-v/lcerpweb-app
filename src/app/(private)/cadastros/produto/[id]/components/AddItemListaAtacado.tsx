@@ -114,9 +114,7 @@ function AddItemListaAtacado({
 
   useEffect(() => {
     if (unidadeSelId) {
-      const item = unidadeLista.find(
-        (item) => item.id === Number(unidadeSelId),
-      );
+      const item = unidadeLista.find((item) => item.id === unidadeSelId);
       if (item) {
         setUnidadeSelNome(item.descricao);
       }
@@ -198,7 +196,7 @@ function AddItemListaAtacado({
             onAdd({
               id: new Date().getTime(),
               unidade: {
-                id: Number(unidadeSelId),
+                id: unidadeSelId + "",
                 nome: unidadeSelNome,
               },
               codigo: codigo,

@@ -7,7 +7,7 @@ import api from "../axios";
 
 export const requestProdutoById = async (
   id: number,
-  idEmpresa: number,
+  idEmpresa: string,
   token: string,
 ) => {
   return api.get<IProdutoResponse>(
@@ -34,7 +34,7 @@ export const requestProdutoResumeByFilters = async (
   idSubcategoria: number | null,
   idFabricante: number | null,
   idUnidade: number | null,
-  idEmpresa: number,
+  idEmpresa: string,
   page: number,
   size: number,
 ) => {
@@ -44,7 +44,7 @@ export const requestProdutoResumeByFilters = async (
       ativo,
       nome,
       descricao,
-      id: codigoInterno,
+      codInterno: codigoInterno,
       codigoBarras,
       codigo,
       referencia,
@@ -77,7 +77,7 @@ export const requestInsertOrUpdateProduto = async (
 
 export const requestChangeStatusProduto = async (
   token: string,
-  idProduto: number,
+  idProduto: string,
   status: boolean,
 ) => {
   return api.post<IProdutoRefResponse>(

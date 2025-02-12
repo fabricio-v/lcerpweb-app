@@ -67,7 +67,7 @@ function CadastrosCliente() {
     nome: string | null,
   ) => {};
 
-  const alterarStatusCliente = (id: number, status: boolean) => {};
+  const alterarStatusCliente = (id: string, status: boolean) => {};
 
   useEffect(() => {
     pesquisaClientes(0);

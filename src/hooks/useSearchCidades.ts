@@ -1,9 +1,7 @@
 "use client";
 
-import { CookiesKeys } from "@/constants/CookiesKeys";
 import { ICidadeResponse } from "@/interfaces/response/CidadeResponse";
-import { getCookieClient } from "@/lib/cookieClient";
-import { requestCidadesByFilter } from "@/services/requests/cidade";
+import { requestCidadesPublicByFilter } from "@/services/requests/cidade";
 import { useState } from "react";
 
 export default function useSearchCidades() {
@@ -26,9 +24,9 @@ export default function useSearchCidades() {
         return;
       }
 
-      const token = await getCookieClient(CookiesKeys.TOKEN);
+      // const token = await getCookieClient(CookiesKeys.TOKEN);
 
-      const response = await requestCidadesByFilter(token!, idEstado, filter);
+      const response = await requestCidadesPublicByFilter(idEstado, filter);
 
       setDataCidades({
         cidades: response.data,

@@ -54,7 +54,8 @@ import Breadcrumbs from "./components/Breadcrumbs";
 import CollapsibleSection from "./components/CollapsibleSection";
 
 export const formClienteSchema = z.object({
-  id: z.number().optional(),
+  id: z.string().optional(),
+  codInterno: z.number().optional(),
   ativo: z.boolean(),
   isCliente: z.boolean(),
   isFornecedor: z.boolean(),
@@ -226,6 +227,7 @@ function CadastrosClienteNovo({ params }: any) {
     resolver: zodResolver(formClienteSchema),
     defaultValues: {
       id: undefined,
+      codInterno: undefined,
       ativo: true,
       isCliente: true,
       isFornecedor: false,
@@ -539,7 +541,7 @@ function CadastrosClienteNovo({ params }: any) {
           <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-[minmax(auto,150px)_1fr_1fr_1fr]">
             <FormField
               control={form.control}
-              name="id"
+              name="codInterno"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -1297,11 +1299,11 @@ function CadastrosClienteNovo({ params }: any) {
                           : null
                       }
                       onChangeValueSelected={(cidade) => {
-                        setCidadeSelected(cidade);
+                        setCidadeNaturalidadeSelected(cidade);
                         form.setValue("naturalidadeCidade", cidade.id + "");
                         form.clearErrors("naturalidadeCidade");
                       }}
-                      valueSelected={cidadeSelected}
+                      valueSelected={cidadeNaturalidadeSelected}
                     />
                   </FormControl>
                   <FormMessage />
@@ -1438,7 +1440,8 @@ function CadastrosClienteNovo({ params }: any) {
 
   useEffect(() => {
     if (cliente !== undefined) {
-      form.setValue("id", Number(params.id));
+      form.setValue("id", params.id);
+      form.setValue("codInterno", cliente.codInterno);
       form.setValue("ativo", cliente.ativo);
       form.setValue("isFornecedor", cliente.isFornecedor);
       form.setValue("isTransportadora", cliente.isTransportadora);

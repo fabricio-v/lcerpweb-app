@@ -1,9 +1,9 @@
 import { ICidadeResponse } from "./CidadeResponse";
 import { IEstadoResponse } from "./EstadoResponse";
 import { IPaisResponse } from "./PaisResponse";
-import { IPessoaEnderecoResponse } from "./PessoaEnderecoResponse";
+import { IUsuarioResponse } from "./UsuarioResponse";
 
-export interface IClienteResponse {
+export interface IFuncionarioResponse {
   id: string;
   codInterno: number;
   ativo: boolean;
@@ -17,9 +17,6 @@ export interface IClienteResponse {
   apelido: string;
   cpfCnpj: string;
   ieIndicador: number;
-  ie: string;
-  im: string;
-  isuf: string;
   rg: string;
   rgOrgao: string;
   rgDataEmissao: string | null;
@@ -38,15 +35,8 @@ export interface IClienteResponse {
   email: string;
   email2: string;
   paisNacionalidade: IPaisResponse;
-  cidadeNaturalidade?: ICidadeResponse;
-  estadoNaturalidade?: IEstadoResponse;
-  enderecoEntrega: string;
-  numeroEntrega: string;
-  bairroEntrega: string;
-  referenciaEntrega: string;
-  cepEntrega: string;
-  cidadeEntrega: ICidadeResponse;
-  estadoEntrega: IEstadoResponse;
+  cidadeNaturalidade: ICidadeResponse | null;
+  estadoNaturalidade: IEstadoResponse | null;
   filiacaoPai: string;
   filiacaoPaiContato: string;
   filiacaoMae: string;
@@ -56,8 +46,8 @@ export interface IClienteResponse {
   filiacaoBairro: string;
   filiacaoReferencia: string;
   filiacaoCep: string;
-  cidadeFiliacao: ICidadeResponse;
-  estadoFiliacao: IEstadoResponse;
+  cidadeFiliacao: ICidadeResponse | null;
+  estadoFiliacao: IEstadoResponse | null;
   conjugeNome: string;
   conjugeCpf: string;
   conjugeRg: string;
@@ -67,46 +57,23 @@ export interface IClienteResponse {
   conjugeNumero: string;
   conjugeBairro: string;
   conjugeCep: string;
-  cidadeConjuge: ICidadeResponse;
-  estadoConjuge: IEstadoResponse;
+  cidadeConjuge: ICidadeResponse | null;
+  estadoConjuge: IEstadoResponse | null;
   conjugeEmpresa: string;
   conjugeEmpresaCargo: string;
   conjugeEmpresaRenda: number;
   conjugeEmpresaAdmissao: string | null;
-  empresaNome: string;
-  empresaContato: string;
-  empresaEndereco: string;
-  empresaNumero: string;
-  empresaBairro: string;
-  empresaCep: string;
-  cidadeEmpresa: ICidadeResponse;
-  estadoEmpresa: IEstadoResponse;
-  empresaCargo: string;
-  empresaRenda: number;
-  empresaAdmissao: string | null;
-  avalistaNome: string;
-  avalistaCpf: string;
-  avalistaRg: string;
-  avalistaDataNascimento: string | null;
-  avalistaContato: string;
-  avalistaEndereco: string;
-  avalistaNumero: string;
-  avalistaBairro: string;
-  avalistaCep: string;
-  cidadeAvalista: ICidadeResponse;
-  estadoAvalista: IEstadoResponse;
-  avalistaEmpresa: string;
-  avalistaEmpresaCargo: string;
-  avalistaEmpresaRenda: number;
-  avalistaEmpresaAdmissao: string | null;
+
+  funcionarioStatus: string;
+  funcionarioCtps: string | null;
+  funcionarioSalario: number | null;
+  funcionarioDataAdmissao: string | null;
+  funcionarioDataDemissao: string | null;
+  funcionarioDataAfastamento: string | null;
+
   sexo: string;
   estadoCivil: string;
-  limiteCredito: number;
-  tabelaPreco: {
-    id: number;
-    nome: string;
-  } | null;
   obs: string;
   datahoraCadastro: string;
-  enderecosAdicionais: IPessoaEnderecoResponse[];
+  usuario: IUsuarioResponse;
 }

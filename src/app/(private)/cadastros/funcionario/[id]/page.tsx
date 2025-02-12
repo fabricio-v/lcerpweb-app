@@ -335,9 +335,9 @@ function CadastrosFuncionarioNovo({ params }: any) {
       usuarioAtivo: true,
       usuarioGrupo: undefined,
       usuarioFuncao: undefined,
-      usuarioEmail: undefined,
-      usuarioSenha: undefined,
-      usuarioSenhaConfirmacao: undefined,
+      usuarioEmail: "",
+      usuarioSenha: "",
+      usuarioSenhaConfirmacao: "",
     },
   });
 
